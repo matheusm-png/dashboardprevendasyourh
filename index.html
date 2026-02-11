@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Pré-Vendas - TV 4K</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0e1a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-x: hidden;
+        }
+        
+        .dashboard-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .dashboard-container {
+            width: 2560px;
+            height: 1200px;
+            background-color: #0a0e1a;
+            padding: 40px 60px;
+            flex-shrink: 0;
+            transform-origin: center center;
+        }
+        
+        @media (max-width: 2560px) {
+            .dashboard-container {
+                transform: scale(calc(100vw / 2560));
+            }
+        }
+        
+        @media (max-height: 1200px) {
+            .dashboard-container {
+                transform: scale(calc(100vh / 1200));
+            }
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .card-gradient-green {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(59, 130, 246, 0.05) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        
+        .card-gradient-blue {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.05) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        .card-gradient-purple {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.05) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        
+        .card-gradient-orange {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(249, 115, 22, 0.05) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+        
+        .card-dark {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .badge-green {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .badge-blue {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        .badge-purple {
+            background: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        
+        .badge-orange {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        
+        .badge-dark-green {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+        
+        .badge-dark-purple {
+            background: rgba(139, 92, 246, 0.15);
+            color: #8b5cf6;
+            border: 1px solid rgba(139, 92, 246, 0.25);
+        }
+        
+        .badge-red {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+        }
+        
+        .progress-bg {
+            background: rgba(15, 23, 42, 0.8);
+        }
+        
+        .progress-green {
+            background: linear-gradient(90deg, #10b981, #34d399);
+        }
+        
+        .progress-blue {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+        }
+        
+        .progress-purple {
+            background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+        }
+        
+        .progress-orange {
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+        }
+        
+        .progress-red {
+            background: linear-gradient(90deg, #ef4444, #f87171);
+        }
+        
+        .metric-card {
+            transition: all 0.3s ease;
+        }
+        
+        .circular-progress {
+            position: relative;
+            width: 64px;
+            height: 64px;
+        }
+        
+        .circular-progress svg {
+            transform: rotate(-90deg);
+        }
+        
+        .circular-progress circle {
+            fill: none;
+            stroke-width: 4;
+        }
+        
+        .circular-progress .bg {
+            stroke: rgba(255, 255, 255, 0.1);
+        }
+        
+        .circular-progress .progress {
+            stroke-linecap: round;
+        }
+
+        .chart-area {
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* CONFIG SECTION - Não aparece no print */
+        .config-section {
+            width: 2560px;
+            margin-top: 100px;
+            padding: 60px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            border-top: 2px solid #334155;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-field {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 16px;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .input-field:hover {
+            border-color: #64748b;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .config-title {
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .config-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .btn-salvar {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-salvar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-reset {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-reset:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-copiar {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-copiar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .url-box {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid #475569;
+            border-radius: 12px;
+            padding: 16px;
+            font-family: monospace;
+            font-size: 14px;
+            color: #94a3b8;
+            word-break: break-all;
+            margin-top: 16px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-saved {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .status-unsaved {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="text-white">
+    <div class="dashboard-wrapper">
+        <!-- DASHBOARD PRINCIPAL (Área do Print - 1200px) -->
+        <div class="dashboard-container flex flex-col justify-between">
+            <!-- Header -->
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h1 class="text-5xl font-bold gradient-text mb-2">Dashboard Pré-Vendas</h1>
+                    <p class="text-gray-400 text-lg flex items-center gap-3">
+                        <span class="w-10 h-1 bg-emerald-500 rounded-full"></span>
+                        Meta vs Realizado
+                    </p>
+                </div>
+                <div class="badge-green px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
+                    <i class="fas fa-check-circle"></i>
+                    Meta Mensal
+                    <span class="text-gray-400 text-xs ml-1">Fevereiro 2026</span>
+                </div>
+            </div>
+
+            <!-- INBOUND Section - Main Cards -->
+            <div class="mb-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-1.5 h-6 bg-gradient-to-b from-emerald-400 to-blue-500 rounded-full"></div>
+                    <h2 class="text-xl font-bold tracking-wider text-gray-200">INBOUND</h2>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-5 mb-6">
+                    <!-- Leads Card -->
+                    <div class="card-gradient-green rounded-2xl p-5 metric-card relative overflow-hidden h-[240px] flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
+                                    <i class="fas fa-users text-emerald-400 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <div id="badge_leads" class="badge-green px-2 py-1 rounded text-xs font-medium inline-flex items-center gap-1 mb-1">
+                                        <i class="fas fa-arrow-up text-[10px]"></i>
+                                        <span id="text_leads_diff">+142</span>
+                                    </div>
+                                    <div class="text-gray-300 text-sm">Leads Captados</div>
+                                </div>
+                            </div>
+                            <div class="circular-progress">
+                                <svg width="64" height="64" viewBox="0 0 48 48">
+                                    <circle class="bg" cx="24" cy="24" r="20"></circle>
+                                    <circle id="circle_leads" class="progress" cx="24" cy="24" r="20" 
+                                        stroke="url(#gradientGreen)" 
+                                        stroke-dasharray="125.6" 
+                                        stroke-dashoffset="101.7"
+                                        stroke-width="4"
+                                        fill="none"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center text-base font-bold text-emerald-400" id="pct_leads">19%</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="mb-3">
+                                <span id="display_leads_atual" class="text-5xl font-bold text-white">142</span>
+                                <span class="text-gray-400 text-xl ml-2">/</span>
+                                <span id="display_leads_meta" class="text-gray-400 text-xl">750</span>
+                            </div>
+                            <div class="chart-area h-14 w-full">
+                                <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 40">
+                                    <defs>
+                                        <linearGradient id="areaGreen" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0%" stop-color="#10b981" stop-opacity="0.4"/>
+                                            <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <path d="M0,35 Q20,30 40,25 T100,10 L100,40 L0,40 Z" fill="url(#areaGreen)"/>
+                                    <path d="M0,35 Q20,30 40,25 T100,10" fill="none" stroke="#10b981" stroke-width="2"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Agendas Card -->
+                    <div class="card-gradient-blue rounded-2xl p-5 metric-card relative overflow-hidden h-[240px] flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
+                                    <i class="fas fa-phone text-blue-400 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <div id="badge_agendas" class="badge-blue px-2 py-1 rounded text-xs font-medium inline-flex items-center gap-1 mb-1">
+                                        <i class="fas fa-arrow-up text-[10px]"></i>
+                                        <span id="text_agendas_diff">+28</span>
+                                    </div>
+                                    <div class="text-gray-300 text-sm">Agendas Realizadas</div>
+                                </div>
+                            </div>
+                            <div class="circular-progress">
+                                <svg width="64" height="64" viewBox="0 0 48 48">
+                                    <circle class="bg" cx="24" cy="24" r="20"></circle>
+                                    <circle id="circle_agendas" class="progress" cx="24" cy="24" r="20" 
+                                        stroke="url(#gradientBlue)" 
+                                        stroke-dasharray="125.6" 
+                                        stroke-dashoffset="104.9"
+                                        stroke-width="4"
+                                        fill="none"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center text-base font-bold text-blue-400" id="pct_agendas">16%</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="mb-3">
+                                <span id="display_agendas_atual" class="text-5xl font-bold text-white">28</span>
+                                <span class="text-gray-400 text-xl ml-2">/</span>
+                                <span id="display_agendas_meta" class="text-gray-400 text-xl">170</span>
+                            </div>
+                            <div class="chart-area h-14 w-full">
+                                <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 40">
+                                    <defs>
+                                        <linearGradient id="areaBlue" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.4"/>
+                                            <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <path d="M0,38 Q30,35 60,20 T100,15 L100,40 L0,40 Z" fill="url(#areaBlue)"/>
+                                    <path d="M0,38 Q30,35 60,20 T100,15" fill="none" stroke="#3b82f6" stroke-width="2"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Qualificados Card -->
+                    <div class="card-gradient-purple rounded-2xl p-5 metric-card relative overflow-hidden h-[240px] flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center border border-purple-500/30">
+                                    <i class="fas fa-check-circle text-purple-400 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <div id="badge_qualif" class="badge-purple px-2 py-1 rounded text-xs font-medium inline-flex items-center gap-1 mb-1">
+                                        <i class="fas fa-arrow-up text-[10px]"></i>
+                                        <span id="text_qualif_diff">+15</span>
+                                    </div>
+                                    <div class="text-gray-300 text-sm">Leads Qualificados</div>
+                                </div>
+                            </div>
+                            <div class="circular-progress">
+                                <svg width="64" height="64" viewBox="0 0 48 48">
+                                    <circle class="bg" cx="24" cy="24" r="20"></circle>
+                                    <circle id="circle_qualif" class="progress" cx="24" cy="24" r="20" 
+                                        stroke="url(#gradientPurple)" 
+                                        stroke-dasharray="125.6" 
+                                        stroke-dashoffset="112.2"
+                                        stroke-width="4"
+                                        fill="none"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center text-base font-bold text-purple-400" id="pct_qualif">11%</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="mb-3">
+                                <span id="display_qualif_atual" class="text-5xl font-bold text-white">15</span>
+                                <span class="text-gray-400 text-xl ml-2">/</span>
+                                <span id="display_qualif_meta" class="text-gray-400 text-xl">140</span>
+                            </div>
+                            <div class="chart-area h-14 w-full">
+                                <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 40">
+                                    <defs>
+                                        <linearGradient id="areaPurple" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.4"/>
+                                            <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <path d="M0,40 Q25,35 50,25 T100,5 L100,40 L0,40 Z" fill="url(#areaPurple)"/>
+                                    <path d="M0,40 Q25,35 50,25 T100,5" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OUTBOUND & YOU PARCEIRO - Lado a lado -->
+            <div class="grid grid-cols-2 gap-6 mb-6">
+                <!-- OUTBOUND Section -->
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-1.5 h-6 bg-gradient-to-b from-purple-400 to-pink-500 rounded-full"></div>
+                        <h2 class="text-xl font-bold tracking-wider text-gray-200">OUTBOUND</h2>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="card-dark rounded-xl p-3 h-[110px] flex flex-col justify-between">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-phone text-blue-400 text-lg"></i>
+                                    <span class="text-gray-300 text-sm">Agendas</span>
+                                </div>
+                                <span id="pct_out_agendas" class="text-blue-400 font-bold text-lg">20%</span>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-end mb-2">
+                                    <span id="display_out_agendas_atual" class="text-3xl font-bold">9</span>
+                                    <span class="text-gray-500 text-sm">/</span>
+                                    <span id="display_out_agendas_meta" class="text-gray-500 text-sm">45</span>
+                                </div>
+                                <div class="progress-bg rounded-full h-1.5 overflow-hidden">
+                                    <div id="progress_out_agendas" class="progress-blue h-full rounded-full" style="width: 20%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-dark rounded-xl p-3 h-[110px] flex flex-col justify-between">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-clipboard-check text-purple-400 text-lg"></i>
+                                    <span class="text-gray-300 text-sm">Qualif.</span>
+                                </div>
+                                <span id="pct_out_qualif" class="text-purple-400 font-bold text-lg">19%</span>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-end mb-2">
+                                    <span id="display_out_qualif_atual" class="text-3xl font-bold">7</span>
+                                    <span class="text-gray-500 text-sm">/</span>
+                                    <span id="display_out_qualif_meta" class="text-gray-500 text-sm">36</span>
+                                </div>
+                                <div class="progress-bg rounded-full h-1.5 overflow-hidden">
+                                    <div id="progress_out_qualif" class="progress-purple h-full rounded-full" style="width: 19%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-dark rounded-xl p-3 h-[110px] flex flex-col justify-between">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-bullseye text-orange-400 text-lg"></i>
+                                    <span class="text-gray-300 text-sm">Vendas</span>
+                                </div>
+                                <span id="pct_out_vendas" class="text-orange-400 font-bold text-lg">20%</span>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-end mb-2">
+                                    <span id="display_out_vendas_atual" class="text-3xl font-bold">1</span>
+                                    <span class="text-gray-500 text-sm">/</span>
+                                    <span id="display_out_vendas_meta" class="text-gray-500 text-sm">5</span>
+                                </div>
+                                <div class="progress-bg rounded-full h-1.5 overflow-hidden">
+                                    <div id="progress_out_vendas" class="progress-orange h-full rounded-full" style="width: 20%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- YOU PARCEIRO Section -->
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-1.5 h-6 bg-gradient-to-b from-orange-400 to-red-500 rounded-full"></div>
+                        <h2 class="text-xl font-bold tracking-wider text-gray-200">YOU PARCEIRO</h2>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="card-dark rounded-xl p-3 h-[110px] flex flex-col justify-between">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-user-tie text-orange-400 text-lg"></i>
+                                    <span class="text-gray-300 text-sm">Apres.</span>
+                                </div>
+                                <span id="pct_you_apres" class="text-orange-400 font-bold text-lg">20%</span>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-end mb-2">
+                                    <span id="display_you_apres_atual" class="text-3xl font-bold">1</span>
+                                    <span class="text-gray-500 text-sm">/</span>
+                                    <span id="display_you_apres_meta" class="text-gray-500 text-sm">5</span>
+                                </div>
+                                <div class="progress-bg rounded-full h-1.5 overflow-hidden">
+                                    <div id="progress_you_apres" class="progress-orange h-full rounded-full" style="width: 20%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-dark rounded-xl p-3 h-[110px] flex flex-col justify-between">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-file-signature text-red-400 text-lg"></i>
+                                    <span class="text-gray-300 text-sm">Contr.</span>
+                                </div>
+                                <span id="pct_you_contr" class="text-red-400 font-bold text-lg">0%</span>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-end mb-2">
+                                    <span id="display_you_contr_atual" class="text-3xl font-bold">0</span>
+                                    <span class="text-gray-500 text-sm">/</span>
+                                    <span id="display_you_contr_meta" class="text-gray-500 text-sm">5</span>
+                                </div>
+                                <div class="progress-bg rounded-full h-1.5 overflow-hidden">
+                                    <div id="progress_you_contr" class="progress-red h-full rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-dark rounded-xl p-3 h-[110px] flex flex-col justify-between">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-user-plus text-red-400 text-lg"></i>
+                                    <span class="text-gray-300 text-sm">Indic.</span>
+                                </div>
+                                <span id="pct_you_indic" class="text-red-400 font-bold text-lg">0%</span>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-end mb-2">
+                                    <span id="display_you_indic_atual" class="text-3xl font-bold">0</span>
+                                    <span class="text-gray-500 text-sm">/</span>
+                                    <span id="display_you_indic_meta" class="text-gray-500 text-sm">5</span>
+                                </div>
+                                <div class="progress-bg rounded-full h-1.5 overflow-hidden">
+                                    <div id="progress_you_indic" class="progress-red h-full rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO DE TAXAS - 4 Cards lado a lado -->
+            <div class="mb-6">
+                <div class="grid grid-cols-4 gap-5">
+                    <!-- Lead → Qualificado -->
+                    <div class="card-dark rounded-2xl p-5 border-l-4 border-emerald-500 h-[160px] flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <div class="text-gray-400 text-base">Lead → Qualificado</div>
+                            <div id="badge_conv1" class="badge-red px-2 py-1 rounded text-xs font-medium flex items-center gap-1">
+                                <i class="fas fa-arrow-down text-xs"></i>
+                                <span id="diff_conv1">14.3%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-baseline gap-2 mb-3">
+                                <span id="display_conv1_atual" class="text-4xl font-bold text-white">10.71%</span>
+                                <span class="text-gray-500 text-sm">meta: <span id="display_conv1_meta">25%</span></span>
+                            </div>
+                            <div class="progress-bg rounded-full h-2.5 overflow-hidden">
+                                <div id="progress_conv1" class="progress-purple h-full rounded-full" style="width: 43%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Qualificado → Venda -->
+                    <div class="card-dark rounded-2xl p-5 border-l-4 border-purple-500 h-[160px] flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <div class="text-gray-400 text-base">Qualificado → Venda</div>
+                            <div id="badge_conv2" class="badge-red px-2 py-1 rounded text-xs font-medium flex items-center gap-1">
+                                <i class="fas fa-arrow-down text-xs"></i>
+                                <span id="diff_conv2">18.3%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-baseline gap-2 mb-3">
+                                <span id="display_conv2_atual" class="text-4xl font-bold text-white">6.67%</span>
+                                <span class="text-gray-500 text-sm">meta: <span id="display_conv2_meta">25%</span></span>
+                            </div>
+                            <div class="progress-bg rounded-full h-2.5 overflow-hidden">
+                                <div id="progress_conv2" class="progress-purple h-full rounded-full" style="width: 27%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vendas Realizadas -->
+                    <div class="card-gradient-orange rounded-2xl p-5 h-[160px] flex flex-col justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center border border-orange-500/30">
+                                <i class="fas fa-fire text-orange-400 text-xl"></i>
+                            </div>
+                            <div class="text-gray-300 text-sm">Vendas Realizadas</div>
+                        </div>
+                        <div>
+                            <div id="display_vendas_atual" class="text-4xl font-bold text-orange-400 mb-1">01</div>
+                            <div class="text-gray-400 text-xs mb-2">Total: <span id="display_vendas_total">01</span>/<span id="display_vendas_meta2">24</span></div>
+                            <div class="progress-bg rounded-full h-2.5 overflow-hidden">
+                                <div id="progress_vendas" class="progress-orange h-full rounded-full" style="width: 4%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Taxa de Conversão Geral -->
+                    <div class="card-gradient-blue rounded-2xl p-5 h-[160px] flex flex-col justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
+                                <i class="fas fa-rocket text-blue-400 text-xl"></i>
+                            </div>
+                            <div class="text-gray-300 text-sm">Taxa de Conversão</div>
+                        </div>
+                        <div>
+                            <div id="display_taxa_conv" class="text-4xl font-bold text-blue-400 mb-1">0.70%</div>
+                            <div class="text-gray-400 text-xs mb-2">Leads → Vendas</div>
+                            <div class="progress-bg rounded-full h-2.5 overflow-hidden">
+                                <div id="progress_taxa_conv" class="progress-blue h-full rounded-full" style="width: 3%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Message -->
+            <div class="card-gradient-green rounded-2xl p-4 text-center border border-emerald-500/30">
+                <p class="text-emerald-300 text-lg font-medium flex items-center justify-center gap-2">
+                    <i class="fas fa-fire text-xl"></i>
+                    Pipeline aquecendo! Hora de transformar oportunidades em resultados!
+                </p>
+            </div>
+        </div>
+
+        <!-- SEÇÃO DE CONFIGURAÇÃO (Não aparece no print) -->
+        <div class="config-section">
+            <div class="config-header">
+                <i class="fas fa-cog text-4xl text-emerald-400"></i>
+                <div>
+                    <h2 class="text-3xl font-bold text-white">Configuração de Parâmetros</h2>
+                    <p class="text-gray-400 mt-1">Edite os valores e clique em "Gerar Link" para salvar na URL</p>
+                </div>
+                <div class="ml-auto flex items-center gap-4">
+                    <span id="status_indicator" class="status-indicator status-unsaved">
+                        <i class="fas fa-exclamation-circle"></i>
+                        Alterações não salvas
+                    </span>
+                </div>
+            </div>
+
+            <!-- INBOUND -->
+            <div class="mb-8">
+                <h3 class="text-xl font-bold text-emerald-400 mb-4 flex items-center gap-2">
+                    <i class="fas fa-arrow-down"></i>
+                    INBOUND
+                </h3>
+                <div class="config-grid">
+                    <div class="input-group">
+                        <label class="config-title">Leads Captados - Atual</label>
+                        <input type="number" id="input_leads_atual" class="input-field" value="142" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Leads Captados - Meta</label>
+                        <input type="number" id="input_leads_meta" class="input-field" value="750" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Agendas Realizadas - Atual</label>
+                        <input type="number" id="input_agendas_atual" class="input-field" value="28" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Agendas Realizadas - Meta</label>
+                        <input type="number" id="input_agendas_meta" class="input-field" value="170" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Leads Qualificados - Atual</label>
+                        <input type="number" id="input_qualif_atual" class="input-field" value="15" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Leads Qualificados - Meta</label>
+                        <input type="number" id="input_qualif_meta" class="input-field" value="140" oninput="marcarAlterado()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONVERSÕES E VENDAS -->
+            <div class="mb-8">
+                <h3 class="text-xl font-bold text-purple-400 mb-4 flex items-center gap-2">
+                    <i class="fas fa-percentage"></i>
+                    CONVERSÕES E VENDAS
+                </h3>
+                <div class="config-grid">
+                    <div class="input-group">
+                        <label class="config-title">Lead → Qualificado % (Atual)</label>
+                        <input type="number" step="0.01" id="input_conv1_atual" class="input-field" value="10.71" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Lead → Qualificado % (Meta)</label>
+                        <input type="number" step="0.01" id="input_conv1_meta" class="input-field" value="25" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Qualificado → Venda % (Atual)</label>
+                        <input type="number" step="0.01" id="input_conv2_atual" class="input-field" value="6.67" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Qualificado → Venda % (Meta)</label>
+                        <input type="number" step="0.01" id="input_conv2_meta" class="input-field" value="25" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Vendas Realizadas - Atual</label>
+                        <input type="number" id="input_vendas_atual" class="input-field" value="1" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Vendas Realizadas - Meta</label>
+                        <input type="number" id="input_vendas_meta" class="input-field" value="24" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Taxa de Conversão Geral %</label>
+                        <input type="number" step="0.01" id="input_taxa_conv" class="input-field" value="0.70" oninput="marcarAlterado()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- OUTBOUND -->
+            <div class="mb-8">
+                <h3 class="text-xl font-bold text-blue-400 mb-4 flex items-center gap-2">
+                    <i class="fas fa-phone"></i>
+                    OUTBOUND
+                </h3>
+                <div class="config-grid">
+                    <div class="input-group">
+                        <label class="config-title">Agendas - Atual</label>
+                        <input type="number" id="input_out_agendas_atual" class="input-field" value="9" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Agendas - Meta</label>
+                        <input type="number" id="input_out_agendas_meta" class="input-field" value="45" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Qualificações - Atual</label>
+                        <input type="number" id="input_out_qualif_atual" class="input-field" value="7" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Qualificações - Meta</label>
+                        <input type="number" id="input_out_qualif_meta" class="input-field" value="36" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Vendas - Atual</label>
+                        <input type="number" id="input_out_vendas_atual" class="input-field" value="1" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Vendas - Meta</label>
+                        <input type="number" id="input_out_vendas_meta" class="input-field" value="5" oninput="marcarAlterado()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- YOU PARCEIRO -->
+            <div class="mb-8">
+                <h3 class="text-xl font-bold text-orange-400 mb-4 flex items-center gap-2">
+                    <i class="fas fa-handshake"></i>
+                    YOU PARCEIRO
+                </h3>
+                <div class="config-grid">
+                    <div class="input-group">
+                        <label class="config-title">Apresentações - Atual</label>
+                        <input type="number" id="input_you_apres_atual" class="input-field" value="1" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Apresentações - Meta</label>
+                        <input type="number" id="input_you_apres_meta" class="input-field" value="5" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Contratos - Atual</label>
+                        <input type="number" id="input_you_contr_atual" class="input-field" value="0" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Contratos - Meta</label>
+                        <input type="number" id="input_you_contr_meta" class="input-field" value="5" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Indicações - Atual</label>
+                        <input type="number" id="input_you_indic_atual" class="input-field" value="0" oninput="marcarAlterado()">
+                    </div>
+                    <div class="input-group">
+                        <label class="config-title">Indicações - Meta</label>
+                        <input type="number" id="input_you_indic_meta" class="input-field" value="5" oninput="marcarAlterado()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOTÕES DE AÇÃO -->
+            <div class="flex justify-center gap-4 mt-8 flex-wrap">
+                <button class="btn-salvar" onclick="gerarLink()">
+                    <i class="fas fa-link"></i>
+                    Gerar Link com Dados
+                </button>
+                <button class="btn-copiar" onclick="copiarLink()">
+                    <i class="fas fa-copy"></i>
+                    Copiar Link
+                </button>
+                <button class="btn-reset" onclick="resetarValores()">
+                    <i class="fas fa-undo"></i>
+                    Resetar Padrão
+                </button>
+            </div>
+
+            <!-- URL GERADA -->
+            <div class="mt-6">
+                <label class="config-title">Link Gerado (compartilhe este link):</label>
+                <div id="url_gerada" class="url-box">Clique em "Gerar Link" para criar uma URL compartilhável com seus dados</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast_msg">Link copiado com sucesso!</span>
+    </div>
+
+    <script>
+        // Valores padrão
+        const valoresPadrao = {
+            leads_atual: 142, leads_meta: 750,
+            agendas_atual: 28, agendas_meta: 170,
+            qualif_atual: 15, qualif_meta: 140,
+            conv1_atual: 10.71, conv1_meta: 25,
+            conv2_atual: 6.67, conv2_meta: 25,
+            vendas_atual: 1, vendas_meta: 24,
+            taxa_conv: 0.70,
+            out_agendas_atual: 9, out_agendas_meta: 45,
+            out_qualif_atual: 7, out_qualif_meta: 36,
+            out_vendas_atual: 1, out_vendas_meta: 5,
+            you_apres_atual: 1, you_apres_meta: 5,
+            you_contr_atual: 0, you_contr_meta: 5,
+            you_indic_atual: 0, you_indic_meta: 5
+        };
+
+        let alterado = false;
+
+        function calcularPorcentagem(atual, meta) {
+            if (meta === 0) return 0;
+            return ((atual / meta) * 100);
+        }
+
+        function getBadgeClass(porcentagem) {
+            if (porcentagem >= 80) return 'badge-green';
+            if (porcentagem >= 60) return 'badge-blue';
+            if (porcentagem >= 40) return 'badge-orange';
+            return 'badge-red';
+        }
+
+        function getDiffBadgeClass(diff) {
+            if (diff >= 0) return 'badge-dark-green';
+            return 'badge-red';
+        }
+
+        function marcarAlterado() {
+            alterado = true;
+            document.getElementById('status_indicator').className = 'status-indicator status-unsaved';
+            document.getElementById('status_indicator').innerHTML = '<i class="fas fa-exclamation-circle"></i> Alterações não salvas';
+        }
+
+        function atualizarDashboard() {
+            // INBOUND - Leads
+            const leadsAtual = parseInt(document.getElementById('input_leads_atual').value) || 0;
+            const leadsMeta = parseInt(document.getElementById('input_leads_meta').value) || 1;
+            const leadsPct = calcularPorcentagem(leadsAtual, leadsMeta);
+            const leadsOffset = 125.6 - (125.6 * leadsPct / 100);
+            
+            document.getElementById('display_leads_atual').textContent = leadsAtual;
+            document.getElementById('display_leads_meta').textContent = leadsMeta;
+            document.getElementById('pct_leads').textContent = Math.round(leadsPct) + '%';
+            document.getElementById('circle_leads').style.strokeDashoffset = leadsOffset;
+            document.getElementById('text_leads_diff').textContent = '+' + leadsAtual;
+            document.getElementById('badge_leads').className = getBadgeClass(leadsPct) + ' px-2 py-1 rounded text-xs font-medium inline-flex items-center gap-1 mb-1';
+
+            // INBOUND - Agendas
+            const agendasAtual = parseInt(document.getElementById('input_agendas_atual').value) || 0;
+            const agendasMeta = parseInt(document.getElementById('input_agendas_meta').value) || 1;
+            const agendasPct = calcularPorcentagem(agendasAtual, agendasMeta);
+            const agendasOffset = 125.6 - (125.6 * agendasPct / 100);
+            
+            document.getElementById('display_agendas_atual').textContent = agendasAtual;
+            document.getElementById('display_agendas_meta').textContent = agendasMeta;
+            document.getElementById('pct_agendas').textContent = Math.round(agendasPct) + '%';
+            document.getElementById('circle_agendas').style.strokeDashoffset = agendasOffset;
+            document.getElementById('text_agendas_diff').textContent = '+' + agendasAtual;
+            document.getElementById('badge_agendas').className = getBadgeClass(agendasPct) + ' px-2 py-1 rounded text-xs font-medium inline-flex items-center gap-1 mb-1';
+
+            // INBOUND - Qualificados
+            const qualifAtual = parseInt(document.getElementById('input_qualif_atual').value) || 0;
+            const qualifMeta = parseInt(document.getElementById('input_qualif_meta').value) || 1;
+            const qualifPct = calcularPorcentagem(qualifAtual, qualifMeta);
+            const qualifOffset = 125.6 - (125.6 * qualifPct / 100);
+            
+            document.getElementById('display_qualif_atual').textContent = qualifAtual;
+            document.getElementById('display_qualif_meta').textContent = qualifMeta;
+            document.getElementById('pct_qualif').textContent = Math.round(qualifPct) + '%';
+            document.getElementById('circle_qualif').style.strokeDashoffset = qualifOffset;
+            document.getElementById('text_qualif_diff').textContent = '+' + qualifAtual;
+            document.getElementById('badge_qualif').className = getBadgeClass(qualifPct) + ' px-2 py-1 rounded text-xs font-medium inline-flex items-center gap-1 mb-1';
+
+            // CONVERSÕES
+            const conv1Atual = parseFloat(document.getElementById('input_conv1_atual').value) || 0;
+            const conv1Meta = parseFloat(document.getElementById('input_conv1_meta').value) || 1;
+            const conv1Diff = (conv1Atual - conv1Meta).toFixed(2);
+            
+            document.getElementById('display_conv1_atual').textContent = conv1Atual.toFixed(2) + '%';
+            document.getElementById('display_conv1_meta').textContent = conv1Meta + '%';
+            document.getElementById('diff_conv1').textContent = Math.abs(conv1Diff) + '%';
+            document.getElementById('progress_conv1').style.width = Math.min((conv1Atual / conv1Meta) * 100, 100) + '%';
+            document.getElementById('badge_conv1').className = getDiffBadgeClass(conv1Diff) + ' px-2 py-1 rounded text-xs font-medium flex items-center gap-1';
+            document.getElementById('badge_conv1').innerHTML = conv1Diff >= 0 ? 
+                '<i class="fas fa-arrow-up text-xs"></i> +' + conv1Diff + '%' : 
+                '<i class="fas fa-arrow-down text-xs"></i> ' + conv1Diff + '%';
+
+            const conv2Atual = parseFloat(document.getElementById('input_conv2_atual').value) || 0;
+            const conv2Meta = parseFloat(document.getElementById('input_conv2_meta').value) || 1;
+            const conv2Diff = (conv2Atual - conv2Meta).toFixed(2);
+            
+            document.getElementById('display_conv2_atual').textContent = conv2Atual.toFixed(2) + '%';
+            document.getElementById('display_conv2_meta').textContent = conv2Meta + '%';
+            document.getElementById('diff_conv2').textContent = Math.abs(conv2Diff) + '%';
+            document.getElementById('progress_conv2').style.width = Math.min((conv2Atual / conv2Meta) * 100, 100) + '%';
+            document.getElementById('badge_conv2').className = getDiffBadgeClass(conv2Diff) + ' px-2 py-1 rounded text-xs font-medium flex items-center gap-1';
+            document.getElementById('badge_conv2').innerHTML = conv2Diff >= 0 ? 
+                '<i class="fas fa-arrow-up text-xs"></i> +' + conv2Diff + '%' : 
+                '<i class="fas fa-arrow-down text-xs"></i> ' + conv2Diff + '%';
+
+            // VENDAS
+            const vendasAtual = parseInt(document.getElementById('input_vendas_atual').value) || 0;
+            const vendasMeta = parseInt(document.getElementById('input_vendas_meta').value) || 1;
+            const vendasPct = calcularPorcentagem(vendasAtual, vendasMeta);
+            
+            document.getElementById('display_vendas_atual').textContent = vendasAtual.toString().padStart(2, '0');
+            document.getElementById('display_vendas_total').textContent = vendasAtual.toString().padStart(2, '0');
+            document.getElementById('display_vendas_meta2').textContent = vendasMeta;
+            document.getElementById('progress_vendas').style.width = vendasPct + '%';
+
+            // TAXA CONVERSÃO
+            const taxaConv = parseFloat(document.getElementById('input_taxa_conv').value) || 0;
+            document.getElementById('display_taxa_conv').textContent = taxaConv.toFixed(2) + '%';
+            document.getElementById('progress_taxa_conv').style.width = Math.min(taxaConv * 10, 100) + '%';
+
+            // OUTBOUND
+            const outAgendasAtual = parseInt(document.getElementById('input_out_agendas_atual').value) || 0;
+            const outAgendasMeta = parseInt(document.getElementById('input_out_agendas_meta').value) || 1;
+            const outAgendasPct = calcularPorcentagem(outAgendasAtual, outAgendasMeta);
+            document.getElementById('display_out_agendas_atual').textContent = outAgendasAtual;
+            document.getElementById('display_out_agendas_meta').textContent = outAgendasMeta;
+            document.getElementById('pct_out_agendas').textContent = Math.round(outAgendasPct) + '%';
+            document.getElementById('progress_out_agendas').style.width = outAgendasPct + '%';
+
+            const outQualifAtual = parseInt(document.getElementById('input_out_qualif_atual').value) || 0;
+            const outQualifMeta = parseInt(document.getElementById('input_out_qualif_meta').value) || 1;
+            const outQualifPct = calcularPorcentagem(outQualifAtual, outQualifMeta);
+            document.getElementById('display_out_qualif_atual').textContent = outQualifAtual;
+            document.getElementById('display_out_qualif_meta').textContent = outQualifMeta;
+            document.getElementById('pct_out_qualif').textContent = Math.round(outQualifPct) + '%';
+            document.getElementById('progress_out_qualif').style.width = outQualifPct + '%';
+
+            const outVendasAtual = parseInt(document.getElementById('input_out_vendas_atual').value) || 0;
+            const outVendasMeta = parseInt(document.getElementById('input_out_vendas_meta').value) || 1;
+            const outVendasPct = calcularPorcentagem(outVendasAtual, outVendasMeta);
+            document.getElementById('display_out_vendas_atual').textContent = outVendasAtual;
+            document.getElementById('display_out_vendas_meta').textContent = outVendasMeta;
+            document.getElementById('pct_out_vendas').textContent = Math.round(outVendasPct) + '%';
+            document.getElementById('progress_out_vendas').style.width = outVendasPct + '%';
+
+            // YOU PARCEIRO
+            const youApresAtual = parseInt(document.getElementById('input_you_apres_atual').value) || 0;
+            const youApresMeta = parseInt(document.getElementById('input_you_apres_meta').value) || 1;
+            const youApresPct = calcularPorcentagem(youApresAtual, youApresMeta);
+            document.getElementById('display_you_apres_atual').textContent = youApresAtual;
+            document.getElementById('display_you_apres_meta').textContent = youApresMeta;
+            document.getElementById('pct_you_apres').textContent = Math.round(youApresPct) + '%';
+            document.getElementById('progress_you_apres').style.width = youApresPct + '%';
+
+            const youContrAtual = parseInt(document.getElementById('input_you_contr_atual').value) || 0;
+            const youContrMeta = parseInt(document.getElementById('input_you_contr_meta').value) || 1;
+            const youContrPct = calcularPorcentagem(youContrAtual, youContrMeta);
+            document.getElementById('display_you_contr_atual').textContent = youContrAtual;
+            document.getElementById('display_you_contr_meta').textContent = youContrMeta;
+            document.getElementById('pct_you_contr').textContent = Math.round(youContrPct) + '%';
+            document.getElementById('progress_you_contr').style.width = youContrPct + '%';
+
+            const youIndicAtual = parseInt(document.getElementById('input_you_indic_atual').value) || 0;
+            const youIndicMeta = parseInt(document.getElementById('input_you_indic_meta').value) || 1;
+            const youIndicPct = calcularPorcentagem(youIndicAtual, youIndicMeta);
+            document.getElementById('display_you_indic_atual').textContent = youIndicAtual;
+            document.getElementById('display_you_indic_meta').textContent = youIndicMeta;
+            document.getElementById('pct_you_indic').textContent = Math.round(youIndicPct) + '%';
+            document.getElementById('progress_you_indic').style.width = youIndicPct + '%';
+        }
+
+        function gerarLink() {
+            const params = new URLSearchParams();
+            
+            // Coletar todos os valores dos inputs
+            const inputs = document.querySelectorAll('.input-field');
+            inputs.forEach(input => {
+                if (input.value && input.value !== '') {
+                    params.set(input.id.replace('input_', ''), input.value);
+                }
+            });
+            
+            // Criar nova URL
+            const url = new URL(window.location.href);
+            url.search = params.toString();
+            
+            // Atualizar URL sem recarregar
+            window.history.replaceState({}, '', url);
+            
+            // Mostrar URL na caixa
+            document.getElementById('url_gerada').textContent = url.toString();
+            
+            // Marcar como salvo
+            alterado = false;
+            document.getElementById('status_indicator').className = 'status-indicator status-saved';
+            document.getElementById('status_indicator').innerHTML = '<i class="fas fa-check-circle"></i> Link gerado! Copie a URL acima';
+            
+            showToast('Link gerado com sucesso!');
+        }
+
+        function copiarLink() {
+            const urlText = document.getElementById('url_gerada').textContent;
+            if (urlText.includes('http')) {
+                navigator.clipboard.writeText(urlText).then(() => {
+                    showToast('Link copiado para a área de transferência!');
+                }).catch(() => {
+                    // Fallback
+                    const textarea = document.createElement('textarea');
+                    textarea.value = urlText;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    showToast('Link copiado para a área de transferência!');
+                });
+            } else {
+                showToast('Gere o link primeiro!', true);
+            }
+        }
+
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast_msg');
+            toastMsg.textContent = msg;
+            
+            if (isError) {
+                toast.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+            } else {
+                toast.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            }
+            
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function resetarValores() {
+            if (confirm('Tem certeza que deseja resetar todos os valores para o padrão?')) {
+                // Resetar inputs
+                Object.keys(valoresPadrao).forEach(key => {
+                    const input = document.getElementById('input_' + key);
+                    if (input) {
+                        input.value = valoresPadrao[key];
+                    }
+                });
+                
+                // Limpar URL
+                window.history.replaceState({}, '', window.location.pathname);
+                document.getElementById('url_gerada').textContent = 'Clique em "Gerar Link" para criar uma URL compartilhável com seus dados';
+                
+                marcarAlterado();
+                atualizarDashboard();
+                showToast('Valores resetados para o padrão!');
+            }
+        }
+
+        function carregarDaURL() {
+            const params = new URLSearchParams(window.location.search);
+            
+            if (params.toString() === '') return; // Nada na URL
+            
+            let hasData = false;
+            
+            params.forEach((value, key) => {
+                const inputId = 'input_' + key;
+                const input = document.getElementById(inputId);
+                if (input && value) {
+                    input.value = value;
+                    hasData = true;
+                }
+            });
+            
+            if (hasData) {
+                atualizarDashboard();
+                document.getElementById('status_indicator').className = 'status-indicator status-saved';
+                document.getElementById('status_indicator').innerHTML = '<i class="fas fa-check-circle"></i> Dados carregados da URL';
+                
+                // Mostrar URL atual
+                document.getElementById('url_gerada').textContent = window.location.href;
+            }
+        }
+
+        // Carregar dados da URL ao iniciar
+        window.onload = function() {
+            carregarDaURL();
+        };
+    </script>
+</body>
+</html>
