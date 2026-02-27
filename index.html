@@ -3,1105 +3,539 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Pré-Vendas - TV 4K</title>
+    <title>Dashboard Pré Vendas</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        html, body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0a0e1a;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            overflow-x: hidden;
-        }
-        
-        .dashboard-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; }
-        
-        .dashboard-container {
-            width: 2560px;
-            height: 1200px;
-            background-color: #0a0e1a;
-            padding: 40px 60px;
-            flex-shrink: 0;
-            transform-origin: top center;
-        }
-        
-        /* FIX: Scale corretamente em diferentes resoluções */
-        .dashboard-container {
-            transform: scale(calc(min(100vw / 2560, 100vh / 1200)));
-            margin-bottom: calc((min(100vw / 2560, 100vh / 1200) - 1) * 1200px);
-        }
+        body { font-family: 'Inter', sans-serif; background: #0a0e1a; }
+        .glass-card { background: rgba(20, 25, 40, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .gradient-text { background: linear-gradient(135deg, #4ade80 0%, #3b82f6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .circular-progress { transform: rotate(-90deg); transform-origin: 50% 50%; }
+        .progress-ring-circle { transition: stroke-dashoffset 1s ease-in-out; }
+        .metric-card { background: linear-gradient(145deg, rgba(20, 30, 48, 0.8) 0%, rgba(10, 14, 26, 0.9) 100%); border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.3s ease; }
+        .metric-card:hover { transform: translateY(-2px); border-color: rgba(74, 222, 128, 0.2); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); }
+        .pipeline-card { background: linear-gradient(145deg, rgba(30, 25, 20, 0.8) 0%, rgba(15, 12, 10, 0.9) 100%); border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.3s ease; }
+        .pipeline-card:hover { transform: translateY(-2px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); }
+        .pipeline-warm { border-color: rgba(251, 146, 60, 0.2); }
+        .pipeline-warm:hover { border-color: rgba(251, 146, 60, 0.4); }
+        .pipeline-hot { border-color: rgba(239, 68, 68, 0.2); }
+        .pipeline-hot:hover { border-color: rgba(239, 68, 68, 0.4); }
+        .badge-green { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .badge-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+        .badge-cyan { background: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3); }
+        .badge-yellow { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3); }
+        .badge-meta { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+        .progress-bar-bg { background: rgba(255, 255, 255, 0.05); }
+        .progress-bar-fill { transition: width 1s ease-out; box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); }
+        .glow-text { text-shadow: 0 0 20px rgba(74, 222, 128, 0.5); }
+        .glow-orange { text-shadow: 0 0 20px rgba(251, 146, 60, 0.5); }
+        .glow-red { text-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
+        .glow-cyan { text-shadow: 0 0 20px rgba(6, 182, 212, 0.5); }
+        @keyframes pulse-glow { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .animate-pulse-slow { animation: pulse-glow 3s infinite; }
+        .chart-container { position: relative; height: 45px; overflow: hidden; }
+        .mini-chart { position: absolute; bottom: 0; left: 0; right: 0; }
+        .pipeline-value { background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .pipeline-value-hot { background: linear-gradient(135deg, #f87171 0%, #dc2626 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 
-        .gradient-text {
-            background: linear-gradient(135deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .card-gradient-green {
-            background: linear-gradient(135deg, rgba(16,185,129,.15) 0%, rgba(59,130,246,.05) 100%);
-            border: 1px solid rgba(16,185,129,.2);
-        }
-        .card-gradient-blue {
-            background: linear-gradient(135deg, rgba(59,130,246,.15) 0%, rgba(139,92,246,.05) 100%);
-            border: 1px solid rgba(59,130,246,.2);
-        }
-        .card-gradient-purple {
-            background: linear-gradient(135deg, rgba(139,92,246,.15) 0%, rgba(236,72,153,.05) 100%);
-            border: 1px solid rgba(139,92,246,.2);
-        }
-        .card-gradient-orange {
-            background: linear-gradient(135deg, rgba(245,158,11,.15) 0%, rgba(249,115,22,.05) 100%);
-            border: 1px solid rgba(245,158,11,.2);
-        }
-        .card-dark {
-            background: rgba(15,23,42,.6);
-            border: 1px solid rgba(255,255,255,.05);
-        }
-        
-        .badge-green  { background: rgba(16,185,129,.2);  color: #34d399; border: 1px solid rgba(16,185,129,.3); }
-        .badge-blue   { background: rgba(59,130,246,.2);  color: #60a5fa; border: 1px solid rgba(59,130,246,.3); }
-        .badge-purple { background: rgba(139,92,246,.2);  color: #a78bfa; border: 1px solid rgba(139,92,246,.3); }
-        .badge-orange { background: rgba(245,158,11,.2);  color: #fbbf24; border: 1px solid rgba(245,158,11,.3); }
-        .badge-dark-green { background: rgba(16,185,129,.15); color: #10b981; border: 1px solid rgba(16,185,129,.25); }
-        .badge-dark-purple { background: rgba(139,92,246,.15); color: #8b5cf6; border: 1px solid rgba(139,92,246,.25); }
-        .badge-red    { background: rgba(239,68,68,.15);  color: #ef4444; border: 1px solid rgba(239,68,68,.25); }
-        
-        .progress-bg { background: rgba(15,23,42,.8); }
-        .progress-green  { background: linear-gradient(90deg,#10b981,#34d399); }
-        .progress-blue   { background: linear-gradient(90deg,#3b82f6,#60a5fa); }
-        .progress-purple { background: linear-gradient(90deg,#8b5cf6,#a78bfa); }
-        .progress-orange { background: linear-gradient(90deg,#f59e0b,#fbbf24); }
-        .progress-red    { background: linear-gradient(90deg,#ef4444,#f87171); }
-        
-        .metric-card { transition: all .3s ease; }
-        
-        .circular-progress {
-            position: relative;
-            width: 64px; height: 64px;
-        }
-        .circular-progress svg { transform: rotate(-90deg); }
-        .circular-progress circle { fill: none; stroke-width: 4; }
-        .circular-progress .bg { stroke: rgba(255,255,255,.1); }
-        .circular-progress .progress { stroke-linecap: round; }
-        .circular-progress .pct-label {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.875rem;
-            font-weight: 700;
-        }
+        /* parceiro card */
+        .parceiro-card { background: linear-gradient(145deg, rgba(10, 20, 30, 0.85) 0%, rgba(5, 10, 20, 0.95) 100%); border: 1px solid rgba(6, 182, 212, 0.15); transition: all 0.3s ease; }
+        .parceiro-card:hover { transform: translateY(-2px); border-color: rgba(6, 182, 212, 0.35); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .parceiro-value { background: linear-gradient(135deg, #22d3ee 0%, #0ea5e9 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 
-        .chart-area { position: relative; overflow: hidden; }
-
-        /* CONFIG SECTION */
-        .config-section {
-            width: 2560px;
-            padding: 60px;
-            background: linear-gradient(180deg,#0f172a 0%,#1e293b 100%);
-            border-top: 2px solid #334155;
-            /* FIX: Sem margin-top fixo — agora o wrapper controla */
+        /* Loading */
+        #loading-overlay {
+            position: fixed; inset: 0; background: #0a0e1a;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 100; transition: opacity 0.5s;
         }
-        .input-group { display: flex; flex-direction: column; gap: 8px; }
-        .input-field {
-            background: rgba(30,41,59,.8);
-            border: 1px solid #475569;
-            border-radius: 8px;
-            padding: 12px 16px;
-            color: white;
-            font-size: 16px;
-            width: 100%;
-            transition: all .3s;
+        .loading-spinner {
+            width: 40px; height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #22d3ee;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
-        .input-field:focus { outline: none; border-color: #10b981; box-shadow: 0 0 0 3px rgba(16,185,129,.1); }
-        .input-field:hover { border-color: #64748b; }
-        /* FIX: readonly agora tem estilo visual diferente e cursor adequado */
-        .input-field[readonly] {
-            opacity: .55;
-            cursor: not-allowed;
-            background: rgba(15,23,42,.9);
-            border-color: #334155;
-            border-style: dashed;
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #last-update { position: fixed; bottom: 12px; right: 16px; font-size: 11px; color: rgba(255,255,255,0.3); }
+        #error-banner {
+            display: none; position: fixed; bottom: 12px; left: 16px;
+            background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239,68,68,0.3);
+            color: #f87171; font-size: 11px; padding: 6px 12px; border-radius: 8px;
         }
-
-        .config-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; margin-bottom: 32px; }
-        .config-title { color: #94a3b8; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
-        .config-header {
-            display: flex; align-items: center; gap: 12px;
-            margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #334155;
-        }
-        .btn-salvar {
-            background: linear-gradient(135deg,#10b981,#059669); color: white; border: none;
-            padding: 16px 32px; border-radius: 12px; font-size: 18px; font-weight: 600;
-            cursor: pointer; transition: all .3s; display: flex; align-items: center; gap: 8px;
-        }
-        .btn-salvar:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(16,185,129,.3); }
-        .btn-reset {
-            background: rgba(239,68,68,.2); color: #ef4444; border: 1px solid rgba(239,68,68,.3);
-            padding: 16px 32px; border-radius: 12px; font-size: 18px; font-weight: 600;
-            cursor: pointer; transition: all .3s; display: flex; align-items: center; gap: 8px;
-        }
-        .btn-reset:hover { background: rgba(239,68,68,.3); }
-        .btn-copiar {
-            background: linear-gradient(135deg,#3b82f6,#2563eb); color: white; border: none;
-            padding: 16px 32px; border-radius: 12px; font-size: 18px; font-weight: 600;
-            cursor: pointer; transition: all .3s; display: flex; align-items: center; gap: 8px;
-        }
-        .btn-copiar:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(59,130,246,.3); }
-        .url-box {
-            background: rgba(15,23,42,.8); border: 1px solid #475569; border-radius: 12px;
-            padding: 16px; font-family: monospace; font-size: 14px; color: #94a3b8;
-            word-break: break-all; margin-top: 16px; max-height: 100px; overflow-y: auto;
-        }
-        .status-indicator { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-        .status-saved   { background: rgba(16,185,129,.2); color: #34d399; }
-        .status-unsaved { background: rgba(245,158,11,.2);  color: #fbbf24; }
-        .toast {
-            position: fixed; bottom: 32px; right: 32px;
-            background: linear-gradient(135deg,#10b981,#059669);
-            color: white; padding: 16px 24px; border-radius: 12px; font-weight: 600;
-            display: flex; align-items: center; gap: 8px;
-            opacity: 0; transform: translateY(20px);
-            transition: all .3s; z-index: 1000;
-        }
-        .toast.show { opacity: 1; transform: translateY(0); }
-        .auto-label { font-size: 11px; color: #64748b; font-style: italic; }
-
-        /* FIX: badge nas taxas de conversão agora tem alinhamento correto */
-        .badge-diff {
-            display: inline-flex; align-items: center; gap: 4px;
-            padding: 4px 10px; border-radius: 6px;
-            font-size: 12px; font-weight: 700;
-            white-space: nowrap;
-        }
-
-        /* FIX: Animação suave nas barras de progresso */
-        [id^="progress_"] { transition: width 0.5s ease; }
-        circle.progress { transition: stroke-dashoffset 0.5s ease; }
     </style>
 </head>
-<body class="text-white">
-<div class="dashboard-wrapper">
+<body class="min-h-screen text-white">
 
-    <!-- ══════════════════ DASHBOARD PRINCIPAL ══════════════════ -->
-    <div class="dashboard-container flex flex-col justify-between">
-
-        <!-- SVG Defs globais para gradientes dos círculos -->
-        <svg width="0" height="0" style="position:absolute">
-            <defs>
-                <linearGradient id="gradientGreen"  x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%"   stop-color="#10b981"/>
-                    <stop offset="100%" stop-color="#34d399"/>
-                </linearGradient>
-                <linearGradient id="gradientBlue"   x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%"   stop-color="#3b82f6"/>
-                    <stop offset="100%" stop-color="#60a5fa"/>
-                </linearGradient>
-                <linearGradient id="gradientPurple" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%"   stop-color="#8b5cf6"/>
-                    <stop offset="100%" stop-color="#a78bfa"/>
-                </linearGradient>
-            </defs>
-        </svg>
-
-        <!-- Header -->
-        <div class="flex justify-between items-start mb-6">
-            <div>
-                <h1 class="text-5xl font-bold gradient-text mb-2">Dashboard Pré-Vendas</h1>
-                <p class="text-gray-400 text-lg flex items-center gap-3">
-                    <span class="w-10 h-1 bg-emerald-500 rounded-full"></span>
-                    Meta vs Realizado
-                </p>
-            </div>
-            <div class="badge-green px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
-                <i class="fas fa-check-circle"></i>
-                Meta Mensal
-                <span class="text-gray-400 text-xs ml-1">Fevereiro 2026</span>
-            </div>
+    <!-- LOADING OVERLAY -->
+    <div id="loading-overlay">
+        <div class="text-center">
+            <div class="loading-spinner mx-auto mb-4"></div>
+            <p class="text-gray-400 text-sm">Carregando dados...</p>
         </div>
+    </div>
 
-        <!-- INBOUND -->
-        <div class="mb-6">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="w-1.5 h-6 bg-gradient-to-b from-emerald-400 to-blue-500 rounded-full"></div>
-                <h2 class="text-xl font-bold tracking-wider text-gray-200">INBOUND</h2>
-            </div>
-            <div class="grid grid-cols-3 gap-5 mb-6">
+    <!-- DASHBOARD -->
+    <div id="dashboard-area" class="p-4">
+        <div class="max-w-6xl mx-auto">
 
-                <!-- Leads -->
-                <div class="card-gradient-green rounded-2xl p-5 metric-card relative overflow-hidden h-[240px] flex flex-col justify-between">
-                    <div class="flex justify-between items-start">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
-                                <i class="fas fa-users text-emerald-400 text-2xl"></i>
-                            </div>
-                            <div>
-                                <!-- FIX: badge_leads agora usa div com id correto, não span dentro -->
-                                <div id="badge_leads" class="badge-green px-2 py-1 rounded text-xs font-medium inline-flex items-center gap-1 mb-1">
-                                    <i class="fas fa-arrow-up text-[10px]"></i>
-                                    <span id="text_leads_diff">+142</span>
-                                </div>
-                                <div class="text-gray-300 text-sm">Leads Captados</div>
-                            </div>
-                        </div>
-                        <div class="circular-progress">
-                            <svg width="64" height="64" viewBox="0 0 48 48">
-                                <circle class="bg" cx="24" cy="24" r="20"></circle>
-                                <circle id="circle_leads" class="progress" cx="24" cy="24" r="20"
-                                    stroke="url(#gradientGreen)"
-                                    stroke-dasharray="125.6" stroke-dashoffset="101.7"
-                                    stroke-width="4" fill="none"></circle>
-                            </svg>
-                            <div class="pct-label text-emerald-400" id="pct_leads">19%</div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="mb-3">
-                            <span id="display_leads_atual" class="text-5xl font-bold text-white">142</span>
-                            <span class="text-gray-400 text-xl ml-2">/</span>
-                            <span id="display_leads_meta" class="text-gray-400 text-xl">750</span>
-                        </div>
-                        <div class="chart-area h-14 w-full">
-                            <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 40">
-                                <defs>
-                                    <linearGradient id="areaGreen" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="0%"   stop-color="#10b981" stop-opacity="0.4"/>
-                                        <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
-                                    </linearGradient>
-                                </defs>
-                                <path d="M0,35 Q20,30 40,25 T100,10 L100,40 L0,40 Z" fill="url(#areaGreen)"/>
-                                <path d="M0,35 Q20,30 40,25 T100,10" fill="none" stroke="#10b981" stroke-width="2"/>
-                            </svg>
-                        </div>
-                    </div>
+            <!-- Header -->
+            <div class="relative flex items-center justify-between mb-6 rounded-2xl overflow-hidden px-8 py-5" style="background: linear-gradient(135deg, #050a12 0%, #0a1020 60%, #0a0e1a 100%); border: 1px solid rgba(34,211,238,0.2); min-height: 110px;">
+                <div style="position:absolute;top:-60px;left:-60px;width:400px;height:260px;background:radial-gradient(ellipse,rgba(34,211,238,0.1) 0%,transparent 70%);pointer-events:none;"></div>
+                <div style="position:absolute;right:20px;top:-30px;opacity:0.08;transform:scale(3.5);transform-origin:right top;pointer-events:none;">
+                    <svg width="66" height="44" viewBox="0 0 66 44"><path d="M47.548,4.818v6.26l8.04-.435c-14.822,16-20.871,22.77-27.435,22.77-5.238,0-7.686-3.36-8.757-7.021,14.412-.5,19.342-9.319,19.342-14.846C38.738,6.092,35.533,0,26.72,0,17.191,0,12.512,9.451,11.881,18.583a8.806,8.806,0,0,1-5.065-8.314,17.589,17.589,0,0,1,1.3-6.724C6.529,2.918,1.7,1.282,1.7,1.282A30.663,30.663,0,0,0,0,10.628,15.478,15.478,0,0,0,12.252,25.76c1.725,9.229,8.252,14.106,15.9,14.106,9.9,0,16.675-8.377,32.28-24.966l-.5,8.56h6.26V4.818H47.548ZM26.6,6.975a4.651,4.651,0,0,1,5.048,4.967c0,3.827-4.487,8.147-12.371,8.147-.211,0-.419,0-.625-.009C18.81,12.6,21.721,6.975,26.6,6.975" fill="#61de75"/></svg>
                 </div>
 
-                <!-- Agendas -->
-                <div class="card-gradient-blue rounded-2xl p-5 metric-card relative overflow-hidden h-[240px] flex flex-col justify-between">
-                    <div class="flex justify-between items-start">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
-                                <i class="fas fa-phone text-blue-400 text-2xl"></i>
-                            </div>
-                            <div>
-                                <div id="badge_agendas" class="badge-blue px-2 py-1 rounded text-xs font-medium inline-flex items-center gap-1 mb-1">
-                                    <i class="fas fa-arrow-up text-[10px]"></i>
-                                    <span id="text_agendas_diff">+28</span>
-                                </div>
-                                <div class="text-gray-300 text-sm">Agendas Realizadas</div>
-                            </div>
-                        </div>
-                        <div class="circular-progress">
-                            <svg width="64" height="64" viewBox="0 0 48 48">
-                                <circle class="bg" cx="24" cy="24" r="20"></circle>
-                                <circle id="circle_agendas" class="progress" cx="24" cy="24" r="20"
-                                    stroke="url(#gradientBlue)"
-                                    stroke-dasharray="125.6" stroke-dashoffset="104.9"
-                                    stroke-width="4" fill="none"></circle>
-                            </svg>
-                            <div class="pct-label text-blue-400" id="pct_agendas">16%</div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="mb-3">
-                            <span id="display_agendas_atual" class="text-5xl font-bold text-white">28</span>
-                            <span class="text-gray-400 text-xl ml-2">/</span>
-                            <span id="display_agendas_meta" class="text-gray-400 text-xl">170</span>
-                        </div>
-                        <div class="chart-area h-14 w-full">
-                            <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 40">
-                                <defs>
-                                    <linearGradient id="areaBlue" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="0%"   stop-color="#3b82f6" stop-opacity="0.4"/>
-                                        <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
-                                    </linearGradient>
-                                </defs>
-                                <path d="M0,38 Q30,35 60,20 T100,15 L100,40 L0,40 Z" fill="url(#areaBlue)"/>
-                                <path d="M0,38 Q30,35 60,20 T100,15" fill="none" stroke="#3b82f6" stroke-width="2"/>
-                            </svg>
-                        </div>
-                    </div>
+                <div class="relative z-10">
+                    <h1 style="font-size:2.8rem;font-weight:900;line-height:1;background:linear-gradient(90deg,#22d3ee 0%,#a5f3fc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px;">Dashboard Pré Vendas</h1>
+                    <p style="color:rgba(255,255,255,0.4);font-size:0.85rem;margin-top:6px;letter-spacing:0.2px;">Acompanhamento em tempo real</p>
                 </div>
 
-                <!-- Qualificados -->
-                <div class="card-gradient-purple rounded-2xl p-5 metric-card relative overflow-hidden h-[240px] flex flex-col justify-between">
-                    <div class="flex justify-between items-start">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center border border-purple-500/30">
-                                <i class="fas fa-check-circle text-purple-400 text-2xl"></i>
-                            </div>
-                            <div>
-                                <div id="badge_qualif" class="badge-purple px-2 py-1 rounded text-xs font-medium inline-flex items-center gap-1 mb-1">
-                                    <i class="fas fa-arrow-up text-[10px]"></i>
-                                    <span id="text_qualif_diff">+15</span>
-                                </div>
-                                <div class="text-gray-300 text-sm">Leads Qualificados</div>
-                            </div>
-                        </div>
-                        <div class="circular-progress">
-                            <svg width="64" height="64" viewBox="0 0 48 48">
-                                <circle class="bg" cx="24" cy="24" r="20"></circle>
-                                <circle id="circle_qualif" class="progress" cx="24" cy="24" r="20"
-                                    stroke="url(#gradientPurple)"
-                                    stroke-dasharray="125.6" stroke-dashoffset="112.2"
-                                    stroke-width="4" fill="none"></circle>
-                            </svg>
-                            <div class="pct-label text-purple-400" id="pct_qualif">11%</div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="mb-3">
-                            <span id="display_qualif_atual" class="text-5xl font-bold text-white">15</span>
-                            <span class="text-gray-400 text-xl ml-2">/</span>
-                            <span id="display_qualif_meta" class="text-gray-400 text-xl">140</span>
-                        </div>
-                        <div class="chart-area h-14 w-full">
-                            <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 40">
-                                <defs>
-                                    <linearGradient id="areaPurple" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="0%"   stop-color="#8b5cf6" stop-opacity="0.4"/>
-                                        <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
-                                    </linearGradient>
-                                </defs>
-                                <path d="M0,40 Q25,35 50,25 T100,5 L100,40 L0,40 Z" fill="url(#areaPurple)"/>
-                                <path d="M0,40 Q25,35 50,25 T100,5" fill="none" stroke="#8b5cf6" stroke-width="2"/>
-                            </svg>
-                        </div>
-                    </div>
+                <div class="relative z-10 flex items-center gap-4">
+                    <svg width="50" height="43" viewBox="0 0 66 44"><path d="M47.548,4.818v6.26l8.04-.435c-14.822,16-20.871,22.77-27.435,22.77-5.238,0-7.686-3.36-8.757-7.021,14.412-.5,19.342-9.319,19.342-14.846C38.738,6.092,35.533,0,26.72,0,17.191,0,12.512,9.451,11.881,18.583a8.806,8.806,0,0,1-5.065-8.314,17.589,17.589,0,0,1,1.3-6.724C6.529,2.918,1.7,1.282,1.7,1.282A30.663,30.663,0,0,0,0,10.628,15.478,15.478,0,0,0,12.252,25.76c1.725,9.229,8.252,14.106,15.9,14.106,9.9,0,16.675-8.377,32.28-24.966l-.5,8.56h6.26V4.818H47.548ZM26.6,6.975a4.651,4.651,0,0,1,5.048,4.967c0,3.827-4.487,8.147-12.371,8.147-.211,0-.419,0-.625-.009C18.81,12.6,21.721,6.975,26.6,6.975" fill="#61de75"/></svg>
+                    <svg height="46" viewBox="75 -3 210 50" style="width:auto;">
+                      <path d="M167.439,7.486c-4.842,12.1-10.076,24.144-13.871,33.435-4.253,10.01-8.244,15.311-14.918,15.311-4.711,0-7.917-1.963-9.684-5.1l7.852-6.543.785.066c.327,3.01,1.832,5.3,4.515,5.3,3.86,0,6.215-3.729,7.393-7.72-2.094,0-5.954-.131-8.048-.393-3.6-11.058-8.637-24.536-12.825-34.351a90.474,90.474,0,0,0,14.591,0c2.159,8.375,5.234,19.3,8.113,28.331,2.682-9.749,5.1-21.265,6.347-28.331a60.68,60.68,0,0,0,9.749,0" transform="translate(-45.794,-2.665)" fill="white"/>
+                      <path d="M186.956,23.825c0-10.73,7.262-17.862,19.237-17.862s19.3,7.132,19.3,17.862c0,10.927-7.328,18.255-19.3,18.255s-19.237-7.328-19.237-18.255m24.667-.261c0-11.647-1.9-15.376-5.431-15.376-3.4,0-5.5,3.8-5.5,15.638,0,12.17,2.094,15.965,5.562,15.965,3.4,0,5.365-3.86,5.365-16.226" transform="translate(-66.555,-2.123)" fill="white"/>
+                      <path d="M287.188,41.706h-5.5L275.345,33c-1.505,5.758-5.823,9.618-12.17,9.618-6.608,0-11.712-3.4-11.777-14.133-.066-8.375,0-14.329-.131-21a90.885,90.885,0,0,0,13.348,0c-.066,12.3,0,11.385.131,20.807.065,6.805.981,9.226,3.6,9.16,3.468-.065,5.562-4.318,5.562-12.759,0-8.9,0-10.8-.2-17.208a92.672,92.672,0,0,0,13.478,0c-.327,11.581-.392,22.639,0,34.22" transform="translate(-89.449,-2.665)" fill="white"/>
+                      <path d="M361.8,41.566a58.7,58.7,0,0,1-13.564,0A102.564,102.564,0,0,0,338.267,28.9c0,4.139.05,8.378.149,12.666a37.558,37.558,0,0,1-10.572,0c.249-11.669.249-21.992,0-34.309A88.294,88.294,0,0,1,341.158,6.01c4.389,0,17.654.549,17.654,10.672,0,8.128-9.525,11.968-18.052,11.819A102.671,102.671,0,0,0,352.428,30c2.494,3.191,5.585,7.43,9.375,11.569m-23.587-14.91a21.961,21.961,0,0,0,2.244.149c4.04,0,6.982-2.494,6.982-9.525,0-6.931-2.743-9.126-6.383-9.126-.7,0-1.646.1-2.643.2-.149,5.934-.2,12.067-.2,18.3" transform="translate(-116.71,-2.14)" fill="white"/>
+                      <path d="M416.777,41.738a42.058,42.058,0,0,1-10.622,0c.1-5.435.2-10.871.2-16.307-3.889-.1-7.879-.1-11.718,0,0,5.436.1,10.872.2,16.307a42.058,42.058,0,0,1-10.622,0c.249-11.619.249-23.288,0-34.907a42.058,42.058,0,0,1,10.622,0c-.1,5.236-.15,10.472-.2,15.708,3.84.1,7.829.1,11.718,0-.05-5.236-.1-10.472-.2-15.708a42.058,42.058,0,0,1,10.622,0c-.249,11.619-.249,23.288,0,34.907" transform="translate(-136.777,-2.312)" fill="white"/>
+                    </svg>
                 </div>
             </div>
-        </div>
 
-        <!-- OUTBOUND & YOU PARCEIRO -->
-        <div class="grid grid-cols-2 gap-6 mb-6">
+            <!-- INBOUND — 3 cards -->
+            <div class="mb-2">
+                <p class="text-xs text-gray-500 uppercase tracking-widest mb-2 px-1">📥 Inbound</p>
+            </div>
+            <div class="grid grid-cols-3 gap-4 mb-4">
+
+                <!-- Leads Captados -->
+                <div class="metric-card rounded-xl p-4 relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                            </div>
+                            <span class="badge-green px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+                                +<span id="leads-variacao">-</span>
+                            </span>
+                        </div>
+                        <div class="relative w-12 h-12">
+                            <svg class="w-12 h-12 circular-progress">
+                                <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"></circle>
+                                <circle id="circle-leads" cx="24" cy="24" r="20" stroke="#4ade80" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" stroke-linecap="round" class="progress-ring-circle"></circle>
+                            </svg>
+                            <span id="pct-leads" class="absolute inset-0 flex items-center justify-center text-xs font-bold">--%</span>
+                        </div>
+                    </div>
+                    <div class="mb-1">
+                        <h3 class="text-gray-300 font-medium text-sm leading-tight">Leads Captados</h3>
+                        <p class="text-gray-500 text-xs leading-tight">Inbound total</p>
+                    </div>
+                    <div class="flex items-baseline gap-1 mb-1">
+                        <span class="text-2xl font-bold text-white leading-none"><span id="val-leads">--</span></span>
+                        <span class="text-gray-500 text-xs">/ <span id="meta-leads">--</span></span>
+                    </div>
+                    <div class="chart-container"><canvas id="chart1" class="mini-chart"></canvas></div>
+                </div>
+
+                <!-- Agendas Inbound -->
+                <div class="metric-card rounded-xl p-4 relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <span class="badge-blue px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+                                +<span id="agendas-in-variacao">-</span>
+                            </span>
+                        </div>
+                        <div class="relative w-12 h-12">
+                            <svg class="w-12 h-12 circular-progress">
+                                <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"></circle>
+                                <circle id="circle-agendas-in" cx="24" cy="24" r="20" stroke="#60a5fa" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" stroke-linecap="round" class="progress-ring-circle"></circle>
+                            </svg>
+                            <span id="pct-agendas-in" class="absolute inset-0 flex items-center justify-center text-xs font-bold">--%</span>
+                        </div>
+                    </div>
+                    <div class="mb-1">
+                        <h3 class="text-gray-300 font-medium text-sm leading-tight">Agendas Realizadas</h3>
+                        <p class="text-gray-500 text-xs leading-tight">Inbound</p>
+                    </div>
+                    <div class="flex items-baseline gap-1 mb-1">
+                        <span class="text-2xl font-bold text-white leading-none"><span id="val-agendas-in">--</span></span>
+                        <span class="text-gray-500 text-xs">/ <span id="meta-agendas-in">--</span></span>
+                    </div>
+                    <div class="chart-container"><canvas id="chart2" class="mini-chart"></canvas></div>
+                </div>
+
+                <!-- Leads Qualificados -->
+                <div class="metric-card rounded-xl p-4 relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                                </svg>
+                            </div>
+                            <span class="badge-purple px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+                                +<span id="leads-qual-variacao">-</span>
+                            </span>
+                        </div>
+                        <div class="relative w-12 h-12">
+                            <svg class="w-12 h-12 circular-progress">
+                                <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"></circle>
+                                <circle id="circle-leads-qual" cx="24" cy="24" r="20" stroke="#c084fc" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" stroke-linecap="round" class="progress-ring-circle"></circle>
+                            </svg>
+                            <span id="pct-leads-qual" class="absolute inset-0 flex items-center justify-center text-xs font-bold">--%</span>
+                        </div>
+                    </div>
+                    <div class="mb-1">
+                        <h3 class="text-gray-300 font-medium text-sm leading-tight">Leads Qualificados</h3>
+                        <p class="text-gray-500 text-xs leading-tight">SQLs gerados</p>
+                    </div>
+                    <div class="flex items-baseline gap-1 mb-1">
+                        <span class="text-2xl font-bold text-white leading-none"><span id="val-leads-qual">--</span></span>
+                        <span class="text-gray-500 text-xs">/ <span id="meta-leads-qual">--</span></span>
+                    </div>
+                    <div class="chart-container"><canvas id="chart3" class="mini-chart"></canvas></div>
+                </div>
+            </div>
+
+            <!-- CONVERSÕES — taxas -->
+            <div class="mb-2">
+                <p class="text-xs text-gray-500 uppercase tracking-widest mb-2 px-1">📊 Conversões</p>
+            </div>
+            <div class="grid grid-cols-3 gap-4 mb-4">
+
+                <!-- Lead → Qualificado -->
+                <div class="glass-card rounded-lg p-3">
+                    <div class="flex justify-between items-center mb-2">
+                        <div>
+                            <p class="text-gray-400 text-xs mb-0.5">Lead → Qualificado</p>
+                            <div class="flex items-baseline gap-1">
+                                <span id="val-conv-lq" class="text-xl font-bold text-white leading-none">--%</span>
+                                <span class="text-gray-500 text-xs">/ <span id="meta-conv-lq">--</span>%</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span id="pct-conv-lq" class="text-lg font-bold text-white leading-none">--%</span>
+                            <p class="text-gray-500 text-xs">da meta</p>
+                        </div>
+                    </div>
+                    <div class="progress-bar-bg rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-conv-lq" class="progress-bar-fill h-full bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Qualificado → Venda -->
+                <div class="glass-card rounded-lg p-3">
+                    <div class="flex justify-between items-center mb-2">
+                        <div>
+                            <p class="text-gray-400 text-xs mb-0.5">Qualificado → Venda</p>
+                            <div class="flex items-baseline gap-1">
+                                <span id="val-conv-qv" class="text-xl font-bold text-white leading-none">--%</span>
+                                <span class="text-gray-500 text-xs">/ <span id="meta-conv-qv">--</span>%</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span id="pct-conv-qv" class="text-lg font-bold text-white leading-none">--%</span>
+                            <p class="text-gray-500 text-xs">da meta</p>
+                        </div>
+                    </div>
+                    <div class="progress-bar-bg rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-conv-qv" class="progress-bar-fill h-full bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Vendas Realizadas -->
+                <div class="glass-card rounded-lg p-3">
+                    <div class="flex justify-between items-center mb-2">
+                        <div>
+                            <p class="text-gray-400 text-xs mb-0.5">Vendas Realizadas</p>
+                            <div class="flex items-baseline gap-1">
+                                <span id="val-vendas" class="text-xl font-bold text-white leading-none">--</span>
+                                <span class="text-gray-500 text-xs">/ <span id="meta-vendas">--</span></span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span id="pct-vendas" class="text-lg font-bold text-white leading-none">--%</span>
+                            <p class="text-gray-500 text-xs">da meta</p>
+                        </div>
+                    </div>
+                    <div class="progress-bar-bg rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-vendas" class="progress-bar-fill h-full bg-gradient-to-r from-orange-400 to-yellow-400 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
 
             <!-- OUTBOUND -->
-            <div>
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-1.5 h-6 bg-gradient-to-b from-purple-400 to-pink-500 rounded-full"></div>
-                    <h2 class="text-xl font-bold tracking-wider text-gray-200">OUTBOUND</h2>
+            <div class="mb-2">
+                <p class="text-xs text-gray-500 uppercase tracking-widest mb-2 px-1">📤 Outbound</p>
+            </div>
+            <div class="grid grid-cols-3 gap-4 mb-4">
+                <div class="glass-card rounded-lg p-3">
+                    <div class="flex justify-between items-center mb-2">
+                        <div>
+                            <p class="text-gray-400 text-xs mb-0.5">Agendas Outbound</p>
+                            <div class="flex items-baseline gap-1">
+                                <span id="val-agendas-out" class="text-xl font-bold text-white leading-none">--</span>
+                                <span class="text-gray-500 text-xs">/ <span id="meta-agendas-out">--</span></span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span id="pct-agendas-out" class="text-lg font-bold text-white leading-none">--%</span>
+                            <p class="text-gray-500 text-xs">da meta</p>
+                        </div>
+                    </div>
+                    <div class="progress-bar-bg rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-agendas-out" class="progress-bar-fill h-full bg-gradient-to-r from-orange-400 to-yellow-400 rounded-full" style="width: 0%"></div>
+                    </div>
                 </div>
-                <div class="grid grid-cols-3 gap-3">
-                    <div class="card-dark rounded-xl p-3 h-[110px] flex flex-col justify-between">
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-phone text-blue-400 text-lg"></i>
-                                <span class="text-gray-300 text-sm">Agendas</span>
-                            </div>
-                            <span id="pct_out_agendas" class="text-blue-400 font-bold text-lg">20%</span>
-                        </div>
+
+                <div class="glass-card rounded-lg p-3">
+                    <div class="flex justify-between items-center mb-2">
                         <div>
-                            <div class="flex justify-between items-end mb-2">
-                                <span id="display_out_agendas_atual" class="text-3xl font-bold">9</span>
-                                <span class="text-gray-500 text-sm">/</span>
-                                <span id="display_out_agendas_meta" class="text-gray-500 text-sm">45</span>
+                            <p class="text-gray-400 text-xs mb-0.5">Qualificações Outbound</p>
+                            <div class="flex items-baseline gap-1">
+                                <span id="val-quals-out" class="text-xl font-bold text-white leading-none">--</span>
+                                <span class="text-gray-500 text-xs">/ <span id="meta-quals-out">--</span></span>
                             </div>
-                            <div class="progress-bg rounded-full h-1.5 overflow-hidden">
-                                <div id="progress_out_agendas" class="progress-blue h-full rounded-full" style="width:20%"></div>
-                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span id="pct-quals-out" class="text-lg font-bold text-white leading-none">--%</span>
+                            <p class="text-gray-500 text-xs">da meta</p>
                         </div>
                     </div>
-                    <div class="card-dark rounded-xl p-3 h-[110px] flex flex-col justify-between">
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-clipboard-check text-purple-400 text-lg"></i>
-                                <span class="text-gray-300 text-sm">Qualif.</span>
-                            </div>
-                            <span id="pct_out_qualif" class="text-purple-400 font-bold text-lg">19%</span>
-                        </div>
+                    <div class="progress-bar-bg rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-quals-out" class="progress-bar-fill h-full bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-lg p-3">
+                    <div class="flex justify-between items-center mb-2">
                         <div>
-                            <div class="flex justify-between items-end mb-2">
-                                <span id="display_out_qualif_atual" class="text-3xl font-bold">7</span>
-                                <span class="text-gray-500 text-sm">/</span>
-                                <span id="display_out_qualif_meta" class="text-gray-500 text-sm">36</span>
+                            <p class="text-gray-400 text-xs mb-0.5">Vendas Outbound</p>
+                            <div class="flex items-baseline gap-1">
+                                <span id="val-vendas-out" class="text-xl font-bold text-white leading-none">--</span>
+                                <span class="text-gray-500 text-xs">/ <span id="meta-vendas-out">--</span></span>
                             </div>
-                            <div class="progress-bg rounded-full h-1.5 overflow-hidden">
-                                <div id="progress_out_qualif" class="progress-purple h-full rounded-full" style="width:19%"></div>
-                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span id="pct-vendas-out" class="text-lg font-bold text-white leading-none">--%</span>
+                            <p class="text-gray-500 text-xs">da meta</p>
                         </div>
                     </div>
-                    <div class="card-dark rounded-xl p-3 h-[110px] flex flex-col justify-between">
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-bullseye text-orange-400 text-lg"></i>
-                                <span class="text-gray-300 text-sm">Vendas</span>
-                            </div>
-                            <span id="pct_out_vendas" class="text-orange-400 font-bold text-lg">20%</span>
-                        </div>
-                        <div>
-                            <div class="flex justify-between items-end mb-2">
-                                <span id="display_out_vendas_atual" class="text-3xl font-bold">1</span>
-                                <span class="text-gray-500 text-sm">/</span>
-                                <span id="display_out_vendas_meta" class="text-gray-500 text-sm">5</span>
-                            </div>
-                            <div class="progress-bg rounded-full h-1.5 overflow-hidden">
-                                <div id="progress_out_vendas" class="progress-orange h-full rounded-full" style="width:20%"></div>
-                            </div>
-                        </div>
+                    <div class="progress-bar-bg rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-vendas-out" class="progress-bar-fill h-full bg-gradient-to-r from-purple-400 to-pink-400 rounded-full" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
 
             <!-- YOU PARCEIRO -->
-            <div>
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-1.5 h-6 bg-gradient-to-b from-orange-400 to-red-500 rounded-full"></div>
-                    <h2 class="text-xl font-bold tracking-wider text-gray-200">YOU PARCEIRO</h2>
+            <div class="mb-2">
+                <p class="text-xs text-gray-500 uppercase tracking-widest mb-2 px-1">🤝 You Parceiro</p>
+            </div>
+            <div class="grid grid-cols-3 gap-4 mb-4">
+                <div class="parceiro-card rounded-xl p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <div>
+                            <p class="text-gray-400 text-xs mb-0.5">Apresentações</p>
+                            <div class="flex items-baseline gap-1">
+                                <span id="val-apres" class="text-2xl font-bold parceiro-value glow-cyan leading-none">--</span>
+                                <span class="text-gray-500 text-xs">/ <span id="meta-apres">--</span></span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span id="pct-apres" class="text-xl font-bold text-white leading-none">--%</span>
+                            <p class="text-gray-500 text-xs">da meta</p>
+                        </div>
+                    </div>
+                    <div class="progress-bar-bg rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-apres" class="progress-bar-fill h-full bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full shadow-lg shadow-cyan-500/30" style="width: 0%"></div>
+                    </div>
                 </div>
-                <div class="grid grid-cols-3 gap-3">
-                    <div class="card-dark rounded-xl p-3 h-[110px] flex flex-col justify-between">
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-user-tie text-orange-400 text-lg"></i>
-                                <span class="text-gray-300 text-sm">Apres.</span>
-                            </div>
-                            <span id="pct_you_apres" class="text-orange-400 font-bold text-lg">20%</span>
-                        </div>
+
+                <div class="parceiro-card rounded-xl p-4">
+                    <div class="flex justify-between items-center mb-2">
                         <div>
-                            <div class="flex justify-between items-end mb-2">
-                                <span id="display_you_apres_atual" class="text-3xl font-bold">1</span>
-                                <span class="text-gray-500 text-sm">/</span>
-                                <span id="display_you_apres_meta" class="text-gray-500 text-sm">5</span>
+                            <p class="text-gray-400 text-xs mb-0.5">Contratos</p>
+                            <div class="flex items-baseline gap-1">
+                                <span id="val-contratos" class="text-2xl font-bold parceiro-value glow-cyan leading-none">--</span>
+                                <span class="text-gray-500 text-xs">/ <span id="meta-contratos">--</span></span>
                             </div>
-                            <div class="progress-bg rounded-full h-1.5 overflow-hidden">
-                                <div id="progress_you_apres" class="progress-orange h-full rounded-full" style="width:20%"></div>
-                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span id="pct-contratos" class="text-xl font-bold text-white leading-none">--%</span>
+                            <p class="text-gray-500 text-xs">da meta</p>
                         </div>
                     </div>
-                    <div class="card-dark rounded-xl p-3 h-[110px] flex flex-col justify-between">
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-file-signature text-red-400 text-lg"></i>
-                                <span class="text-gray-300 text-sm">Contr.</span>
-                            </div>
-                            <span id="pct_you_contr" class="text-red-400 font-bold text-lg">0%</span>
-                        </div>
+                    <div class="progress-bar-bg rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-contratos" class="progress-bar-fill h-full bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full shadow-lg shadow-cyan-500/30" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="parceiro-card rounded-xl p-4">
+                    <div class="flex justify-between items-center mb-2">
                         <div>
-                            <div class="flex justify-between items-end mb-2">
-                                <span id="display_you_contr_atual" class="text-3xl font-bold">0</span>
-                                <span class="text-gray-500 text-sm">/</span>
-                                <span id="display_you_contr_meta" class="text-gray-500 text-sm">5</span>
+                            <p class="text-gray-400 text-xs mb-0.5">Indicações</p>
+                            <div class="flex items-baseline gap-1">
+                                <span id="val-indicacoes" class="text-2xl font-bold parceiro-value glow-cyan leading-none">--</span>
+                                <span class="text-gray-500 text-xs">/ <span id="meta-indicacoes">--</span></span>
                             </div>
-                            <div class="progress-bg rounded-full h-1.5 overflow-hidden">
-                                <div id="progress_you_contr" class="progress-red h-full rounded-full" style="width:0%"></div>
-                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span id="pct-indicacoes" class="text-xl font-bold text-white leading-none">--%</span>
+                            <p class="text-gray-500 text-xs">da meta</p>
                         </div>
                     </div>
-                    <div class="card-dark rounded-xl p-3 h-[110px] flex flex-col justify-between">
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-user-plus text-red-400 text-lg"></i>
-                                <span class="text-gray-300 text-sm">Indic.</span>
-                            </div>
-                            <span id="pct_you_indic" class="text-red-400 font-bold text-lg">0%</span>
-                        </div>
-                        <div>
-                            <div class="flex justify-between items-end mb-2">
-                                <span id="display_you_indic_atual" class="text-3xl font-bold">0</span>
-                                <span class="text-gray-500 text-sm">/</span>
-                                <span id="display_you_indic_meta" class="text-gray-500 text-sm">5</span>
-                            </div>
-                            <div class="progress-bg rounded-full h-1.5 overflow-hidden">
-                                <div id="progress_you_indic" class="progress-red h-full rounded-full" style="width:0%"></div>
-                            </div>
-                        </div>
+                    <div class="progress-bar-bg rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-indicacoes" class="progress-bar-fill h-full bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full shadow-lg shadow-cyan-500/30" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- TAXAS DE CONVERSÃO — 100% automáticas -->
-        <div class="mb-6">
-            <div class="grid grid-cols-4 gap-5">
-
-                <!-- Lead → Qualificado -->
-                <div class="card-dark rounded-2xl p-5 border-l-4 border-emerald-500 h-[160px] flex flex-col justify-between">
-                    <div class="flex justify-between items-start">
-                        <div class="text-gray-400 text-base">Lead → Qualificado</div>
-                        <!-- FIX: badge com id correto, renderizado pelo JS -->
-                        <div id="badge_conv1" class="badge-diff badge-red">
-                            <i class="fas fa-arrow-down text-xs"></i>
-                            <span id="diff_conv1_text">-14.29%</span>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex items-baseline gap-2 mb-3">
-                            <!-- FIX: exibe taxa calculada automaticamente -->
-                            <span id="display_conv1_atual" class="text-4xl font-bold text-white">10.71%</span>
-                            <span class="text-gray-500 text-sm">meta: <span id="display_conv1_meta">25%</span></span>
-                        </div>
-                        <!-- FIX: barra proporcional a quanto atingiu da meta -->
-                        <div class="progress-bg rounded-full h-2.5 overflow-hidden">
-                            <div id="progress_conv1" class="progress-purple h-full rounded-full" style="width:43%"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Qualificado → Venda -->
-                <div class="card-dark rounded-2xl p-5 border-l-4 border-purple-500 h-[160px] flex flex-col justify-between">
-                    <div class="flex justify-between items-start">
-                        <div class="text-gray-400 text-base">Qualificado → Venda</div>
-                        <div id="badge_conv2" class="badge-diff badge-red">
-                            <i class="fas fa-arrow-down text-xs"></i>
-                            <span id="diff_conv2_text">-18.33%</span>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex items-baseline gap-2 mb-3">
-                            <span id="display_conv2_atual" class="text-4xl font-bold text-white">6.67%</span>
-                            <span class="text-gray-500 text-sm">meta: <span id="display_conv2_meta">25%</span></span>
-                        </div>
-                        <div class="progress-bg rounded-full h-2.5 overflow-hidden">
-                            <div id="progress_conv2" class="progress-purple h-full rounded-full" style="width:27%"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Vendas Realizadas -->
-                <div class="card-gradient-orange rounded-2xl p-5 h-[160px] flex flex-col justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center border border-orange-500/30">
-                            <i class="fas fa-fire text-orange-400 text-xl"></i>
-                        </div>
-                        <div class="text-gray-300 text-sm">Vendas Realizadas</div>
-                    </div>
-                    <div>
-                        <!-- FIX: display_vendas_atual exibe com zero à esquerda -->
-                        <div id="display_vendas_atual" class="text-4xl font-bold text-orange-400 mb-1">01</div>
-                        <div class="text-gray-400 text-xs mb-2">Total: <span id="display_vendas_total">01</span>/<span id="display_vendas_meta2">24</span></div>
-                        <div class="progress-bg rounded-full h-2.5 overflow-hidden">
-                            <div id="progress_vendas" class="progress-orange h-full rounded-full" style="width:4%"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Taxa de Conversão Geral (Leads → Vendas) -->
-                <div class="card-gradient-blue rounded-2xl p-5 h-[160px] flex flex-col justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
-                            <i class="fas fa-rocket text-blue-400 text-xl"></i>
-                        </div>
-                        <div class="text-gray-300 text-sm">Taxa de Conversão</div>
-                    </div>
-                    <div>
-                        <!-- FIX: calcula automaticamente vendasA / leadsA -->
-                        <div id="display_taxa_conv" class="text-4xl font-bold text-blue-400 mb-1">0.70%</div>
-                        <div class="text-gray-400 text-xs mb-2">Leads → Vendas</div>
-                        <!-- FIX: barra escala a 10% = 100% da barra (escala razoável) -->
-                        <div class="progress-bg rounded-full h-2.5 overflow-hidden">
-                            <div id="progress_taxa_conv" class="progress-blue h-full rounded-full" style="width:7%"></div>
-                        </div>
-                    </div>
+            <!-- Motivational Banner -->
+            <div class="glass-card rounded-xl p-4 text-center relative overflow-hidden group cursor-pointer hover:border-cyan-500/30 transition-all duration-300 bg-gradient-to-r from-cyan-900/20 to-blue-900/20">
+                <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div class="relative z-10 flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5 text-cyan-400 animate-pulse-slow" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"></path>
+                    </svg>
+                    <p id="mensagem-motivacional" class="text-base font-semibold text-cyan-400">
+                        Cada lead qualificado é uma venda mais perto de acontecer. Bora transformar pipeline em resultado!
+                    </p>
                 </div>
             </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="card-gradient-green rounded-2xl p-4 text-center border border-emerald-500/30">
-            <p class="text-emerald-300 text-lg font-medium flex items-center justify-center gap-2">
-                <i class="fas fa-fire text-xl"></i>
-                Pipeline aquecendo! Hora de transformar oportunidades em resultados!
-            </p>
         </div>
     </div>
 
-    <!-- ══════════════════ SEÇÃO DE CONFIGURAÇÃO ══════════════════ -->
-    <div class="config-section">
-        <div class="config-header">
-            <i class="fas fa-cog text-4xl text-emerald-400"></i>
-            <div>
-                <h2 class="text-3xl font-bold text-white">Configuração de Parâmetros</h2>
-                <p class="text-gray-400 mt-1">Edite os valores abaixo — o dashboard atualiza automaticamente!</p>
-                <p class="text-yellow-400 text-sm mt-1">
-                    <i class="fas fa-info-circle mr-1"></i>
-                    Campos com borda tracejada são calculados automaticamente a partir dos outros valores.
-                </p>
-            </div>
-            <div class="ml-auto flex items-center gap-4">
-                <span id="status_indicator" class="status-indicator status-unsaved">
-                    <i class="fas fa-pencil-alt"></i> Editando...
-                </span>
-            </div>
-        </div>
+    <div id="last-update">Atualizando...</div>
+    <div id="error-banner">⚠ Erro ao carregar dados. Tentando novamente...</div>
 
-        <!-- INBOUND -->
-        <div class="mb-8">
-            <h3 class="text-xl font-bold text-emerald-400 mb-4 flex items-center gap-2">
-                <i class="fas fa-arrow-down"></i> INBOUND
-            </h3>
-            <div class="config-grid">
-                <div class="input-group">
-                    <label class="config-title">Leads Captados — Atual</label>
-                    <input type="number" id="input_leads_atual" class="input-field" value="142" min="0">
-                </div>
-                <div class="input-group">
-                    <label class="config-title">Leads Captados — Meta</label>
-                    <input type="number" id="input_leads_meta" class="input-field" value="750" min="1">
-                </div>
-                <div class="input-group">
-                    <label class="config-title">Agendas Realizadas — Atual</label>
-                    <input type="number" id="input_agendas_atual" class="input-field" value="28" min="0">
-                </div>
-                <div class="input-group">
-                    <label class="config-title">Agendas Realizadas — Meta</label>
-                    <input type="number" id="input_agendas_meta" class="input-field" value="170" min="1">
-                </div>
-                <div class="input-group">
-                    <label class="config-title">Leads Qualificados — Atual</label>
-                    <input type="number" id="input_qualif_atual" class="input-field" value="15" min="0">
-                </div>
-                <div class="input-group">
-                    <label class="config-title">Leads Qualificados — Meta</label>
-                    <input type="number" id="input_qualif_meta" class="input-field" value="140" min="1">
-                </div>
-            </div>
-        </div>
+    <script>
+        // ============================================================
+        // ⚙️  CONFIGURAÇÃO — COLE AQUI A URL DO SEU APPS SCRIPT (PRÉ VENDAS)
+        // ============================================================
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby0z8bATH-bki-RIbqsT6BaZDwTlCq0WWeTwnrf_5KmsBjr8Ifoz5jS3nu69WXuVIRdhw/exec';
+        const INTERVALO_ATUALIZACAO_MS = 60 * 1000;
+        // ============================================================
 
-        <!-- CONVERSÕES E VENDAS — metas editáveis, taxas auto -->
-        <div class="mb-8">
-            <h3 class="text-xl font-bold text-purple-400 mb-4 flex items-center gap-2">
-                <i class="fas fa-percentage"></i> CONVERSÕES E VENDAS
-            </h3>
-            <div class="config-grid">
-                <!-- FIX: Conv1 atual → readonly, calculado de qualif_atual / leads_atual -->
-                <div class="input-group">
-                    <label class="config-title">Lead → Qualif. % <span class="auto-label">(auto)</span></label>
-                    <input type="number" step="0.01" id="input_conv1_atual" class="input-field" value="10.71" readonly tabindex="-1">
-                </div>
-                <div class="input-group">
-                    <label class="config-title">Lead → Qualif. % — Meta</label>
-                    <input type="number" step="0.01" id="input_conv1_meta" class="input-field" value="25" min="0">
-                </div>
-                <!-- FIX: Conv2 atual → readonly, calculado de vendas_atual / qualif_atual -->
-                <div class="input-group">
-                    <label class="config-title">Qualif. → Venda % <span class="auto-label">(auto)</span></label>
-                    <input type="number" step="0.01" id="input_conv2_atual" class="input-field" value="6.67" readonly tabindex="-1">
-                </div>
-                <div class="input-group">
-                    <label class="config-title">Qualif. → Venda % — Meta</label>
-                    <input type="number" step="0.01" id="input_conv2_meta" class="input-field" value="25" min="0">
-                </div>
-                <div class="input-group">
-                    <label class="config-title">Vendas Realizadas — Atual</label>
-                    <input type="number" id="input_vendas_atual" class="input-field" value="1" min="0">
-                </div>
-                <div class="input-group">
-                    <label class="config-title">Vendas Realizadas — Meta</label>
-                    <input type="number" id="input_vendas_meta" class="input-field" value="24" min="1">
-                </div>
-                <!-- FIX: Taxa geral → readonly, calculado de vendas_atual / leads_atual -->
-                <div class="input-group">
-                    <label class="config-title">Conversão Geral % <span class="auto-label">(auto)</span></label>
-                    <input type="number" step="0.01" id="input_taxa_conv" class="input-field" value="0.70" readonly tabindex="-1">
-                </div>
-            </div>
-        </div>
+        let charts = {};
 
-        <!-- OUTBOUND -->
-        <div class="mb-8">
-            <h3 class="text-xl font-bold text-blue-400 mb-4 flex items-center gap-2">
-                <i class="fas fa-phone"></i> OUTBOUND
-            </h3>
-            <div class="config-grid">
-                <div class="input-group">
-                    <label class="config-title">Agendas — Atual</label>
-                    <input type="number" id="input_out_agendas_atual" class="input-field" value="9" min="0">
-                </div>
-                <div class="input-group">
-                    <label class="config-title">Agendas — Meta</label>
-                    <input type="number" id="input_out_agendas_meta" class="input-field" value="45" min="1">
-                </div>
-                <div class="input-group">
-                    <label class="config-title">Qualificações — Atual</label>
-                    <input type="number" id="input_out_qualif_atual" class="input-field" value="7" min="0">
-                </div>
-                <div class="input-group">
-                    <label class="config-title">Qualificações — Meta</label>
-                    <input type="number" id="input_out_qualif_meta" class="input-field" value="36" min="1">
-                </div>
-                <div class="input-group">
-                    <label class="config-title">Vendas — Atual</label>
-                    <input type="number" id="input_out_vendas_atual" class="input-field" value="1" min="0">
-                </div>
-                <div class="input-group">
-                    <label class="config-title">Vendas — Meta</label>
-                    <input type="number" id="input_out_vendas_meta" class="input-field" value="5" min="1">
-                </div>
-            </div>
-        </div>
-
-        <!-- YOU PARCEIRO -->
-        <div class="mb-8">
-            <h3 class="text-xl font-bold text-orange-400 mb-4 flex items-center gap-2">
-                <i class="fas fa-handshake"></i> YOU PARCEIRO
-            </h3>
-            <div class="config-grid">
-                <div class="input-group">
-                    <label class="config-title">Apresentações — Atual</label>
-                    <input type="number" id="input_you_apres_atual" class="input-field" value="1" min="0">
-                </div>
-                <div class="input-group">
-                    <label class="config-title">Apresentações — Meta</label>
-                    <input type="number" id="input_you_apres_meta" class="input-field" value="5" min="1">
-                </div>
-                <div class="input-group">
-                    <label class="config-title">Contratos — Atual</label>
-                    <input type="number" id="input_you_contr_atual" class="input-field" value="0" min="0">
-                </div>
-                <div class="input-group">
-                    <label class="config-title">Contratos — Meta</label>
-                    <input type="number" id="input_you_contr_meta" class="input-field" value="5" min="1">
-                </div>
-                <div class="input-group">
-                    <label class="config-title">Indicações — Atual</label>
-                    <input type="number" id="input_you_indic_atual" class="input-field" value="0" min="0">
-                </div>
-                <div class="input-group">
-                    <label class="config-title">Indicações — Meta</label>
-                    <input type="number" id="input_you_indic_meta" class="input-field" value="5" min="1">
-                </div>
-            </div>
-        </div>
-
-        <!-- BOTÕES -->
-        <div class="flex justify-center gap-4 mt-8 flex-wrap">
-            <button class="btn-salvar" onclick="gerarLink()">
-                <i class="fas fa-link"></i> Gerar Link com Dados
-            </button>
-            <button class="btn-copiar" onclick="copiarLink()">
-                <i class="fas fa-copy"></i> Copiar Link
-            </button>
-            <button class="btn-reset" onclick="resetarValores()">
-                <i class="fas fa-undo"></i> Resetar Padrão
-            </button>
-        </div>
-
-        <div class="mt-6">
-            <label class="config-title">Link Gerado (compartilhe este link):</label>
-            <div id="url_gerada" class="url-box">Clique em "Gerar Link" para criar uma URL compartilhável com seus dados</div>
-        </div>
-    </div>
-</div>
-
-<!-- TOAST -->
-<div id="toast" class="toast">
-    <i class="fas fa-check-circle"></i>
-    <span id="toast_msg">Link copiado com sucesso!</span>
-</div>
-
-<script>
-// ─── Valores padrão (apenas campos editáveis pelo usuário) ────────
-const valoresPadrao = {
-    leads_atual: 142,   leads_meta: 750,
-    agendas_atual: 28,  agendas_meta: 170,
-    qualif_atual: 15,   qualif_meta: 140,
-    conv1_meta: 25,
-    conv2_meta: 25,
-    vendas_atual: 1,    vendas_meta: 24,
-    out_agendas_atual: 9,  out_agendas_meta: 45,
-    out_qualif_atual: 7,   out_qualif_meta: 36,
-    out_vendas_atual: 1,   out_vendas_meta: 5,
-    you_apres_atual: 1,    you_apres_meta: 5,
-    you_contr_atual: 0,    you_contr_meta: 5,
-    you_indic_atual: 0,    you_indic_meta: 5
-};
-
-// Campos readonly — nunca lidos da URL, sempre recalculados
-const camposAuto = ['input_conv1_atual', 'input_conv2_atual', 'input_taxa_conv'];
-
-// ─── Helpers ─────────────────────────────────────────────────────
-function pct(atual, meta) {
-    if (!meta || meta === 0) return 0;
-    return (atual / meta) * 100;
-}
-
-function clamp(val, min = 0, max = 100) {
-    return Math.min(Math.max(val, min), max);
-}
-
-// FIX: getBadgeClass agora funciona tanto para inbound quanto para taxas
-function getBadgeClass(p) {
-    if (p >= 80) return 'badge-green';
-    if (p >= 60) return 'badge-blue';
-    if (p >= 40) return 'badge-orange';
-    return 'badge-red';
-}
-
-function setCircle(id, pctVal) {
-    const circumference = 125.6;
-    const offset = circumference - (circumference * clamp(pctVal) / 100);
-    document.getElementById(id).style.strokeDashoffset = offset.toFixed(1);
-}
-
-/**
- * FIX: setBadgeDiff agora usa o id do contêiner e o id do span separados.
- * diff = valorAtual - metaValor (em pontos percentuais)
- */
-function setBadgeDiff(containerId, textId, diff) {
-    const el = document.getElementById(containerId);
-    const span = document.getElementById(textId);
-    const positive = diff >= 0;
-    const sign = positive ? '+' : '';
-    const icon = positive ? 'fa-arrow-up' : 'fa-arrow-down';
-    const cls = positive ? 'badge-diff badge-dark-green' : 'badge-diff badge-red';
-    el.className = cls;
-    el.innerHTML = `<i class="fas ${icon} text-xs"></i><span>${sign}${Math.abs(diff).toFixed(2)}%</span>`;
-}
-
-function val(id)  { return parseFloat(document.getElementById(id).value) || 0; }
-function ival(id) { return parseInt(document.getElementById(id).value)   || 0; }
-
-// ─── Função principal de atualização ────────────────────────────
-function atualizarDashboard() {
-
-    // ── Leitura dos inputs manuais ──
-    const leadsA   = ival('input_leads_atual');
-    const leadsM   = ival('input_leads_meta')   || 1;
-    const agendasA = ival('input_agendas_atual');
-    const agendasM = ival('input_agendas_meta') || 1;
-    const qualifA  = ival('input_qualif_atual');
-    const qualifM  = ival('input_qualif_meta')  || 1;
-    const vendasA  = ival('input_vendas_atual');
-    const vendasM  = ival('input_vendas_meta')  || 1;
-    const conv1M   = val('input_conv1_meta')    || 1;
-    const conv2M   = val('input_conv2_meta')    || 1;
-
-    // ── FIX: Cálculo automático das três taxas de conversão ──
-    // Lead → Qualificado %
-    const conv1A = leadsA > 0 ? (qualifA / leadsA) * 100 : 0;
-    // Qualificado → Venda %
-    const conv2A = qualifA > 0 ? (vendasA / qualifA) * 100 : 0;
-    // Leads → Vendas % (taxa geral)
-    const taxaConv = leadsA > 0 ? (vendasA / leadsA) * 100 : 0;
-
-    // Atualiza campos readonly para que gerarLink() também os inclua
-    document.getElementById('input_conv1_atual').value = conv1A.toFixed(2);
-    document.getElementById('input_conv2_atual').value = conv2A.toFixed(2);
-    document.getElementById('input_taxa_conv').value   = taxaConv.toFixed(2);
-
-    // ── INBOUND — Leads ──
-    const leadsP = pct(leadsA, leadsM);
-    document.getElementById('display_leads_atual').textContent = leadsA;
-    document.getElementById('display_leads_meta').textContent  = leadsM;
-    document.getElementById('pct_leads').textContent           = Math.round(leadsP) + '%';
-    // FIX: badge_leads innerHTML atualizado corretamente, sem perder o ícone
-    document.getElementById('badge_leads').className =
-        getBadgeClass(leadsP) + ' px-2 py-1 rounded text-xs font-medium inline-flex items-center gap-1 mb-1';
-    document.getElementById('badge_leads').innerHTML =
-        `<i class="fas fa-arrow-up text-[10px]"></i><span>+${leadsA}</span>`;
-    setCircle('circle_leads', leadsP);
-
-    // ── INBOUND — Agendas ──
-    const agendasP = pct(agendasA, agendasM);
-    document.getElementById('display_agendas_atual').textContent = agendasA;
-    document.getElementById('display_agendas_meta').textContent  = agendasM;
-    document.getElementById('pct_agendas').textContent           = Math.round(agendasP) + '%';
-    document.getElementById('badge_agendas').className =
-        getBadgeClass(agendasP) + ' px-2 py-1 rounded text-xs font-medium inline-flex items-center gap-1 mb-1';
-    document.getElementById('badge_agendas').innerHTML =
-        `<i class="fas fa-arrow-up text-[10px]"></i><span>+${agendasA}</span>`;
-    setCircle('circle_agendas', agendasP);
-
-    // ── INBOUND — Qualificados ──
-    const qualifP = pct(qualifA, qualifM);
-    document.getElementById('display_qualif_atual').textContent = qualifA;
-    document.getElementById('display_qualif_meta').textContent  = qualifM;
-    document.getElementById('pct_qualif').textContent           = Math.round(qualifP) + '%';
-    document.getElementById('badge_qualif').className =
-        getBadgeClass(qualifP) + ' px-2 py-1 rounded text-xs font-medium inline-flex items-center gap-1 mb-1';
-    document.getElementById('badge_qualif').innerHTML =
-        `<i class="fas fa-arrow-up text-[10px]"></i><span>+${qualifA}</span>`;
-    setCircle('circle_qualif', qualifP);
-
-    // ── FIX: Conversão 1 — Lead → Qualificado (totalmente automático) ──
-    const diff1 = conv1A - conv1M;
-    document.getElementById('display_conv1_atual').textContent = conv1A.toFixed(2) + '%';
-    document.getElementById('display_conv1_meta').textContent  = conv1M.toFixed(2) + '%';
-    // Barra: quanto da meta foi atingida
-    document.getElementById('progress_conv1').style.width = clamp(conv1M > 0 ? (conv1A / conv1M) * 100 : 0) + '%';
-    // Badge: diferença entre atual e meta
-    setBadgeDiff('badge_conv1', 'diff_conv1_text', diff1);
-
-    // ── FIX: Conversão 2 — Qualificado → Venda (totalmente automático) ──
-    const diff2 = conv2A - conv2M;
-    document.getElementById('display_conv2_atual').textContent = conv2A.toFixed(2) + '%';
-    document.getElementById('display_conv2_meta').textContent  = conv2M.toFixed(2) + '%';
-    document.getElementById('progress_conv2').style.width = clamp(conv2M > 0 ? (conv2A / conv2M) * 100 : 0) + '%';
-    setBadgeDiff('badge_conv2', 'diff_conv2_text', diff2);
-
-    // ── Vendas ──
-    const vendasP = pct(vendasA, vendasM);
-    document.getElementById('display_vendas_atual').textContent = String(vendasA).padStart(2, '0');
-    document.getElementById('display_vendas_total').textContent = String(vendasA).padStart(2, '0');
-    document.getElementById('display_vendas_meta2').textContent = vendasM;
-    document.getElementById('progress_vendas').style.width = clamp(vendasP) + '%';
-
-    // ── FIX: Taxa de conversão geral — automática ──
-    document.getElementById('display_taxa_conv').textContent = taxaConv.toFixed(2) + '%';
-    // Barra: escala onde 10% = barra cheia (taxa de 10% já seria excelente)
-    document.getElementById('progress_taxa_conv').style.width = clamp(taxaConv * 10) + '%';
-
-    // ── OUTBOUND — Agendas ──
-    const outAgA = ival('input_out_agendas_atual');
-    const outAgM = ival('input_out_agendas_meta') || 1;
-    const outAgP = pct(outAgA, outAgM);
-    document.getElementById('display_out_agendas_atual').textContent = outAgA;
-    document.getElementById('display_out_agendas_meta').textContent  = outAgM;
-    document.getElementById('pct_out_agendas').textContent = Math.round(outAgP) + '%';
-    document.getElementById('progress_out_agendas').style.width = clamp(outAgP) + '%';
-
-    // ── OUTBOUND — Qualif ──
-    const outQA = ival('input_out_qualif_atual');
-    const outQM = ival('input_out_qualif_meta') || 1;
-    const outQP = pct(outQA, outQM);
-    document.getElementById('display_out_qualif_atual').textContent = outQA;
-    document.getElementById('display_out_qualif_meta').textContent  = outQM;
-    document.getElementById('pct_out_qualif').textContent = Math.round(outQP) + '%';
-    document.getElementById('progress_out_qualif').style.width = clamp(outQP) + '%';
-
-    // ── OUTBOUND — Vendas ──
-    const outVA = ival('input_out_vendas_atual');
-    const outVM = ival('input_out_vendas_meta') || 1;
-    const outVP = pct(outVA, outVM);
-    document.getElementById('display_out_vendas_atual').textContent = outVA;
-    document.getElementById('display_out_vendas_meta').textContent  = outVM;
-    document.getElementById('pct_out_vendas').textContent = Math.round(outVP) + '%';
-    document.getElementById('progress_out_vendas').style.width = clamp(outVP) + '%';
-
-    // ── YOU PARCEIRO — Apresentações ──
-    const yApA = ival('input_you_apres_atual');
-    const yApM = ival('input_you_apres_meta') || 1;
-    const yApP = pct(yApA, yApM);
-    document.getElementById('display_you_apres_atual').textContent = yApA;
-    document.getElementById('display_you_apres_meta').textContent  = yApM;
-    document.getElementById('pct_you_apres').textContent = Math.round(yApP) + '%';
-    document.getElementById('progress_you_apres').style.width = clamp(yApP) + '%';
-
-    // ── YOU PARCEIRO — Contratos ──
-    const yCnA = ival('input_you_contr_atual');
-    const yCnM = ival('input_you_contr_meta') || 1;
-    const yCnP = pct(yCnA, yCnM);
-    document.getElementById('display_you_contr_atual').textContent = yCnA;
-    document.getElementById('display_you_contr_meta').textContent  = yCnM;
-    document.getElementById('pct_you_contr').textContent = Math.round(yCnP) + '%';
-    document.getElementById('progress_you_contr').style.width = clamp(yCnP) + '%';
-
-    // ── YOU PARCEIRO — Indicações ──
-    const yInA = ival('input_you_indic_atual');
-    const yInM = ival('input_you_indic_meta') || 1;
-    const yInP = pct(yInA, yInM);
-    document.getElementById('display_you_indic_atual').textContent = yInA;
-    document.getElementById('display_you_indic_meta').textContent  = yInM;
-    document.getElementById('pct_you_indic').textContent = Math.round(yInP) + '%';
-    document.getElementById('progress_you_indic').style.width = clamp(yInP) + '%';
-}
-
-// ─── Event listeners ─────────────────────────────────────────────
-function adicionarListeners() {
-    // FIX: escuta apenas inputs editáveis (não readonly)
-    document.querySelectorAll('.input-field:not([readonly])').forEach(input => {
-        input.addEventListener('input',  atualizarDashboard);
-        input.addEventListener('change', atualizarDashboard);
-    });
-}
-
-// ─── Gerar link ──────────────────────────────────────────────────
-function gerarLink() {
-    atualizarDashboard(); // garante campos readonly atualizados antes de gerar
-
-    const params = new URLSearchParams();
-
-    // FIX: só serializa campos editáveis (evita poluir URL com campos auto)
-    Object.keys(valoresPadrao).forEach(key => {
-        const el = document.getElementById('input_' + key);
-        if (el && el.value !== '') params.set(key, el.value);
-    });
-
-    const url = new URL(window.location.href);
-    url.search = params.toString();
-    window.history.replaceState({}, '', url);
-    document.getElementById('url_gerada').textContent = url.toString();
-    document.getElementById('status_indicator').className = 'status-indicator status-saved';
-    document.getElementById('status_indicator').innerHTML = '<i class="fas fa-check-circle"></i> Link gerado!';
-    showToast('Link gerado com sucesso!');
-}
-
-function copiarLink() {
-    const urlText = document.getElementById('url_gerada').textContent;
-    if (!urlText.includes('http')) { showToast('Gere o link primeiro!', true); return; }
-    navigator.clipboard.writeText(urlText)
-        .then(() => showToast('Link copiado para a área de transferência!'))
-        .catch(() => {
-            const ta = document.createElement('textarea');
-            ta.value = urlText;
-            document.body.appendChild(ta);
-            ta.select();
-            document.execCommand('copy');
-            document.body.removeChild(ta);
-            showToast('Link copiado para a área de transferência!');
+        document.addEventListener('DOMContentLoaded', function() {
+            initCharts();
+            buscarDados();
+            setInterval(buscarDados, INTERVALO_ATUALIZACAO_MS);
         });
-}
 
-function showToast(msg, isError = false) {
-    const toast = document.getElementById('toast');
-    document.getElementById('toast_msg').textContent = msg;
-    toast.style.background = isError
-        ? 'linear-gradient(135deg,#ef4444,#dc2626)'
-        : 'linear-gradient(135deg,#10b981,#059669)';
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3000);
-}
-
-function resetarValores() {
-    if (!confirm('Tem certeza que deseja resetar todos os valores para o padrão?')) return;
-    Object.keys(valoresPadrao).forEach(key => {
-        const el = document.getElementById('input_' + key);
-        if (el) el.value = valoresPadrao[key];
-    });
-    atualizarDashboard();
-    window.history.replaceState({}, '', window.location.pathname);
-    document.getElementById('url_gerada').textContent = 'Clique em "Gerar Link" para criar uma URL compartilhável com seus dados';
-    document.getElementById('status_indicator').className = 'status-indicator status-unsaved';
-    document.getElementById('status_indicator').innerHTML = '<i class="fas fa-pencil-alt"></i> Editando...';
-    showToast('Valores resetados para o padrão!');
-}
-
-// ─── Carregar da URL ──────────────────────────────────────────────
-function carregarDaURL() {
-    const params = new URLSearchParams(window.location.search);
-    let hasData = false;
-
-    params.forEach((value, key) => {
-        // FIX: nunca restaura campos auto pela URL — sempre recalculados
-        const elId = 'input_' + key;
-        if (camposAuto.includes(elId)) return;
-        const el = document.getElementById(elId);
-        if (el && value !== '') {
-            el.value = value;
-            hasData = true;
+        async function buscarDados() {
+            try {
+                const resp = await fetch(APPS_SCRIPT_URL + '?aba=prevendas&nocache=' + Date.now());
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                const dados = await resp.json();
+                renderizarDashboard(dados);
+                document.getElementById('error-banner').style.display = 'none';
+                document.getElementById('last-update').textContent =
+                    'Atualizado às ' + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+            } catch (err) {
+                console.error('Erro ao buscar dados:', err);
+                document.getElementById('error-banner').style.display = 'block';
+            } finally {
+                const overlay = document.getElementById('loading-overlay');
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.style.display = 'none', 500);
+            }
         }
-    });
 
-    if (hasData) {
-        document.getElementById('status_indicator').className = 'status-indicator status-saved';
-        document.getElementById('status_indicator').innerHTML = '<i class="fas fa-check-circle"></i> Dados carregados da URL';
-        document.getElementById('url_gerada').textContent = window.location.href;
-    }
+        function renderizarDashboard(d) {
+            // INBOUND
+            setCircleCard('circle-leads',    'pct-leads',    'val-leads',    'meta-leads',    'leads-variacao',    d.leads_valor,    d.leads_meta,    d.leads_variacao,    false);
+            setCircleCard('circle-agendas-in','pct-agendas-in','val-agendas-in','meta-agendas-in','agendas-in-variacao',d.agendas_in_valor,d.agendas_in_meta,d.agendas_in_variacao,false);
+            setCircleCard('circle-leads-qual','pct-leads-qual','val-leads-qual','meta-leads-qual','leads-qual-variacao',d.leads_qual_valor,d.leads_qual_meta,d.leads_qual_variacao,false);
 
-    adicionarListeners();
-    atualizarDashboard(); // sempre recalcula ao carregar (isso preenche os campos auto)
-}
+            // CONVERSÕES — barras com valores percentuais
+            setBarPct('val-conv-lq',  'meta-conv-lq',  'pct-conv-lq',  'bar-conv-lq',  d.conv_lq_valor,  d.conv_lq_meta);
+            setBarPct('val-conv-qv',  'meta-conv-qv',  'pct-conv-qv',  'bar-conv-qv',  d.conv_qv_valor,  d.conv_qv_meta);
+            setBar('val-vendas',      'meta-vendas',    'pct-vendas',    'bar-vendas',   d.vendas_valor,   d.vendas_meta);
 
-window.onload = carregarDaURL;
-</script>
+            // OUTBOUND
+            setBar('val-agendas-out', 'meta-agendas-out', 'pct-agendas-out', 'bar-agendas-out', d.agendas_out_valor, d.agendas_out_meta);
+            setBar('val-quals-out',   'meta-quals-out',   'pct-quals-out',   'bar-quals-out',   d.quals_out_valor,   d.quals_out_meta);
+            setBar('val-vendas-out',  'meta-vendas-out',  'pct-vendas-out',  'bar-vendas-out',  d.vendas_out_valor,  d.vendas_out_meta);
+
+            // YOU PARCEIRO
+            setBarFull('val-apres',      'meta-apres',      'pct-apres',      'bar-apres',      d.apres_valor,      d.apres_meta);
+            setBarFull('val-contratos',  'meta-contratos',  'pct-contratos',  'bar-contratos',  d.contratos_valor,  d.contratos_meta);
+            setBarFull('val-indicacoes', 'meta-indicacoes', 'pct-indicacoes', 'bar-indicacoes', d.indicacoes_valor, d.indicacoes_meta);
+        }
+
+        function setCircleCard(circleId, pctId, valId, metaId, varId, valor, meta, variacao, isMoney) {
+            const pct = Math.min(Math.round((valor / meta) * 100), 100);
+            document.getElementById(valId).textContent = isMoney ? fmt(valor) : valor;
+            document.getElementById(metaId).textContent = isMoney ? fmt(meta) : meta;
+            document.getElementById(varId).textContent = variacao != null ? variacao : '-';
+            document.getElementById(pctId).textContent = pct + '%';
+            setCircle(circleId, pct);
+        }
+
+        function setCircle(id, pct) {
+            const offset = 125.7 - (125.7 * pct / 100);
+            document.getElementById(id).style.strokeDashoffset = offset;
+        }
+
+        function setBar(valId, metaId, pctId, barId, valor, meta) {
+            const pct = Math.min(Math.round((valor / meta) * 100), 100);
+            document.getElementById(valId).textContent = valor;
+            document.getElementById(metaId).textContent = meta;
+            document.getElementById(pctId).textContent = pct + '%';
+            document.getElementById(barId).style.width = pct + '%';
+        }
+
+        function setBarFull(valId, metaId, pctId, barId, valor, meta) {
+            setBar(valId, metaId, pctId, barId, valor, meta);
+        }
+
+        function setBarPct(valId, metaId, pctId, barId, valor, meta) {
+            // valor e meta são percentuais (ex: 20.88 e 25)
+            const pct = Math.min(Math.round((parseFloat(valor) / parseFloat(meta)) * 100), 100);
+            document.getElementById(valId).textContent = parseFloat(valor).toFixed(2) + '%';
+            document.getElementById(metaId).textContent = parseFloat(meta).toFixed(0);
+            document.getElementById(pctId).textContent = pct + '%';
+            document.getElementById(barId).style.width = pct + '%';
+        }
+
+        function fmt(num) {
+            return parseFloat(num).toLocaleString('pt-BR');
+        }
+
+        function initCharts() {
+            const opts = {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                scales: { x: { display: false }, y: { display: false, min: 0, max: 50 } },
+                elements: { point: { radius: 0 }, line: { tension: 0.4, borderWidth: 2 } }
+            };
+            const grad = (ctx, c1, c2) => {
+                const g = ctx.createLinearGradient(0, 0, 0, 45);
+                g.addColorStop(0, c1); g.addColorStop(1, c2); return g;
+            };
+            const ctx1 = document.getElementById('chart1').getContext('2d');
+            charts.leads = new Chart(ctx1, { type: 'line', data: { labels: Array(10).fill(''), datasets: [{ data: [5,10,18,22,28,33,38,42,46,48], borderColor: '#4ade80', backgroundColor: grad(ctx1,'rgba(74,222,128,0.4)','rgba(74,222,128,0)'), fill: true }] }, options: opts });
+            const ctx2 = document.getElementById('chart2').getContext('2d');
+            charts.agendas = new Chart(ctx2, { type: 'line', data: { labels: Array(10).fill(''), datasets: [{ data: [8,12,15,20,24,29,33,37,41,45], borderColor: '#60a5fa', backgroundColor: grad(ctx2,'rgba(96,165,250,0.4)','rgba(96,165,250,0)'), fill: true }] }, options: opts });
+            const ctx3 = document.getElementById('chart3').getContext('2d');
+            charts.leadsQual = new Chart(ctx3, { type: 'line', data: { labels: Array(10).fill(''), datasets: [{ data: [10,14,20,25,30,34,38,42,45,48], borderColor: '#c084fc', backgroundColor: grad(ctx3,'rgba(192,132,252,0.4)','rgba(192,132,252,0)'), fill: true }] }, options: opts });
+        }
+    </script>
 </body>
 </html>
