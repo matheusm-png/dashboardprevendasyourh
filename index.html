@@ -2,541 +2,459 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=3840, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Pré Vendas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: #0a0e1a; }
+        .glass-card { background: rgba(20, 25, 40, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .circular-progress { transform: rotate(-90deg); transform-origin: 50% 50%; }
+        .progress-ring-circle { transition: stroke-dashoffset 1s ease-in-out; }
+        .metric-card { background: linear-gradient(145deg, rgba(20, 30, 48, 0.8) 0%, rgba(10, 14, 26, 0.9) 100%); border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.3s ease; }
+        .metric-card:hover { transform: translateY(-2px); border-color: rgba(74, 222, 128, 0.2); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); }
+        .secondary-card { background: linear-gradient(145deg, rgba(15, 20, 35, 0.8) 0%, rgba(8, 11, 22, 0.9) 100%); border: 1px solid rgba(255, 255, 255, 0.04); transition: all 0.3s ease; }
+        .secondary-card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+        .parceiro-card { background: linear-gradient(145deg, rgba(10, 20, 35, 0.85) 0%, rgba(5, 10, 20, 0.95) 100%); border: 1px solid rgba(6, 182, 212, 0.12); transition: all 0.3s ease; }
+        .parceiro-card:hover { transform: translateY(-2px); border-color: rgba(6, 182, 212, 0.3); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+        .badge-green { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .badge-blue  { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-purple{ background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+        .badge-cyan  { background: rgba(6, 182, 212, 0.15);  color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3); }
+        .progress-bar-bg   { background: rgba(255, 255, 255, 0.05); }
+        .progress-bar-fill { transition: width 1s ease-out; box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); }
+        .parceiro-value { background: linear-gradient(135deg, #22d3ee 0%, #0ea5e9 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        @keyframes pulse-glow { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .animate-pulse-slow { animation: pulse-glow 3s infinite; }
+        /* MINI CHARTS — apenas nos cards principais */
+        .chart-container { position: relative; height: 45px; overflow: hidden; }
+        .mini-chart { position: absolute; bottom: 0; left: 0; right: 0; }
 
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            font-family: 'Inter', sans-serif;
-            background: #080c18;
-            color: #fff;
+        #loading-overlay {
+            position: fixed; inset: 0; background: #0a0e1a;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 100; transition: opacity 0.5s;
         }
-
-        #app {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding: clamp(8px, 1.2vh, 20px) clamp(10px, 1.5vw, 28px);
-            gap: clamp(5px, 0.8vh, 14px);
+        .loading-spinner {
+            width: 40px; height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #22d3ee;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
-
-        /* HEADER */
-        #header {
-            flex: 0 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: linear-gradient(135deg, #050a12 0%, #0a1020 60%, #0a0e1a 100%);
-            border: 1px solid rgba(34,211,238,0.2);
-            border-radius: 16px;
-            padding: clamp(8px,1.1vh,18px) clamp(16px,2vw,36px);
-            position: relative;
-            overflow: hidden;
-            min-height: clamp(56px, 9vh, 100px);
-        }
-        #header::before {
-            content:''; position:absolute; top:-60px; left:-60px;
-            width:400px; height:260px;
-            background:radial-gradient(ellipse,rgba(34,211,238,0.1) 0%,transparent 70%);
-            pointer-events:none;
-        }
-        #header h1 {
-            font-size: clamp(1.4rem, 3.8vh, 3.2rem);
-            font-weight: 900; line-height: 1; letter-spacing: -1px;
-            background: linear-gradient(90deg,#22d3ee 0%,#a5f3fc 100%);
-            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-        }
-        #header p { color:rgba(255,255,255,0.4); font-size:clamp(0.55rem,1.1vh,0.85rem); margin-top:4px; }
-
-        /* MAIN GRID: 3 colunas iguais */
-        #main-grid {
-            flex: 1 1 0;
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: clamp(6px, 0.9vh, 14px);
-            min-height: 0;
-        }
-
-        /* Coluna genérica */
-        .col {
-            display: flex;
-            flex-direction: column;
-            gap: clamp(4px, 0.6vh, 10px);
-            min-height: 0;
-        }
-
-        .sec-label {
-            font-size: clamp(0.5rem, 0.9vh, 0.7rem);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.14em;
-            color: rgba(255,255,255,0.3);
-            flex: 0 0 auto;
-        }
-
-        /* CARDS */
-        .card {
-            flex: 1 1 0;
-            border-radius: 12px;
-            padding: clamp(8px,1.3vh,18px) clamp(10px,1.2vw,20px);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 0;
-            position: relative;
-            overflow: hidden;
-            transition: transform .25s, border-color .25s;
-        }
-        .card-metric {
-            background: linear-gradient(145deg,rgba(20,30,48,.85),rgba(10,14,26,.95));
-            border: 1px solid rgba(255,255,255,.06);
-        }
-        .card-metric:hover { transform:translateY(-2px); border-color:rgba(74,222,128,.2); }
-        .card-flat {
-            background: rgba(14,19,34,.75);
-            border: 1px solid rgba(255,255,255,.05);
-            backdrop-filter: blur(8px);
-        }
-        .card-parceiro {
-            background: linear-gradient(145deg,rgba(10,20,35,.92),rgba(5,10,20,.98));
-            border: 1px solid rgba(6,182,212,.18);
-        }
-        .card-parceiro:hover { border-color:rgba(6,182,212,.4); }
-
-        /* Ring */
-        .ring-wrap { position:relative; flex-shrink:0; }
-        .ring-wrap span {
-            position:absolute; inset:0;
-            display:flex; align-items:center; justify-content:center;
-            font-size:clamp(.45rem,.9vh,.7rem); font-weight:700;
-        }
-        .ring-svg { transform:rotate(-90deg); transform-origin:50% 50%; display:block; }
-        .ring-circle { transition:stroke-dashoffset 1s ease-in-out; }
-
-        /* Badge */
-        .badge {
-            display:inline-flex; align-items:center; gap:3px;
-            padding:2px 7px; border-radius:99px;
-            font-size:clamp(.48rem,.85vh,.68rem); font-weight:600;
-        }
-        .badge svg { width:9px; height:9px; }
-        .bg  { background:rgba(34,197,94,.15);  color:#4ade80; border:1px solid rgba(34,197,94,.3); }
-        .bb  { background:rgba(59,130,246,.15); color:#60a5fa; border:1px solid rgba(59,130,246,.3); }
-        .bp  { background:rgba(168,85,247,.15); color:#c084fc; border:1px solid rgba(168,85,247,.3); }
-
-        /* Tipografia */
-        .ttl  { font-size:clamp(.62rem,1.05vh,.88rem); font-weight:600; color:rgba(255,255,255,.85); }
-        .sub  { font-size:clamp(.48rem,.82vh,.68rem); color:rgba(255,255,255,.35); }
-        .val-lg { font-size:clamp(1.1rem,2.8vh,2.4rem); font-weight:800; line-height:1; }
-        .val-xl { font-size:clamp(1.6rem,4.5vh,3.6rem); font-weight:800; line-height:1;
-                  background:linear-gradient(135deg,#22d3ee,#0ea5e9);
-                  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-        .meta-txt { font-size:clamp(.48rem,.82vh,.68rem); color:rgba(255,255,255,.35); }
-
-        /* Pct direita */
-        .pct-r .big { font-size:clamp(.8rem,1.7vh,1.4rem); font-weight:800; }
-        .pct-r .lbl { font-size:clamp(.43rem,.75vh,.62rem); color:rgba(255,255,255,.35); }
-
-        /* Progress bar */
-        .pbar-bg { background:rgba(255,255,255,.06); border-radius:99px; height:clamp(3px,.45vh,5px); overflow:hidden; flex:0 0 auto; }
-        .pbar    { height:100%; border-radius:99px; transition:width 1s ease-out; }
-
-        /* Mini chart */
-        .chart-wrap { position:relative; height:clamp(22px,3.8vh,46px); overflow:hidden; flex:0 0 auto; }
-        .chart-wrap canvas { position:absolute; bottom:0; left:0; right:0; }
-
-        /* Banner */
-        #banner {
-            flex:0 0 auto;
-            background:linear-gradient(135deg,rgba(6,182,212,.07),rgba(59,130,246,.07));
-            border:1px solid rgba(34,211,238,.14);
-            border-radius:12px;
-            padding:clamp(6px,.9vh,12px) clamp(12px,1.5vw,24px);
-            display:flex; align-items:center; justify-content:center; gap:10px;
-        }
-        #banner svg { color:#22d3ee; flex-shrink:0; width:clamp(13px,1.9vh,20px); height:clamp(13px,1.9vh,20px); }
-        #banner p { font-size:clamp(.62rem,1.2vh,.95rem); font-weight:600; color:#22d3ee; }
-        @keyframes pglow { 0%,100%{opacity:1} 50%{opacity:.6} }
-        .pulse { animation:pglow 3s infinite; }
-
-        /* Loading */
-        #lo { position:fixed; inset:0; background:#080c18; display:flex; align-items:center; justify-content:center; z-index:100; transition:opacity .5s; }
-        .spinner { width:38px; height:38px; border:3px solid rgba(255,255,255,.1); border-top-color:#22d3ee; border-radius:50%; animation:spin .8s linear infinite; }
-        @keyframes spin { to{transform:rotate(360deg)} }
-        #lu { position:fixed; bottom:10px; right:14px; font-size:clamp(9px,.95vh,11px); color:rgba(255,255,255,.22); }
-        #eb { display:none; position:fixed; bottom:10px; left:14px; background:rgba(239,68,68,.15); border:1px solid rgba(239,68,68,.3); color:#f87171; font-size:11px; padding:5px 12px; border-radius:8px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #last-update { position: fixed; bottom: 12px; right: 16px; font-size: 11px; color: rgba(255,255,255,0.3); }
+        #error-banner { display: none; position: fixed; bottom: 12px; left: 16px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #f87171; font-size: 11px; padding: 6px 12px; border-radius: 8px; }
     </style>
 </head>
-<body>
+<body class="min-h-screen text-white">
 
-<div id="lo">
-    <div style="text-align:center;">
-        <div class="spinner" style="margin:0 auto 12px;"></div>
-        <p style="color:rgba(255,255,255,.4);font-size:13px;">Carregando dados...</p>
-    </div>
-</div>
-
-<div id="app">
-
-    <!-- HEADER -->
-    <div id="header">
-        <div style="position:absolute;right:16px;top:-28px;opacity:.07;transform:scale(3.2);transform-origin:right top;pointer-events:none;">
-            <svg width="66" height="44" viewBox="0 0 66 44"><path d="M47.548,4.818v6.26l8.04-.435c-14.822,16-20.871,22.77-27.435,22.77-5.238,0-7.686-3.36-8.757-7.021,14.412-.5,19.342-9.319,19.342-14.846C38.738,6.092,35.533,0,26.72,0,17.191,0,12.512,9.451,11.881,18.583a8.806,8.806,0,0,1-5.065-8.314,17.589,17.589,0,0,1,1.3-6.724C6.529,2.918,1.7,1.282,1.7,1.282A30.663,30.663,0,0,0,0,10.628,15.478,15.478,0,0,0,12.252,25.76c1.725,9.229,8.252,14.106,15.9,14.106,9.9,0,16.675-8.377,32.28-24.966l-.5,8.56h6.26V4.818H47.548ZM26.6,6.975a4.651,4.651,0,0,1,5.048,4.967c0,3.827-4.487,8.147-12.371,8.147-.211,0-.419,0-.625-.009C18.81,12.6,21.721,6.975,26.6,6.975" fill="#61de75"/></svg>
-        </div>
-        <div style="position:relative;z-index:1;">
-            <h1>Dashboard Pré Vendas</h1>
-            <p>Acompanhamento em tempo real</p>
-        </div>
-        <div style="position:relative;z-index:1;display:flex;align-items:center;gap:12px;">
-            <svg width="46" height="40" viewBox="0 0 66 44">
-                <path d="M47.548,4.818v6.26l8.04-.435c-14.822,16-20.871,22.77-27.435,22.77-5.238,0-7.686-3.36-8.757-7.021,14.412-.5,19.342-9.319,19.342-14.846C38.738,6.092,35.533,0,26.72,0,17.191,0,12.512,9.451,11.881,18.583a8.806,8.806,0,0,1-5.065-8.314,17.589,17.589,0,0,1,1.3-6.724C6.529,2.918,1.7,1.282,1.7,1.282A30.663,30.663,0,0,0,0,10.628,15.478,15.478,0,0,0,12.252,25.76c1.725,9.229,8.252,14.106,15.9,14.106,9.9,0,16.675-8.377,32.28-24.966l-.5,8.56h6.26V4.818H47.548ZM26.6,6.975a4.651,4.651,0,0,1,5.048,4.967c0,3.827-4.487,8.147-12.371,8.147-.211,0-.419,0-.625-.009C18.81,12.6,21.721,6.975,26.6,6.975" fill="#61de75"/>
-            </svg>
-            <svg height="42" viewBox="75 -3 210 50" style="width:auto;">
-                <path d="M167.439,7.486c-4.842,12.1-10.076,24.144-13.871,33.435-4.253,10.01-8.244,15.311-14.918,15.311-4.711,0-7.917-1.963-9.684-5.1l7.852-6.543.785.066c.327,3.01,1.832,5.3,4.515,5.3,3.86,0,6.215-3.729,7.393-7.72-2.094,0-5.954-.131-8.048-.393-3.6-11.058-8.637-24.536-12.825-34.351a90.474,90.474,0,0,0,14.591,0c2.159,8.375,5.234,19.3,8.113,28.331,2.682-9.749,5.1-21.265,6.347-28.331a60.68,60.68,0,0,0,9.749,0" transform="translate(-45.794,-2.665)" fill="white"/>
-                <path d="M186.956,23.825c0-10.73,7.262-17.862,19.237-17.862s19.3,7.132,19.3,17.862c0,10.927-7.328,18.255-19.3,18.255s-19.237-7.328-19.237-18.255m24.667-.261c0-11.647-1.9-15.376-5.431-15.376-3.4,0-5.5,3.8-5.5,15.638,0,12.17,2.094,15.965,5.562,15.965,3.4,0,5.365-3.86,5.365-16.226" transform="translate(-66.555,-2.123)" fill="white"/>
-                <path d="M287.188,41.706h-5.5L275.345,33c-1.505,5.758-5.823,9.618-12.17,9.618-6.608,0-11.712-3.4-11.777-14.133-.066-8.375,0-14.329-.131-21a90.885,90.885,0,0,0,13.348,0c-.066,12.3,0,11.385.131,20.807.065,6.805.981,9.226,3.6,9.16,3.468-.065,5.562-4.318,5.562-12.759,0-8.9,0-10.8-.2-17.208a92.672,92.672,0,0,0,13.478,0c-.327,11.581-.392,22.639,0,34.22" transform="translate(-89.449,-2.665)" fill="white"/>
-                <path d="M361.8,41.566a58.7,58.7,0,0,1-13.564,0A102.564,102.564,0,0,0,338.267,28.9c0,4.139.05,8.378.149,12.666a37.558,37.558,0,0,1-10.572,0c.249-11.669.249-21.992,0-34.309A88.294,88.294,0,0,1,341.158,6.01c4.389,0,17.654.549,17.654,10.672,0,8.128-9.525,11.968-18.052,11.819A102.671,102.671,0,0,0,352.428,30c2.494,3.191,5.585,7.43,9.375,11.569m-23.587-14.91a21.961,21.961,0,0,0,2.244.149c4.04,0,6.982-2.494,6.982-9.525,0-6.931-2.743-9.126-6.383-9.126-.7,0-1.646.1-2.643.2-.149,5.934-.2,12.067-.2,18.3" transform="translate(-116.71,-2.14)" fill="white"/>
-                <path d="M416.777,41.738a42.058,42.058,0,0,1-10.622,0c.1-5.435.2-10.871.2-16.307-3.889-.1-7.879-.1-11.718,0,0,5.436.1,10.872.2,16.307a42.058,42.058,0,0,1-10.622,0c.249-11.619.249-23.288,0-34.907a42.058,42.058,0,0,1,10.622,0c-.1,5.236-.15,10.472-.2,15.708,3.84.1,7.829.1,11.718,0-.05-5.236-.1-10.472-.2-15.708a42.058,42.058,0,0,1,10.622,0c-.249,11.619-.249,23.288,0,34.907" transform="translate(-136.777,-2.312)" fill="white"/>
-            </svg>
+    <div id="loading-overlay">
+        <div class="text-center">
+            <div class="loading-spinner mx-auto mb-4"></div>
+            <p class="text-gray-400 text-sm">Carregando dados...</p>
         </div>
     </div>
 
-    <!-- GRID 3 COLUNAS -->
-    <div id="main-grid">
+    <div id="dashboard-area" class="p-4">
+        <div class="max-w-6xl mx-auto">
 
-        <!-- ══ COL 1: INBOUND ══ -->
-        <div class="col">
-            <div class="sec-label">📥 Inbound</div>
-
-            <!-- Leads Captados -->
-            <div class="card card-metric">
-                <div style="display:flex;align-items:flex-start;justify-content:space-between;">
-                    <div style="display:flex;align-items:center;gap:7px;">
-                        <div style="width:clamp(22px,3vh,38px);height:clamp(22px,3vh,38px);border-radius:8px;background:rgba(74,222,128,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                            <svg style="width:55%;height:55%;" fill="none" stroke="#4ade80" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                        </div>
-                        <span class="badge bg"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>+<span id="leads-variacao">-</span></span>
-                    </div>
-                    <div class="ring-wrap" style="width:clamp(34px,4.8vh,50px);height:clamp(34px,4.8vh,50px);">
-                        <svg class="ring-svg" style="width:100%;height:100%;" viewBox="0 0 48 48">
-                            <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,.08)" stroke-width="3" fill="none"/>
-                            <circle id="circle-leads" cx="24" cy="24" r="20" stroke="#4ade80" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" stroke-linecap="round" class="ring-circle"/>
-                        </svg>
-                        <span id="pct-leads">--%</span>
-                    </div>
+            <!-- ══ HEADER — idêntico ao de Vendas ══ -->
+            <div class="relative flex items-center justify-between mb-6 rounded-2xl overflow-hidden px-8 py-5" style="background: linear-gradient(135deg, #050a05 0%, #0a1a0a 60%, #0a0e1a 100%); border: 1px solid rgba(97,222,117,0.2); min-height: 110px;">
+                <div style="position:absolute;top:-60px;left:-60px;width:400px;height:260px;background:radial-gradient(ellipse,rgba(97,222,117,0.1) 0%,transparent 70%);pointer-events:none;"></div>
+                <div style="position:absolute;right:20px;top:-30px;opacity:0.08;transform:scale(3.5);transform-origin:right top;pointer-events:none;">
+                    <svg width="66" height="44" viewBox="0 0 66 44"><path d="M47.548,4.818v6.26l8.04-.435c-14.822,16-20.871,22.77-27.435,22.77-5.238,0-7.686-3.36-8.757-7.021,14.412-.5,19.342-9.319,19.342-14.846C38.738,6.092,35.533,0,26.72,0,17.191,0,12.512,9.451,11.881,18.583a8.806,8.806,0,0,1-5.065-8.314,17.589,17.589,0,0,1,1.3-6.724C6.529,2.918,1.7,1.282,1.7,1.282A30.663,30.663,0,0,0,0,10.628,15.478,15.478,0,0,0,12.252,25.76c1.725,9.229,8.252,14.106,15.9,14.106,9.9,0,16.675-8.377,32.28-24.966l-.5,8.56h6.26V4.818H47.548ZM26.6,6.975a4.651,4.651,0,0,1,5.048,4.967c0,3.827-4.487,8.147-12.371,8.147-.211,0-.419,0-.625-.009C18.81,12.6,21.721,6.975,26.6,6.975" fill="#61de75"/></svg>
                 </div>
-                <div><div class="ttl">Leads Captados</div><div class="sub">Inbound total</div></div>
-                <div style="display:flex;align-items:baseline;gap:5px;">
-                    <span class="val-lg"><span id="val-leads">--</span></span>
-                    <span class="meta-txt">/ <span id="meta-leads">--</span></span>
+                <div class="relative z-10">
+                    <h1 style="font-size:2.8rem;font-weight:900;line-height:1;background:linear-gradient(90deg,#22d3ee 0%,#a5f3fc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px;">Dashboard Pré Vendas</h1>
+                    <p style="color:rgba(255,255,255,0.4);font-size:0.85rem;margin-top:6px;letter-spacing:0.2px;">Acompanhamento em tempo real</p>
                 </div>
-                <div class="chart-wrap"><canvas id="chart1"></canvas></div>
+                <div class="relative z-10 flex items-center gap-4">
+                    <svg width="50" height="43" viewBox="0 0 66 44"><path d="M47.548,4.818v6.26l8.04-.435c-14.822,16-20.871,22.77-27.435,22.77-5.238,0-7.686-3.36-8.757-7.021,14.412-.5,19.342-9.319,19.342-14.846C38.738,6.092,35.533,0,26.72,0,17.191,0,12.512,9.451,11.881,18.583a8.806,8.806,0,0,1-5.065-8.314,17.589,17.589,0,0,1,1.3-6.724C6.529,2.918,1.7,1.282,1.7,1.282A30.663,30.663,0,0,0,0,10.628,15.478,15.478,0,0,0,12.252,25.76c1.725,9.229,8.252,14.106,15.9,14.106,9.9,0,16.675-8.377,32.28-24.966l-.5,8.56h6.26V4.818H47.548ZM26.6,6.975a4.651,4.651,0,0,1,5.048,4.967c0,3.827-4.487,8.147-12.371,8.147-.211,0-.419,0-.625-.009C18.81,12.6,21.721,6.975,26.6,6.975" fill="#61de75"/></svg>
+                    <svg height="46" viewBox="75 -3 210 50" style="width:auto;">
+                        <path d="M167.439,7.486c-4.842,12.1-10.076,24.144-13.871,33.435-4.253,10.01-8.244,15.311-14.918,15.311-4.711,0-7.917-1.963-9.684-5.1l7.852-6.543.785.066c.327,3.01,1.832,5.3,4.515,5.3,3.86,0,6.215-3.729,7.393-7.72-2.094,0-5.954-.131-8.048-.393-3.6-11.058-8.637-24.536-12.825-34.351a90.474,90.474,0,0,0,14.591,0c2.159,8.375,5.234,19.3,8.113,28.331,2.682-9.749,5.1-21.265,6.347-28.331a60.68,60.68,0,0,0,9.749,0" transform="translate(-45.794,-2.665)" fill="white"/>
+                        <path d="M186.956,23.825c0-10.73,7.262-17.862,19.237-17.862s19.3,7.132,19.3,17.862c0,10.927-7.328,18.255-19.3,18.255s-19.237-7.328-19.237-18.255m24.667-.261c0-11.647-1.9-15.376-5.431-15.376-3.4,0-5.5,3.8-5.5,15.638,0,12.17,2.094,15.965,5.562,15.965,3.4,0,5.365-3.86,5.365-16.226" transform="translate(-66.555,-2.123)" fill="white"/>
+                        <path d="M287.188,41.706h-5.5L275.345,33c-1.505,5.758-5.823,9.618-12.17,9.618-6.608,0-11.712-3.4-11.777-14.133-.066-8.375,0-14.329-.131-21a90.885,90.885,0,0,0,13.348,0c-.066,12.3,0,11.385.131,20.807.065,6.805.981,9.226,3.6,9.16,3.468-.065,5.562-4.318,5.562-12.759,0-8.9,0-10.8-.2-17.208a92.672,92.672,0,0,0,13.478,0c-.327,11.581-.392,22.639,0,34.22" transform="translate(-89.449,-2.665)" fill="white"/>
+                        <path d="M361.8,41.566a58.7,58.7,0,0,1-13.564,0A102.564,102.564,0,0,0,338.267,28.9c0,4.139.05,8.378.149,12.666a37.558,37.558,0,0,1-10.572,0c.249-11.669.249-21.992,0-34.309A88.294,88.294,0,0,1,341.158,6.01c4.389,0,17.654.549,17.654,10.672,0,8.128-9.525,11.968-18.052,11.819A102.671,102.671,0,0,0,352.428,30c2.494,3.191,5.585,7.43,9.375,11.569m-23.587-14.91a21.961,21.961,0,0,0,2.244.149c4.04,0,6.982-2.494,6.982-9.525,0-6.931-2.743-9.126-6.383-9.126-.7,0-1.646.1-2.643.2-.149,5.934-.2,12.067-.2,18.3" transform="translate(-116.71,-2.14)" fill="white"/>
+                        <path d="M416.777,41.738a42.058,42.058,0,0,1-10.622,0c.1-5.435.2-10.871.2-16.307-3.889-.1-7.879-.1-11.718,0,0,5.436.1,10.872.2,16.307a42.058,42.058,0,0,1-10.622,0c.249-11.619.249-23.288,0-34.907a42.058,42.058,0,0,1,10.622,0c-.1,5.236-.15,10.472-.2,15.708,3.84.1,7.829.1,11.718,0-.05-5.236-.1-10.472-.2-15.708a42.058,42.058,0,0,1,10.622,0c-.249,11.619-.249,23.288,0,34.907" transform="translate(-136.777,-2.312)" fill="white"/>
+                    </svg>
+                </div>
             </div>
 
-            <!-- Agendas Inbound -->
-            <div class="card card-metric">
-                <div style="display:flex;align-items:flex-start;justify-content:space-between;">
-                    <div style="display:flex;align-items:center;gap:7px;">
-                        <div style="width:clamp(22px,3vh,38px);height:clamp(22px,3vh,38px);border-radius:8px;background:rgba(96,165,250,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                            <svg style="width:55%;height:55%;" fill="none" stroke="#60a5fa" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <!-- ══ LINHA 1: INBOUND — 3 cards grandes com ring + mini-chart (igual métricas do Vendas) ══ -->
+            <div class="grid grid-cols-3 gap-4 mb-4">
+
+                <!-- Leads Captados -->
+                <div class="metric-card rounded-xl p-4 relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            </div>
+                            <span class="badge-green px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                                +<span id="leads-variacao">--</span>
+                            </span>
                         </div>
-                        <span class="badge bb"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>+<span id="agendas-in-variacao">-</span></span>
+                        <div class="relative w-12 h-12">
+                            <svg class="w-12 h-12 circular-progress">
+                                <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"/>
+                                <circle id="circle-leads" cx="24" cy="24" r="20" stroke="#4ade80" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" stroke-linecap="round" class="progress-ring-circle"/>
+                            </svg>
+                            <span id="pct-leads" class="absolute inset-0 flex items-center justify-center text-xs font-bold">--%</span>
+                        </div>
                     </div>
-                    <div class="ring-wrap" style="width:clamp(34px,4.8vh,50px);height:clamp(34px,4.8vh,50px);">
-                        <svg class="ring-svg" style="width:100%;height:100%;" viewBox="0 0 48 48">
-                            <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,.08)" stroke-width="3" fill="none"/>
-                            <circle id="circle-agendas-in" cx="24" cy="24" r="20" stroke="#60a5fa" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" stroke-linecap="round" class="ring-circle"/>
-                        </svg>
-                        <span id="pct-agendas-in">--%</span>
+                    <div class="mb-1">
+                        <h3 class="text-gray-300 font-medium text-sm leading-tight">Leads Captados</h3>
+                        <p class="text-gray-500 text-xs leading-tight">Inbound total</p>
                     </div>
+                    <div class="flex items-baseline gap-1 mb-1">
+                        <span id="val-leads" class="text-3xl font-bold text-white leading-none">--</span>
+                        <span class="text-gray-500 text-xs">/ <span id="meta-leads">--</span></span>
+                    </div>
+                    <div class="chart-container"><canvas id="chart1" class="mini-chart"></canvas></div>
                 </div>
-                <div><div class="ttl">Agendas Realizadas</div><div class="sub">Inbound</div></div>
-                <div style="display:flex;align-items:baseline;gap:5px;">
-                    <span class="val-lg"><span id="val-agendas-in">--</span></span>
-                    <span class="meta-txt">/ <span id="meta-agendas-in">--</span></span>
+
+                <!-- Agendas Realizadas -->
+                <div class="metric-card rounded-xl p-4 relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            </div>
+                            <span class="badge-blue px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                                +<span id="agendas-variacao">--</span>
+                            </span>
+                        </div>
+                        <div class="relative w-12 h-12">
+                            <svg class="w-12 h-12 circular-progress">
+                                <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"/>
+                                <circle id="circle-agendas" cx="24" cy="24" r="20" stroke="#60a5fa" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" stroke-linecap="round" class="progress-ring-circle"/>
+                            </svg>
+                            <span id="pct-agendas" class="absolute inset-0 flex items-center justify-center text-xs font-bold">--%</span>
+                        </div>
+                    </div>
+                    <div class="mb-1">
+                        <h3 class="text-gray-300 font-medium text-sm leading-tight">Agendas Realizadas</h3>
+                        <p class="text-gray-500 text-xs leading-tight">Inbound</p>
+                    </div>
+                    <div class="flex items-baseline gap-1 mb-1">
+                        <span id="val-agendas" class="text-3xl font-bold text-white leading-none">--</span>
+                        <span class="text-gray-500 text-xs">/ <span id="meta-agendas">--</span></span>
+                    </div>
+                    <div class="chart-container"><canvas id="chart2" class="mini-chart"></canvas></div>
                 </div>
-                <div class="chart-wrap"><canvas id="chart2"></canvas></div>
+
+                <!-- Leads Qualificados -->
+                <div class="metric-card rounded-xl p-4 relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                            </div>
+                            <span class="badge-purple px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                                +<span id="leadsqual-variacao">--</span>
+                            </span>
+                        </div>
+                        <div class="relative w-12 h-12">
+                            <svg class="w-12 h-12 circular-progress">
+                                <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"/>
+                                <circle id="circle-leadsqual" cx="24" cy="24" r="20" stroke="#c084fc" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" stroke-linecap="round" class="progress-ring-circle"/>
+                            </svg>
+                            <span id="pct-leadsqual" class="absolute inset-0 flex items-center justify-center text-xs font-bold">--%</span>
+                        </div>
+                    </div>
+                    <div class="mb-1">
+                        <h3 class="text-gray-300 font-medium text-sm leading-tight">Leads Qualificados</h3>
+                        <p class="text-gray-500 text-xs leading-tight">SQLs gerados</p>
+                    </div>
+                    <div class="flex items-baseline gap-1 mb-1">
+                        <span id="val-leadsqual" class="text-3xl font-bold text-white leading-none">--</span>
+                        <span class="text-gray-500 text-xs">/ <span id="meta-leadsqual">--</span></span>
+                    </div>
+                    <div class="chart-container"><canvas id="chart3" class="mini-chart"></canvas></div>
+                </div>
             </div>
 
-            <!-- Leads Qualificados -->
-            <div class="card card-metric">
-                <div style="display:flex;align-items:flex-start;justify-content:space-between;">
-                    <div style="display:flex;align-items:center;gap:7px;">
-                        <div style="width:clamp(22px,3vh,38px);height:clamp(22px,3vh,38px);border-radius:8px;background:rgba(192,132,252,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                            <svg style="width:55%;height:55%;" fill="none" stroke="#c084fc" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+            <!-- ══ LINHA 2: TAXAS DE CONVERSÃO — 3 cards médios (igual pipeline do Vendas) ══ -->
+            <div class="grid grid-cols-3 gap-4 mb-4">
+
+                <!-- Lead → Qualificado -->
+                <div class="secondary-card rounded-xl p-4">
+                    <div class="flex justify-between items-center mb-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg">🎯</span>
+                            <p class="text-gray-400 text-sm">Lead → Qualificado</p>
                         </div>
-                        <span class="badge bp"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>+<span id="leads-qual-variacao">-</span></span>
+                        <div class="text-right">
+                            <span id="pct-conv-lq" class="text-xl font-bold text-white leading-none">--%</span>
+                            <p class="text-gray-500 text-xs">da meta</p>
+                        </div>
                     </div>
-                    <div class="ring-wrap" style="width:clamp(34px,4.8vh,50px);height:clamp(34px,4.8vh,50px);">
-                        <svg class="ring-svg" style="width:100%;height:100%;" viewBox="0 0 48 48">
-                            <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,.08)" stroke-width="3" fill="none"/>
-                            <circle id="circle-leads-qual" cx="24" cy="24" r="20" stroke="#c084fc" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" stroke-linecap="round" class="ring-circle"/>
-                        </svg>
-                        <span id="pct-leads-qual">--%</span>
+                    <div class="flex items-baseline gap-2 mb-2">
+                        <span id="val-conv-lq" class="text-3xl font-bold text-white leading-none">--%</span>
+                        <span class="text-gray-500 text-xs">/ <span id="meta-conv-lq">--</span>%</span>
+                    </div>
+                    <div class="progress-bar-bg rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-conv-lq" class="progress-bar-fill h-full bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-full" style="width:0%"></div>
                     </div>
                 </div>
-                <div><div class="ttl">Leads Qualificados</div><div class="sub">SQLs gerados</div></div>
-                <div style="display:flex;align-items:baseline;gap:5px;">
-                    <span class="val-lg"><span id="val-leads-qual">--</span></span>
-                    <span class="meta-txt">/ <span id="meta-leads-qual">--</span></span>
+
+                <!-- Qualificado → Venda -->
+                <div class="secondary-card rounded-xl p-4">
+                    <div class="flex justify-between items-center mb-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg">⚡</span>
+                            <p class="text-gray-400 text-sm">Qualificado → Venda</p>
+                        </div>
+                        <div class="text-right">
+                            <span id="pct-conv-qv" class="text-xl font-bold text-white leading-none">--%</span>
+                            <p class="text-gray-500 text-xs">da meta</p>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline gap-2 mb-2">
+                        <span id="val-conv-qv" class="text-3xl font-bold text-white leading-none">--%</span>
+                        <span class="text-gray-500 text-xs">/ <span id="meta-conv-qv">--</span>%</span>
+                    </div>
+                    <div class="progress-bar-bg rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-conv-qv" class="progress-bar-fill h-full bg-gradient-to-r from-blue-400 to-purple-400 rounded-full" style="width:0%"></div>
+                    </div>
                 </div>
-                <div class="chart-wrap"><canvas id="chart3"></canvas></div>
+
+                <!-- Vendas Realizadas -->
+                <div class="secondary-card rounded-xl p-4">
+                    <div class="flex justify-between items-center mb-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg">🏆</span>
+                            <p class="text-gray-400 text-sm">Vendas Realizadas</p>
+                        </div>
+                        <div class="text-right">
+                            <span id="pct-vendas" class="text-xl font-bold text-white leading-none">--%</span>
+                            <p class="text-gray-500 text-xs">da meta</p>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline gap-2 mb-2">
+                        <span id="val-vendas" class="text-3xl font-bold text-white leading-none">--</span>
+                        <span class="text-gray-500 text-xs">/ <span id="meta-vendas">--</span></span>
+                    </div>
+                    <div class="progress-bar-bg rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-vendas" class="progress-bar-fill h-full bg-gradient-to-r from-orange-400 to-yellow-400 rounded-full" style="width:0%"></div>
+                    </div>
+                </div>
             </div>
+
+            <!-- ══ LINHA 3: OUTBOUND (3 cards pequenos) + YOU PARCEIRO (3 cards pequenos) ══ -->
+            <div class="grid grid-cols-6 gap-3 mb-4">
+
+                <!-- Agendas Outbound -->
+                <div class="glass-card rounded-lg p-3">
+                    <div class="flex justify-between items-center mb-1">
+                        <p class="text-gray-400 text-xs">Agendas Out.</p>
+                        <span id="pct-agendas-out" class="text-sm font-bold text-white">--%</span>
+                    </div>
+                    <div class="flex items-baseline gap-1 mb-1.5">
+                        <span id="val-agendas-out" class="text-xl font-bold text-white leading-none">--</span>
+                        <span class="text-gray-500 text-xs">/ <span id="meta-agendas-out">--</span></span>
+                    </div>
+                    <div class="progress-bar-bg rounded-full h-1 overflow-hidden">
+                        <div id="bar-agendas-out" class="progress-bar-fill h-full bg-gradient-to-r from-orange-400 to-yellow-400 rounded-full" style="width:0%"></div>
+                    </div>
+                </div>
+
+                <!-- Qualificações Outbound -->
+                <div class="glass-card rounded-lg p-3">
+                    <div class="flex justify-between items-center mb-1">
+                        <p class="text-gray-400 text-xs">Qualif. Out.</p>
+                        <span id="pct-quals-out" class="text-sm font-bold text-white">--%</span>
+                    </div>
+                    <div class="flex items-baseline gap-1 mb-1.5">
+                        <span id="val-quals-out" class="text-xl font-bold text-white leading-none">--</span>
+                        <span class="text-gray-500 text-xs">/ <span id="meta-quals-out">--</span></span>
+                    </div>
+                    <div class="progress-bar-bg rounded-full h-1 overflow-hidden">
+                        <div id="bar-quals-out" class="progress-bar-fill h-full bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full" style="width:0%"></div>
+                    </div>
+                </div>
+
+                <!-- Vendas Outbound -->
+                <div class="glass-card rounded-lg p-3">
+                    <div class="flex justify-between items-center mb-1">
+                        <p class="text-gray-400 text-xs">Vendas Out.</p>
+                        <span id="pct-vendas-out" class="text-sm font-bold text-white">--%</span>
+                    </div>
+                    <div class="flex items-baseline gap-1 mb-1.5">
+                        <span id="val-vendas-out" class="text-xl font-bold text-white leading-none">--</span>
+                        <span class="text-gray-500 text-xs">/ <span id="meta-vendas-out">--</span></span>
+                    </div>
+                    <div class="progress-bar-bg rounded-full h-1 overflow-hidden">
+                        <div id="bar-vendas-out" class="progress-bar-fill h-full bg-gradient-to-r from-purple-400 to-pink-400 rounded-full" style="width:0%"></div>
+                    </div>
+                </div>
+
+                <!-- Apresentações -->
+                <div class="parceiro-card rounded-lg p-3">
+                    <div class="flex justify-between items-center mb-1">
+                        <p class="text-gray-400 text-xs">Apresentações</p>
+                        <span id="pct-apres" class="text-sm font-bold text-white">--%</span>
+                    </div>
+                    <div class="flex items-baseline gap-1 mb-1.5">
+                        <span id="val-apres" class="text-xl font-bold parceiro-value leading-none">--</span>
+                        <span class="text-gray-500 text-xs">/ <span id="meta-apres">--</span></span>
+                    </div>
+                    <div class="progress-bar-bg rounded-full h-1 overflow-hidden">
+                        <div id="bar-apres" class="progress-bar-fill h-full rounded-full" style="width:0%;background:linear-gradient(90deg,#22d3ee,#0ea5e9);box-shadow:0 0 8px rgba(34,211,238,0.4);"></div>
+                    </div>
+                </div>
+
+                <!-- Contratos -->
+                <div class="parceiro-card rounded-lg p-3">
+                    <div class="flex justify-between items-center mb-1">
+                        <p class="text-gray-400 text-xs">Contratos</p>
+                        <span id="pct-contratos" class="text-sm font-bold text-white">--%</span>
+                    </div>
+                    <div class="flex items-baseline gap-1 mb-1.5">
+                        <span id="val-contratos" class="text-xl font-bold parceiro-value leading-none">--</span>
+                        <span class="text-gray-500 text-xs">/ <span id="meta-contratos">--</span></span>
+                    </div>
+                    <div class="progress-bar-bg rounded-full h-1 overflow-hidden">
+                        <div id="bar-contratos" class="progress-bar-fill h-full rounded-full" style="width:0%;background:linear-gradient(90deg,#22d3ee,#0ea5e9);box-shadow:0 0 8px rgba(34,211,238,0.4);"></div>
+                    </div>
+                </div>
+
+                <!-- Indicações -->
+                <div class="parceiro-card rounded-lg p-3">
+                    <div class="flex justify-between items-center mb-1">
+                        <p class="text-gray-400 text-xs">Indicações</p>
+                        <span id="pct-indicacoes" class="text-sm font-bold text-white">--%</span>
+                    </div>
+                    <div class="flex items-baseline gap-1 mb-1.5">
+                        <span id="val-indicacoes" class="text-xl font-bold parceiro-value leading-none">--</span>
+                        <span class="text-gray-500 text-xs">/ <span id="meta-indicacoes">--</span></span>
+                    </div>
+                    <div class="progress-bar-bg rounded-full h-1 overflow-hidden">
+                        <div id="bar-indicacoes" class="progress-bar-fill h-full rounded-full" style="width:0%;background:linear-gradient(90deg,#22d3ee,#0ea5e9);box-shadow:0 0 8px rgba(34,211,238,0.4);"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ BANNER ══ -->
+            <div class="glass-card rounded-xl p-4 text-center relative overflow-hidden group cursor-pointer hover:border-cyan-500/30 transition-all duration-300 bg-gradient-to-r from-cyan-900/20 to-blue-900/20">
+                <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div class="relative z-10 flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5 text-cyan-400 animate-pulse-slow" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/>
+                    </svg>
+                    <p class="text-base font-semibold text-cyan-400">Cada lead qualificado é uma venda mais perto de acontecer. Bora transformar pipeline em resultado!</p>
+                </div>
+            </div>
+
         </div>
-
-        <!-- ══ COL 2: CONVERSÕES + OUTBOUND ══ -->
-        <div class="col">
-            <div class="sec-label">📊 Conversões</div>
-
-            <div class="card card-flat">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <div><div class="ttl">Lead → Qualificado</div>
-                        <div style="display:flex;align-items:baseline;gap:4px;margin-top:3px;">
-                            <span class="val-lg"><span id="val-conv-lq">--%</span></span>
-                            <span class="meta-txt">/ <span id="meta-conv-lq">--</span>%</span>
-                        </div>
-                    </div>
-                    <div class="pct-r" style="text-align:right;">
-                        <div class="big" id="pct-conv-lq">--%</div>
-                        <div class="lbl">da meta</div>
-                    </div>
-                </div>
-                <div class="pbar-bg"><div id="bar-conv-lq" class="pbar" style="width:0%;background:linear-gradient(90deg,#4ade80,#22d3ee);"></div></div>
-            </div>
-
-            <div class="card card-flat">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <div><div class="ttl">Qualificado → Venda</div>
-                        <div style="display:flex;align-items:baseline;gap:4px;margin-top:3px;">
-                            <span class="val-lg"><span id="val-conv-qv">--%</span></span>
-                            <span class="meta-txt">/ <span id="meta-conv-qv">--</span>%</span>
-                        </div>
-                    </div>
-                    <div class="pct-r" style="text-align:right;">
-                        <div class="big" id="pct-conv-qv">--%</div>
-                        <div class="lbl">da meta</div>
-                    </div>
-                </div>
-                <div class="pbar-bg"><div id="bar-conv-qv" class="pbar" style="width:0%;background:linear-gradient(90deg,#60a5fa,#22d3ee);"></div></div>
-            </div>
-
-            <div class="card card-flat">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <div><div class="ttl">Vendas Realizadas</div>
-                        <div style="display:flex;align-items:baseline;gap:4px;margin-top:3px;">
-                            <span class="val-lg"><span id="val-vendas">--</span></span>
-                            <span class="meta-txt">/ <span id="meta-vendas">--</span></span>
-                        </div>
-                    </div>
-                    <div class="pct-r" style="text-align:right;">
-                        <div class="big" id="pct-vendas">--%</div>
-                        <div class="lbl">da meta</div>
-                    </div>
-                </div>
-                <div class="pbar-bg"><div id="bar-vendas" class="pbar" style="width:0%;background:linear-gradient(90deg,#fb923c,#facc15);"></div></div>
-            </div>
-
-            <div class="sec-label" style="margin-top:clamp(2px,.4vh,6px);">📤 Outbound</div>
-
-            <div class="card card-flat">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <div><div class="ttl">Agendas Outbound</div>
-                        <div style="display:flex;align-items:baseline;gap:4px;margin-top:3px;">
-                            <span class="val-lg"><span id="val-agendas-out">--</span></span>
-                            <span class="meta-txt">/ <span id="meta-agendas-out">--</span></span>
-                        </div>
-                    </div>
-                    <div class="pct-r" style="text-align:right;">
-                        <div class="big" id="pct-agendas-out">--%</div>
-                        <div class="lbl">da meta</div>
-                    </div>
-                </div>
-                <div class="pbar-bg"><div id="bar-agendas-out" class="pbar" style="width:0%;background:linear-gradient(90deg,#fb923c,#fbbf24);"></div></div>
-            </div>
-
-            <div class="card card-flat">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <div><div class="ttl">Qualificações Outbound</div>
-                        <div style="display:flex;align-items:baseline;gap:4px;margin-top:3px;">
-                            <span class="val-lg"><span id="val-quals-out">--</span></span>
-                            <span class="meta-txt">/ <span id="meta-quals-out">--</span></span>
-                        </div>
-                    </div>
-                    <div class="pct-r" style="text-align:right;">
-                        <div class="big" id="pct-quals-out">--%</div>
-                        <div class="lbl">da meta</div>
-                    </div>
-                </div>
-                <div class="pbar-bg"><div id="bar-quals-out" class="pbar" style="width:0%;background:linear-gradient(90deg,#60a5fa,#818cf8);"></div></div>
-            </div>
-
-            <div class="card card-flat">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <div><div class="ttl">Vendas Outbound</div>
-                        <div style="display:flex;align-items:baseline;gap:4px;margin-top:3px;">
-                            <span class="val-lg"><span id="val-vendas-out">--</span></span>
-                            <span class="meta-txt">/ <span id="meta-vendas-out">--</span></span>
-                        </div>
-                    </div>
-                    <div class="pct-r" style="text-align:right;">
-                        <div class="big" id="pct-vendas-out">--%</div>
-                        <div class="lbl">da meta</div>
-                    </div>
-                </div>
-                <div class="pbar-bg"><div id="bar-vendas-out" class="pbar" style="width:0%;background:linear-gradient(90deg,#c084fc,#f472b6);"></div></div>
-            </div>
-        </div>
-
-        <!-- ══ COL 3: YOU PARCEIRO ══ -->
-        <div class="col">
-            <div class="sec-label">🤝 You Parceiro</div>
-
-            <div class="card card-parceiro">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                    <div class="ttl">Apresentações</div>
-                    <div class="pct-r" style="text-align:right;"><div class="big" id="pct-apres">--%</div><div class="lbl">da meta</div></div>
-                </div>
-                <div style="display:flex;align-items:baseline;gap:6px;">
-                    <span class="val-xl" id="val-apres">--</span>
-                    <span class="meta-txt">/ <span id="meta-apres">--</span></span>
-                </div>
-                <div class="pbar-bg"><div id="bar-apres" class="pbar" style="width:0%;background:linear-gradient(90deg,#22d3ee,#0ea5e9);box-shadow:0 0 8px rgba(34,211,238,.35);"></div></div>
-            </div>
-
-            <div class="card card-parceiro">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                    <div class="ttl">Contratos</div>
-                    <div class="pct-r" style="text-align:right;"><div class="big" id="pct-contratos">--%</div><div class="lbl">da meta</div></div>
-                </div>
-                <div style="display:flex;align-items:baseline;gap:6px;">
-                    <span class="val-xl" id="val-contratos">--</span>
-                    <span class="meta-txt">/ <span id="meta-contratos">--</span></span>
-                </div>
-                <div class="pbar-bg"><div id="bar-contratos" class="pbar" style="width:0%;background:linear-gradient(90deg,#22d3ee,#0ea5e9);box-shadow:0 0 8px rgba(34,211,238,.35);"></div></div>
-            </div>
-
-            <div class="card card-parceiro">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                    <div class="ttl">Indicações</div>
-                    <div class="pct-r" style="text-align:right;"><div class="big" id="pct-indicacoes">--%</div><div class="lbl">da meta</div></div>
-                </div>
-                <div style="display:flex;align-items:baseline;gap:6px;">
-                    <span class="val-xl" id="val-indicacoes">--</span>
-                    <span class="meta-txt">/ <span id="meta-indicacoes">--</span></span>
-                </div>
-                <div class="pbar-bg"><div id="bar-indicacoes" class="pbar" style="width:0%;background:linear-gradient(90deg,#22d3ee,#0ea5e9);box-shadow:0 0 8px rgba(34,211,238,.35);"></div></div>
-            </div>
-        </div>
-
-    </div><!-- /main-grid -->
-
-    <!-- BANNER -->
-    <div id="banner">
-        <svg class="pulse" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/>
-        </svg>
-        <p>Cada lead qualificado é uma venda mais perto de acontecer. Bora transformar pipeline em resultado!</p>
     </div>
 
-</div>
+    <div id="last-update">Atualizando...</div>
+    <div id="error-banner">⚠ Erro ao carregar dados. Tentando novamente...</div>
 
-<div id="lu">Atualizando...</div>
-<div id="eb">⚠ Erro ao carregar dados. Tentando novamente...</div>
+    <script>
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby0z8bATH-bki-RIbqsT6BaZDwTlCq0WWeTwnrf_5KmsBjr8Ifoz5jS3nu69WXuVIRdhw/exec';
+        const INTERVALO_ATUALIZACAO_MS = 60 * 1000;
 
-<script>
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby0z8bATH-bki-RIbqsT6BaZDwTlCq0WWeTwnrf_5KmsBjr8Ifoz5jS3nu69WXuVIRdhw/exec';
-    const INTERVALO_MS = 60 * 1000;
-
-    document.addEventListener('DOMContentLoaded', () => {
-        initCharts();
-        buscarDados();
-        setInterval(buscarDados, INTERVALO_MS);
-    });
-
-    async function buscarDados() {
-        try {
-            const resp = await fetch(APPS_SCRIPT_URL + '?aba=prevendas&nocache=' + Date.now());
-            if (!resp.ok) throw new Error('HTTP ' + resp.status);
-            const d = await resp.json();
-            if (d.erro) throw new Error(d.erro);
-            render(d);
-            document.getElementById('eb').style.display = 'none';
-            document.getElementById('lu').textContent =
-                'Atualizado às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-        } catch(err) {
-            console.error(err);
-            document.getElementById('eb').style.display = 'block';
-        } finally {
-            const o = document.getElementById('lo');
-            o.style.opacity = '0';
-            setTimeout(() => o.style.display = 'none', 500);
-        }
-    }
-
-    function render(d) {
-        setRing('circle-leads',     'pct-leads',     'val-leads',     'meta-leads',     'leads-variacao',     d.leads_valor,      d.leads_meta,      d.leads_variacao);
-        setRing('circle-agendas-in','pct-agendas-in','val-agendas-in','meta-agendas-in','agendas-in-variacao',d.agendas_in_valor,  d.agendas_in_meta,  d.agendas_in_variacao);
-        setRing('circle-leads-qual','pct-leads-qual','val-leads-qual','meta-leads-qual','leads-qual-variacao',d.leads_qual_valor,  d.leads_qual_meta,  d.leads_qual_variacao);
-        setBarPct('val-conv-lq','meta-conv-lq','pct-conv-lq','bar-conv-lq', d.conv_lq_valor, d.conv_lq_meta);
-        setBarPct('val-conv-qv','meta-conv-qv','pct-conv-qv','bar-conv-qv', d.conv_qv_valor, d.conv_qv_meta);
-        setBar('val-vendas',    'meta-vendas',  'pct-vendas',  'bar-vendas',  d.vendas_valor,  d.vendas_meta);
-        setBar('val-agendas-out','meta-agendas-out','pct-agendas-out','bar-agendas-out',d.agendas_out_valor,d.agendas_out_meta);
-        setBar('val-quals-out',  'meta-quals-out',  'pct-quals-out',  'bar-quals-out', d.quals_out_valor,  d.quals_out_meta);
-        setBar('val-vendas-out', 'meta-vendas-out', 'pct-vendas-out', 'bar-vendas-out',d.vendas_out_valor, d.vendas_out_meta);
-        setBar('val-apres',     'meta-apres',     'pct-apres',     'bar-apres',     d.apres_valor,     d.apres_meta);
-        setBar('val-contratos', 'meta-contratos', 'pct-contratos', 'bar-contratos', d.contratos_valor, d.contratos_meta);
-        setBar('val-indicacoes','meta-indicacoes','pct-indicacoes','bar-indicacoes',d.indicacoes_valor,d.indicacoes_meta);
-    }
-
-    function p(v,m){ return Math.min(Math.round((parseFloat(v)||0)/(parseFloat(m)||1)*100),100); }
-
-    function setRing(cId,pctId,vId,mId,varId,v,m,vr){
-        const pc=p(v,m);
-        document.getElementById(vId).textContent=v??'--';
-        document.getElementById(mId).textContent=m??'--';
-        if(varId) document.getElementById(varId).textContent=vr??'-';
-        document.getElementById(pctId).textContent=pc+'%';
-        document.getElementById(cId).style.strokeDashoffset=125.7-(125.7*pc/100);
-    }
-    function setBar(vId,mId,pctId,bId,v,m){
-        const pc=p(v,m);
-        document.getElementById(vId).textContent=v??'--';
-        document.getElementById(mId).textContent=m??'--';
-        document.getElementById(pctId).textContent=pc+'%';
-        document.getElementById(bId).style.width=pc+'%';
-    }
-    function setBarPct(vId,mId,pctId,bId,v,m){
-        const vf=parseFloat(v)||0, mf=parseFloat(m)||1;
-        const pc=Math.min(Math.round((vf/mf)*100),100);
-        document.getElementById(vId).textContent=vf.toFixed(2)+'%';
-        document.getElementById(mId).textContent=mf.toFixed(0);
-        document.getElementById(pctId).textContent=pc+'%';
-        document.getElementById(bId).style.width=pc+'%';
-    }
-
-    function initCharts(){
-        const o=()=>({
-            responsive:true,maintainAspectRatio:false,
-            plugins:{legend:{display:false},tooltip:{enabled:false}},
-            scales:{x:{display:false},y:{display:false,min:0,max:50}},
-            elements:{point:{radius:0},line:{tension:0.4,borderWidth:2}}
+        document.addEventListener('DOMContentLoaded', function() {
+            initCharts();
+            buscarDados();
+            setInterval(buscarDados, INTERVALO_ATUALIZACAO_MS);
         });
-        const g=(ctx,c1,c2)=>{const gr=ctx.createLinearGradient(0,0,0,45);gr.addColorStop(0,c1);gr.addColorStop(1,c2);return gr;};
-        const c1=document.getElementById('chart1').getContext('2d');
-        new Chart(c1,{type:'line',data:{labels:Array(10).fill(''),datasets:[{data:[5,10,18,22,28,33,38,42,46,48],borderColor:'#4ade80',backgroundColor:g(c1,'rgba(74,222,128,.35)','rgba(74,222,128,0)'),fill:true}]},options:o()});
-        const c2=document.getElementById('chart2').getContext('2d');
-        new Chart(c2,{type:'line',data:{labels:Array(10).fill(''),datasets:[{data:[8,12,15,20,24,29,33,37,41,45],borderColor:'#60a5fa',backgroundColor:g(c2,'rgba(96,165,250,.35)','rgba(96,165,250,0)'),fill:true}]},options:o()});
-        const c3=document.getElementById('chart3').getContext('2d');
-        new Chart(c3,{type:'line',data:{labels:Array(10).fill(''),datasets:[{data:[10,14,20,25,30,34,38,42,45,48],borderColor:'#c084fc',backgroundColor:g(c3,'rgba(192,132,252,.35)','rgba(192,132,252,0)'),fill:true}]},options:o()});
-    }
-</script>
+
+        async function buscarDados() {
+            try {
+                const resp = await fetch(APPS_SCRIPT_URL + '?aba=prevendas&nocache=' + Date.now());
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                const d = await resp.json();
+                if (d.erro) throw new Error(d.erro);
+                renderizar(d);
+                document.getElementById('error-banner').style.display = 'none';
+                document.getElementById('last-update').textContent =
+                    'Atualizado às ' + new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+            } catch(err) {
+                console.error(err);
+                document.getElementById('error-banner').style.display = 'block';
+            } finally {
+                const o = document.getElementById('loading-overlay');
+                o.style.opacity = '0';
+                setTimeout(() => o.style.display = 'none', 500);
+            }
+        }
+
+        function renderizar(d) {
+            // INBOUND — rings
+            setRing('circle-leads',    'pct-leads',    'val-leads',    'meta-leads',    'leads-variacao',    d.leads_valor,     d.leads_meta,     d.leads_variacao);
+            setRing('circle-agendas',  'pct-agendas',  'val-agendas',  'meta-agendas',  'agendas-variacao',  d.agendas_in_valor,d.agendas_in_meta,d.agendas_in_variacao);
+            setRing('circle-leadsqual','pct-leadsqual','val-leadsqual','meta-leadsqual','leadsqual-variacao',d.leads_qual_valor,d.leads_qual_meta,d.leads_qual_variacao);
+
+            // CONVERSÕES — pipeline style
+            setBarPct('val-conv-lq','meta-conv-lq','pct-conv-lq','bar-conv-lq', d.conv_lq_valor, d.conv_lq_meta);
+            setBarPct('val-conv-qv','meta-conv-qv','pct-conv-qv','bar-conv-qv', d.conv_qv_valor, d.conv_qv_meta);
+            setBar('val-vendas',    'meta-vendas',  'pct-vendas',  'bar-vendas',  d.vendas_valor,  d.vendas_meta);
+
+            // OUTBOUND — pequenos
+            setBar('val-agendas-out','meta-agendas-out','pct-agendas-out','bar-agendas-out',d.agendas_out_valor,d.agendas_out_meta);
+            setBar('val-quals-out',  'meta-quals-out',  'pct-quals-out',  'bar-quals-out', d.quals_out_valor,  d.quals_out_meta);
+            setBar('val-vendas-out', 'meta-vendas-out', 'pct-vendas-out', 'bar-vendas-out',d.vendas_out_valor, d.vendas_out_meta);
+
+            // YOU PARCEIRO — pequenos
+            setBar('val-apres',     'meta-apres',     'pct-apres',     'bar-apres',     d.apres_valor,     d.apres_meta);
+            setBar('val-contratos', 'meta-contratos', 'pct-contratos', 'bar-contratos', d.contratos_valor, d.contratos_meta);
+            setBar('val-indicacoes','meta-indicacoes','pct-indicacoes','bar-indicacoes',d.indicacoes_valor,d.indicacoes_meta);
+        }
+
+        function pct(v, m) { return Math.min(Math.round((parseFloat(v)||0) / (parseFloat(m)||1) * 100), 100); }
+
+        function setRing(cId, pId, vId, mId, vrId, v, m, vr) {
+            const p = pct(v, m);
+            document.getElementById(vId).textContent = v ?? '--';
+            document.getElementById(mId).textContent = m ?? '--';
+            if (vrId) document.getElementById(vrId).textContent = vr ?? '-';
+            document.getElementById(pId).textContent = p + '%';
+            document.getElementById(cId).style.strokeDashoffset = 125.7 - (125.7 * p / 100);
+        }
+
+        function setBar(vId, mId, pId, bId, v, m) {
+            const p = pct(v, m);
+            document.getElementById(vId).textContent = v ?? '--';
+            document.getElementById(mId).textContent = m ?? '--';
+            document.getElementById(pId).textContent = p + '%';
+            document.getElementById(bId).style.width = p + '%';
+        }
+
+        function setBarPct(vId, mId, pId, bId, v, m) {
+            const vf = parseFloat(v)||0, mf = parseFloat(m)||1;
+            const p = Math.min(Math.round(vf/mf*100), 100);
+            document.getElementById(vId).textContent = vf.toFixed(2) + '%';
+            document.getElementById(mId).textContent = mf.toFixed(0);
+            document.getElementById(pId).textContent = p + '%';
+            document.getElementById(bId).style.width = p + '%';
+        }
+
+        function initCharts() {
+            const opts = {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend:{display:false}, tooltip:{enabled:false} },
+                scales: { x:{display:false}, y:{display:false, min:0, max:50} },
+                elements: { point:{radius:0}, line:{tension:0.4, borderWidth:2} }
+            };
+            const grad = (ctx, c1, c2) => {
+                const g = ctx.createLinearGradient(0,0,0,45);
+                g.addColorStop(0,c1); g.addColorStop(1,c2); return g;
+            };
+            const c1 = document.getElementById('chart1').getContext('2d');
+            new Chart(c1, {type:'line', data:{labels:Array(10).fill(''), datasets:[{data:[5,10,18,22,28,33,38,42,46,48], borderColor:'#4ade80', backgroundColor:grad(c1,'rgba(74,222,128,0.4)','rgba(74,222,128,0)'), fill:true}]}, options:opts});
+            const c2 = document.getElementById('chart2').getContext('2d');
+            new Chart(c2, {type:'line', data:{labels:Array(10).fill(''), datasets:[{data:[8,12,15,20,24,29,33,37,41,45], borderColor:'#60a5fa', backgroundColor:grad(c2,'rgba(96,165,250,0.4)','rgba(96,165,250,0)'), fill:true}]}, options:opts});
+            const c3 = document.getElementById('chart3').getContext('2d');
+            new Chart(c3, {type:'line', data:{labels:Array(10).fill(''), datasets:[{data:[10,14,20,25,30,34,38,42,45,48], borderColor:'#c084fc', backgroundColor:grad(c3,'rgba(192,132,252,0.4)','rgba(192,132,252,0)'), fill:true}]}, options:opts});
+        }
+    </script>
 </body>
 </html>
