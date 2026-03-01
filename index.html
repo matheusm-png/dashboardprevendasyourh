@@ -12,40 +12,60 @@
         .glass-card { background: rgba(20, 25, 40, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .circular-progress { transform: rotate(-90deg); transform-origin: 50% 50%; }
         .progress-ring-circle { transition: stroke-dashoffset 1s ease-in-out; }
-        .metric-card { background: linear-gradient(145deg, rgba(20, 30, 48, 0.8) 0%, rgba(10, 14, 26, 0.9) 100%); border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.3s ease; }
-        .metric-card:hover { transform: translateY(-2px); border-color: rgba(74, 222, 128, 0.2); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); }
-        .secondary-card { background: linear-gradient(145deg, rgba(15, 20, 35, 0.8) 0%, rgba(8, 11, 22, 0.9) 100%); border: 1px solid rgba(255, 255, 255, 0.04); transition: all 0.3s ease; }
-        .secondary-card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
-        .parceiro-card { background: linear-gradient(145deg, rgba(10, 20, 35, 0.85) 0%, rgba(5, 10, 20, 0.95) 100%); border: 1px solid rgba(6, 182, 212, 0.12); transition: all 0.3s ease; }
-        .parceiro-card:hover { transform: translateY(-2px); border-color: rgba(6, 182, 212, 0.3); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
-        .badge-green { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
-        .badge-blue  { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
-        .badge-purple{ background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
-        .badge-cyan  { background: rgba(6, 182, 212, 0.15);  color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3); }
-        .progress-bar-bg   { background: rgba(255, 255, 255, 0.05); }
-        .progress-bar-fill { transition: width 1s ease-out; box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); }
-        .parceiro-value { background: linear-gradient(135deg, #22d3ee 0%, #0ea5e9 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        @keyframes pulse-glow { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-        .animate-pulse-slow { animation: pulse-glow 3s infinite; }
-        /* MINI CHARTS — apenas nos cards principais */
+
+        /* ── CARD PADRÃO (igual ao de vendas) ── */
+        .metric-card {
+            background: linear-gradient(145deg, rgba(20, 30, 48, 0.8) 0%, rgba(10, 14, 26, 0.9) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover { transform: translateY(-2px); border-color: rgba(168, 85, 247, 0.2); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+
+        /* ── CARD DESTAQUE OURO (Vendas Realizadas) ── */
+        .metric-card-gold {
+            background: linear-gradient(145deg, rgba(30, 20, 5, 0.9) 0%, rgba(15, 10, 2, 0.95) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            transition: all 0.3s ease;
+        }
+        .metric-card-gold:hover { transform: translateY(-2px); border-color: rgba(245, 158, 11, 0.35); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+
+        /* ── CARDS INBOUND (verde escuro) ── */
+        .inbound-card {
+            background: linear-gradient(145deg, rgba(4, 14, 8, 0.85) 0%, rgba(2, 8, 4, 0.92) 100%);
+            border: 1px solid rgba(74, 222, 128, 0.1);
+            transition: all 0.3s ease;
+        }
+        .inbound-card:hover { transform: translateY(-2px); border-color: rgba(74, 222, 128, 0.25); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+
+        /* ── BADGES (iguais ao de vendas) ── */
+        .badge-green  { background: rgba(34, 197, 94, 0.15);  color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .badge-blue   { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+        .badge-gold   { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+        .progress-bar-bg  { background: rgba(255, 255, 255, 0.05); }
+        .progress-bar-fill { transition: width 1s ease-out; box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+
+        /* ── GRÁFICO MINI — EXATAMENTE 45px COMO NO DE VENDAS ── */
         .chart-container { position: relative; height: 45px; overflow: hidden; }
         .mini-chart { position: absolute; bottom: 0; left: 0; right: 0; }
 
+        /* ── SEÇÕES BOTTOM (outbound/parceiro) ── */
+        .bottom-card-out { background: linear-gradient(145deg, rgba(20, 12, 4, 0.8) 0%, rgba(10, 6, 2, 0.9) 100%); border: 1px solid rgba(251, 146, 60, 0.12); }
+        .bottom-card-par { background: linear-gradient(145deg, rgba(4, 12, 20, 0.8) 0%, rgba(2, 6, 12, 0.9) 100%); border: 1px solid rgba(6, 182, 212, 0.15); }
+
+        /* ── LOADING ── */
         #loading-overlay {
             position: fixed; inset: 0; background: #0a0e1a;
             display: flex; align-items: center; justify-content: center;
             z-index: 100; transition: opacity 0.5s;
         }
-        .loading-spinner {
-            width: 40px; height: 40px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: #61de75;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
+        .loading-spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #4ade80; border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
+
         #last-update { position: fixed; bottom: 12px; right: 16px; font-size: 11px; color: rgba(255,255,255,0.3); }
         #error-banner { display: none; position: fixed; bottom: 12px; left: 16px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #f87171; font-size: 11px; padding: 6px 12px; border-radius: 8px; }
+        .section-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
     </style>
 </head>
 <body class="min-h-screen text-white">
@@ -57,18 +77,21 @@
         </div>
     </div>
 
-    <div id="dashboard-area" class="p-4">
-        <div class="max-w-6xl mx-auto">
+    <div id="dashboard-area" class="p-4 px-6">
+        <div>
 
-            <!-- ══ HEADER — idêntico ao de Vendas ══ -->
-            <div class="relative flex items-center justify-between mb-6 rounded-2xl overflow-hidden px-8 py-5" style="background: linear-gradient(135deg, #050a05 0%, #0a1a0a 60%, #0a0e1a 100%); border: 1px solid rgba(97,222,117,0.2); min-height: 110px;">
+            <!-- ══════════════════════════════════════
+                 HEADER — cópia fiel do de vendas
+            ══════════════════════════════════════ -->
+            <div class="relative flex items-center justify-between mb-6 rounded-2xl overflow-hidden px-8 py-5"
+                 style="background: linear-gradient(135deg, #050a05 0%, #0a1a0a 60%, #0a0e1a 100%); border: 1px solid rgba(97,222,117,0.2); min-height: 110px;">
                 <div style="position:absolute;top:-60px;left:-60px;width:400px;height:260px;background:radial-gradient(ellipse,rgba(97,222,117,0.1) 0%,transparent 70%);pointer-events:none;"></div>
                 <div style="position:absolute;right:20px;top:-30px;opacity:0.08;transform:scale(3.5);transform-origin:right top;pointer-events:none;">
                     <svg width="66" height="44" viewBox="0 0 66 44"><path d="M47.548,4.818v6.26l8.04-.435c-14.822,16-20.871,22.77-27.435,22.77-5.238,0-7.686-3.36-8.757-7.021,14.412-.5,19.342-9.319,19.342-14.846C38.738,6.092,35.533,0,26.72,0,17.191,0,12.512,9.451,11.881,18.583a8.806,8.806,0,0,1-5.065-8.314,17.589,17.589,0,0,1,1.3-6.724C6.529,2.918,1.7,1.282,1.7,1.282A30.663,30.663,0,0,0,0,10.628,15.478,15.478,0,0,0,12.252,25.76c1.725,9.229,8.252,14.106,15.9,14.106,9.9,0,16.675-8.377,32.28-24.966l-.5,8.56h6.26V4.818H47.548ZM26.6,6.975a4.651,4.651,0,0,1,5.048,4.967c0,3.827-4.487,8.147-12.371,8.147-.211,0-.419,0-.625-.009C18.81,12.6,21.721,6.975,26.6,6.975" fill="#61de75"/></svg>
                 </div>
                 <div class="relative z-10">
                     <h1 style="font-size:2.8rem;font-weight:900;line-height:1;background:linear-gradient(90deg,#61de75 0%,#a8f5b4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px;">Dashboard Pré Vendas</h1>
-                    <p style="color:rgba(255,255,255,0.4);font-size:0.85rem;margin-top:6px;letter-spacing:0.2px;">Acompanhamento em tempo real</p>
+                    <p style="color:rgba(255,255,255,0.4);font-size:0.85rem;margin-top:6px;">Acompanhamento em tempo real</p>
                 </div>
                 <div class="relative z-10 flex items-center gap-4">
                     <svg width="50" height="43" viewBox="0 0 66 44"><path d="M47.548,4.818v6.26l8.04-.435c-14.822,16-20.871,22.77-27.435,22.77-5.238,0-7.686-3.36-8.757-7.021,14.412-.5,19.342-9.319,19.342-14.846C38.738,6.092,35.533,0,26.72,0,17.191,0,12.512,9.451,11.881,18.583a8.806,8.806,0,0,1-5.065-8.314,17.589,17.589,0,0,1,1.3-6.724C6.529,2.918,1.7,1.282,1.7,1.282A30.663,30.663,0,0,0,0,10.628,15.478,15.478,0,0,0,12.252,25.76c1.725,9.229,8.252,14.106,15.9,14.106,9.9,0,16.675-8.377,32.28-24.966l-.5,8.56h6.26V4.818H47.548ZM26.6,6.975a4.651,4.651,0,0,1,5.048,4.967c0,3.827-4.487,8.147-12.371,8.147-.211,0-.419,0-.625-.009C18.81,12.6,21.721,6.975,26.6,6.975" fill="#61de75"/></svg>
@@ -82,27 +105,197 @@
                 </div>
             </div>
 
-            <!-- ══ LINHA 1: INBOUND — 3 cards grandes com ring + mini-chart (igual métricas do Vendas) ══ -->
+            <!-- ══════════════════════════════════════
+                 SEÇÃO 1 — RESULTADOS DO TIME
+                 3 cards protagonistas (mesmo layout dos
+                 main cards do dashboard de vendas)
+            ══════════════════════════════════════ -->
+            <div class="flex items-center gap-3 mb-3">
+                <span class="section-label text-purple-400/80">🏢 Pré Vendas — Resultados do Time</span>
+                <div class="flex-1 h-px" style="background:rgba(168,85,247,0.2)"></div>
+            </div>
+            <div class="grid grid-cols-3 gap-4 mb-4">
+
+                <!-- Reunião Qualificada -->
+                <div class="metric-card rounded-xl p-4 relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            </div>
+                            <span class="badge-purple px-2 py-0.5 rounded-full text-xs font-medium">Time total</span>
+                        </div>
+                        <div class="relative w-12 h-12">
+                            <svg class="w-12 h-12 circular-progress">
+                                <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"></circle>
+                                <circle id="circle-reuniao" cx="24" cy="24" r="20" stroke="#c084fc" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" stroke-linecap="round" class="progress-ring-circle"></circle>
+                            </svg>
+                            <span id="pct-reuniao" class="absolute inset-0 flex items-center justify-center text-sm font-bold">--%</span>
+                        </div>
+                    </div>
+                    <div class="mb-1">
+                        <h3 class="text-gray-300 font-medium text-sm leading-tight">Reunião Qualificada</h3>
+                        <p class="text-gray-500 text-xs leading-tight">Total do time</p>
+                    </div>
+                    <div class="flex items-baseline gap-1 mb-1">
+                        <span id="val-reuniao" class="text-3xl font-bold text-white leading-none">--</span>
+                        <span class="text-gray-500 text-sm">/ <span id="meta-reuniao">--</span></span>
+                    </div>
+                    <div class="chart-container"><canvas id="chart-reuniao" class="mini-chart"></canvas></div>
+                </div>
+
+                <!-- Agendamento -->
+                <div class="metric-card rounded-xl p-4 relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            </div>
+                            <span class="badge-blue px-2 py-0.5 rounded-full text-xs font-medium">Time total</span>
+                        </div>
+                        <div class="relative w-12 h-12">
+                            <svg class="w-12 h-12 circular-progress">
+                                <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"></circle>
+                                <circle id="circle-agend" cx="24" cy="24" r="20" stroke="#60a5fa" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" stroke-linecap="round" class="progress-ring-circle"></circle>
+                            </svg>
+                            <span id="pct-agend" class="absolute inset-0 flex items-center justify-center text-sm font-bold">--%</span>
+                        </div>
+                    </div>
+                    <div class="mb-1">
+                        <h3 class="text-gray-300 font-medium text-sm leading-tight">Agendamento</h3>
+                        <p class="text-gray-500 text-xs leading-tight">Total do time</p>
+                    </div>
+                    <div class="flex items-baseline gap-1 mb-1">
+                        <span id="val-agend" class="text-3xl font-bold text-white leading-none">--</span>
+                        <span class="text-gray-500 text-sm">/ <span id="meta-agend">--</span></span>
+                    </div>
+                    <div class="chart-container"><canvas id="chart-agend" class="mini-chart"></canvas></div>
+                </div>
+
+                <!-- Vendas Realizadas -->
+                <div class="metric-card-gold rounded-xl p-4 relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-yellow-500/20 flex items-center justify-center">
+                                <span class="text-base">🏆</span>
+                            </div>
+                            <span class="badge-gold px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1">+<span id="vendas-variacao">-</span></span>
+                        </div>
+                        <div class="relative w-12 h-12">
+                            <svg class="w-12 h-12 circular-progress">
+                                <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"></circle>
+                                <circle id="circle-vendas" cx="24" cy="24" r="20" stroke="#f59e0b" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" stroke-linecap="round" class="progress-ring-circle"></circle>
+                            </svg>
+                            <span id="pct-vendas" class="absolute inset-0 flex items-center justify-center text-sm font-bold">--%</span>
+                        </div>
+                    </div>
+                    <div class="mb-1">
+                        <h3 class="text-gray-300 font-medium text-sm leading-tight">Vendas Realizadas</h3>
+                        <p class="text-gray-500 text-xs leading-tight">Total do time</p>
+                    </div>
+                    <div class="flex items-baseline gap-1 mb-1">
+                        <span id="val-vendas" class="text-3xl font-bold leading-none" style="background:linear-gradient(135deg,#fcd34d,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">--</span>
+                        <span class="text-gray-500 text-sm">/ <span id="meta-vendas">--</span></span>
+                    </div>
+                    <div class="chart-container"><canvas id="chart-vendas" class="mini-chart"></canvas></div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════
+                 SEÇÃO 2 — TAXAS DE CONVERSÃO
+                 (equivalente ao "Progress Bars Section"
+                 do de vendas: glass-card compactos)
+            ══════════════════════════════════════ -->
+            <div class="flex items-center gap-3 mb-3">
+                <span class="section-label text-purple-300/60">📊 Taxas de Conversão</span>
+                <div class="flex-1 h-px" style="background:rgba(168,85,247,0.1)"></div>
+            </div>
+            <div class="grid grid-cols-3 gap-4 mb-4">
+
+                <div class="glass-card rounded-lg p-3">
+                    <div class="flex justify-between items-center mb-2">
+                        <div>
+                            <p class="text-gray-400 text-xs mb-0.5">Taxa Conv. Geral</p>
+                            <div class="flex items-baseline gap-1">
+                                <span id="val-cg" class="text-xl font-bold text-white leading-none">--%</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span id="pct-cg" class="text-lg font-bold text-purple-300 leading-none">--%</span>
+                            <p class="text-gray-500 text-xs">da meta</p>
+                        </div>
+                    </div>
+                    <div class="progress-bar-bg rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-cg" class="progress-bar-fill h-full bg-gradient-to-r from-purple-400 to-pink-400 rounded-full" style="width:0%"></div>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-lg p-3">
+                    <div class="flex justify-between items-center mb-2">
+                        <div>
+                            <p class="text-gray-400 text-xs mb-0.5">Lead → Qualificado</p>
+                            <div class="flex items-baseline gap-1">
+                                <span id="val-lq" class="text-xl font-bold text-white leading-none">--%</span>
+                                <span class="text-gray-500 text-xs">/ <span id="meta-lq">--</span>%</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span id="pct-lq" class="text-lg font-bold text-green-400 leading-none">--%</span>
+                            <p class="text-gray-500 text-xs">da meta</p>
+                        </div>
+                    </div>
+                    <div class="progress-bar-bg rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-lq" class="progress-bar-fill h-full bg-gradient-to-r from-green-400 to-cyan-400 rounded-full" style="width:0%"></div>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-lg p-3">
+                    <div class="flex justify-between items-center mb-2">
+                        <div>
+                            <p class="text-gray-400 text-xs mb-0.5">Qualificado → Venda</p>
+                            <div class="flex items-baseline gap-1">
+                                <span id="val-qv" class="text-xl font-bold text-white leading-none">--%</span>
+                                <span class="text-gray-500 text-xs">/ <span id="meta-qv">--</span>%</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span id="pct-qv" class="text-lg font-bold text-blue-400 leading-none">--%</span>
+                            <p class="text-gray-500 text-xs">da meta</p>
+                        </div>
+                    </div>
+                    <div class="progress-bar-bg rounded-full h-1.5 overflow-hidden">
+                        <div id="bar-qv" class="progress-bar-fill h-full bg-gradient-to-r from-blue-400 to-purple-400 rounded-full" style="width:0%"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ══════════════════════════════════════
+                 SEÇÃO 3 — INBOUND
+                 (mesmo padrão dos main cards, mas com
+                 cor verde — gráficos 45px idênticos)
+            ══════════════════════════════════════ -->
+            <div class="flex items-center gap-3 mb-3">
+                <span class="section-label text-emerald-400/70">📥 Inbound</span>
+                <div class="flex-1 h-px" style="background:rgba(74,222,128,0.15)"></div>
+            </div>
             <div class="grid grid-cols-3 gap-4 mb-4">
 
                 <!-- Leads Captados -->
-                <div class="metric-card rounded-xl p-4 relative overflow-hidden">
+                <div class="inbound-card rounded-xl p-4 relative overflow-hidden">
                     <div class="flex justify-between items-start mb-2">
                         <div class="flex items-center gap-2">
                             <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
                                 <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                             </div>
-                            <span class="badge-green px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
-                                +<span id="leads-variacao">--</span>
-                            </span>
+                            <span class="badge-green px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1">↑ +<span id="vr-leads">--</span></span>
                         </div>
                         <div class="relative w-12 h-12">
                             <svg class="w-12 h-12 circular-progress">
-                                <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"/>
-                                <circle id="circle-leads" cx="24" cy="24" r="20" stroke="#4ade80" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" stroke-linecap="round" class="progress-ring-circle"/>
+                                <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"></circle>
+                                <circle id="circle-leads" cx="24" cy="24" r="20" stroke="#4ade80" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" stroke-linecap="round" class="progress-ring-circle"></circle>
                             </svg>
-                            <span id="pct-leads" class="absolute inset-0 flex items-center justify-center text-xs font-bold">--%</span>
+                            <span id="pct-leads" class="absolute inset-0 flex items-center justify-center text-sm font-bold">--%</span>
                         </div>
                     </div>
                     <div class="mb-1">
@@ -111,29 +304,26 @@
                     </div>
                     <div class="flex items-baseline gap-1 mb-1">
                         <span id="val-leads" class="text-3xl font-bold text-white leading-none">--</span>
-                        <span class="text-gray-500 text-xs">/ <span id="meta-leads">--</span></span>
+                        <span class="text-gray-500 text-sm">/ <span id="meta-leads">--</span></span>
                     </div>
-                    <div class="chart-container"><canvas id="chart1" class="mini-chart"></canvas></div>
+                    <div class="chart-container"><canvas id="chart-leads" class="mini-chart"></canvas></div>
                 </div>
 
                 <!-- Agendas Realizadas -->
-                <div class="metric-card rounded-xl p-4 relative overflow-hidden">
+                <div class="inbound-card rounded-xl p-4 relative overflow-hidden">
                     <div class="flex justify-between items-start mb-2">
                         <div class="flex items-center gap-2">
                             <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
                                 <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                             </div>
-                            <span class="badge-blue px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
-                                +<span id="agendas-variacao">--</span>
-                            </span>
+                            <span class="badge-blue px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1">↑ +<span id="vr-agendas">--</span></span>
                         </div>
                         <div class="relative w-12 h-12">
                             <svg class="w-12 h-12 circular-progress">
-                                <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"/>
-                                <circle id="circle-agendas" cx="24" cy="24" r="20" stroke="#60a5fa" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" stroke-linecap="round" class="progress-ring-circle"/>
+                                <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"></circle>
+                                <circle id="circle-agendas-in" cx="24" cy="24" r="20" stroke="#60a5fa" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" stroke-linecap="round" class="progress-ring-circle"></circle>
                             </svg>
-                            <span id="pct-agendas" class="absolute inset-0 flex items-center justify-center text-xs font-bold">--%</span>
+                            <span id="pct-agendas-in" class="absolute inset-0 flex items-center justify-center text-sm font-bold">--%</span>
                         </div>
                     </div>
                     <div class="mb-1">
@@ -141,30 +331,27 @@
                         <p class="text-gray-500 text-xs leading-tight">Inbound</p>
                     </div>
                     <div class="flex items-baseline gap-1 mb-1">
-                        <span id="val-agendas" class="text-3xl font-bold text-white leading-none">--</span>
-                        <span class="text-gray-500 text-xs">/ <span id="meta-agendas">--</span></span>
+                        <span id="val-agendas-in" class="text-3xl font-bold text-white leading-none">--</span>
+                        <span class="text-gray-500 text-sm">/ <span id="meta-agendas-in">--</span></span>
                     </div>
-                    <div class="chart-container"><canvas id="chart2" class="mini-chart"></canvas></div>
+                    <div class="chart-container"><canvas id="chart-agendas-in" class="mini-chart"></canvas></div>
                 </div>
 
                 <!-- Leads Qualificados -->
-                <div class="metric-card rounded-xl p-4 relative overflow-hidden">
+                <div class="inbound-card rounded-xl p-4 relative overflow-hidden">
                     <div class="flex justify-between items-start mb-2">
                         <div class="flex items-center gap-2">
                             <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
                                 <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
                             </div>
-                            <span class="badge-purple px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
-                                +<span id="leadsqual-variacao">--</span>
-                            </span>
+                            <span class="badge-purple px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1">↑ +<span id="vr-lq">--</span></span>
                         </div>
                         <div class="relative w-12 h-12">
                             <svg class="w-12 h-12 circular-progress">
-                                <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"/>
-                                <circle id="circle-leadsqual" cx="24" cy="24" r="20" stroke="#c084fc" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" stroke-linecap="round" class="progress-ring-circle"/>
+                                <circle cx="24" cy="24" r="20" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"></circle>
+                                <circle id="circle-lq" cx="24" cy="24" r="20" stroke="#c084fc" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" stroke-linecap="round" class="progress-ring-circle"></circle>
                             </svg>
-                            <span id="pct-leadsqual" class="absolute inset-0 flex items-center justify-center text-xs font-bold">--%</span>
+                            <span id="pct-lq-in" class="absolute inset-0 flex items-center justify-center text-sm font-bold">--%</span>
                         </div>
                     </div>
                     <div class="mb-1">
@@ -172,184 +359,92 @@
                         <p class="text-gray-500 text-xs leading-tight">SQLs gerados</p>
                     </div>
                     <div class="flex items-baseline gap-1 mb-1">
-                        <span id="val-leadsqual" class="text-3xl font-bold text-white leading-none">--</span>
-                        <span class="text-gray-500 text-xs">/ <span id="meta-leadsqual">--</span></span>
+                        <span id="val-lq-in" class="text-3xl font-bold text-white leading-none">--</span>
+                        <span class="text-gray-500 text-sm">/ <span id="meta-lq-in">--</span></span>
                     </div>
-                    <div class="chart-container"><canvas id="chart3" class="mini-chart"></canvas></div>
+                    <div class="chart-container"><canvas id="chart-lq" class="mini-chart"></canvas></div>
                 </div>
             </div>
 
-            <!-- ══ LINHA 2: TAXAS DE CONVERSÃO — 3 cards médios (igual pipeline do Vendas) ══ -->
-            <div class="grid grid-cols-3 gap-4 mb-4">
+            <!-- ══════════════════════════════════════
+                 SEÇÃO 4 — OUTBOUND + YOU PARCEIRO
+                 (compacto — equivalente à barra inferior
+                 do de vendas, sem gráficos)
+            ══════════════════════════════════════ -->
+            <div class="grid grid-cols-2 gap-4">
 
-                <!-- Lead → Qualificado -->
-                <div class="secondary-card rounded-xl p-4">
-                    <div class="flex justify-between items-center mb-1">
-                        <div class="flex items-center gap-2">
-                            <span class="text-lg">🎯</span>
-                            <p class="text-gray-400 text-sm">Lead → Qualificado</p>
-                        </div>
-                        <div class="text-right">
-                            <span id="pct-conv-lq" class="text-xl font-bold text-white leading-none">--%</span>
-                            <p class="text-gray-500 text-xs">da meta</p>
-                        </div>
+                <!-- Outbound -->
+                <div class="bottom-card-out rounded-xl p-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="section-label text-orange-400/70">📤 Outbound</span>
+                        <div class="flex-1 h-px" style="background:rgba(251,146,60,0.15)"></div>
                     </div>
-                    <div class="flex items-baseline gap-2 mb-2">
-                        <span id="val-conv-lq" class="text-3xl font-bold text-white leading-none">--%</span>
-                        <span class="text-gray-500 text-xs">/ <span id="meta-conv-lq">--</span>%</span>
-                    </div>
-                    <div class="progress-bar-bg rounded-full h-1.5 overflow-hidden">
-                        <div id="bar-conv-lq" class="progress-bar-fill h-full bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-full" style="width:0%"></div>
-                    </div>
-                </div>
-
-                <!-- Qualificado → Venda -->
-                <div class="secondary-card rounded-xl p-4">
-                    <div class="flex justify-between items-center mb-1">
-                        <div class="flex items-center gap-2">
-                            <span class="text-lg">⚡</span>
-                            <p class="text-gray-400 text-sm">Qualificado → Venda</p>
-                        </div>
-                        <div class="text-right">
-                            <span id="pct-conv-qv" class="text-xl font-bold text-white leading-none">--%</span>
-                            <p class="text-gray-500 text-xs">da meta</p>
-                        </div>
-                    </div>
-                    <div class="flex items-baseline gap-2 mb-2">
-                        <span id="val-conv-qv" class="text-3xl font-bold text-white leading-none">--%</span>
-                        <span class="text-gray-500 text-xs">/ <span id="meta-conv-qv">--</span>%</span>
-                    </div>
-                    <div class="progress-bar-bg rounded-full h-1.5 overflow-hidden">
-                        <div id="bar-conv-qv" class="progress-bar-fill h-full bg-gradient-to-r from-blue-400 to-purple-400 rounded-full" style="width:0%"></div>
-                    </div>
-                </div>
-
-                <!-- Vendas Realizadas -->
-                <div class="secondary-card rounded-xl p-4">
-                    <div class="flex justify-between items-center mb-1">
-                        <div class="flex items-center gap-2">
-                            <span class="text-lg">🏆</span>
-                            <p class="text-gray-400 text-sm">Vendas Realizadas</p>
-                        </div>
-                        <div class="text-right">
-                            <span id="pct-vendas" class="text-xl font-bold text-white leading-none">--%</span>
-                            <p class="text-gray-500 text-xs">da meta</p>
-                        </div>
-                    </div>
-                    <div class="flex items-baseline gap-2 mb-2">
-                        <span id="val-vendas" class="text-3xl font-bold text-white leading-none">--</span>
-                        <span class="text-gray-500 text-xs">/ <span id="meta-vendas">--</span></span>
-                    </div>
-                    <div class="progress-bar-bg rounded-full h-1.5 overflow-hidden">
-                        <div id="bar-vendas" class="progress-bar-fill h-full bg-gradient-to-r from-orange-400 to-yellow-400 rounded-full" style="width:0%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ══ LINHA 3: OUTBOUND + YOU PARCEIRO com separação visual ══ -->
-            <div class="grid grid-cols-2 gap-4 mb-4">
-
-                <!-- OUTBOUND block -->
-                <div class="glass-card rounded-xl p-3" style="border-color:rgba(251,146,60,0.15);">
-                    <p class="text-xs font-semibold uppercase tracking-widest mb-2.5" style="color:rgba(251,146,60,0.7);">📤 Outbound</p>
                     <div class="grid grid-cols-3 gap-3">
-                        <div>
-                            <div class="flex justify-between items-center mb-1">
-                                <p class="text-gray-400 text-xs">Agendas</p>
-                                <span id="pct-agendas-out" class="text-sm font-bold text-white">--%</span>
+                        <div class="glass-card rounded-lg p-2.5">
+                            <p class="text-gray-500 text-xs mb-1">Agendas</p>
+                            <div class="flex items-baseline gap-1 mb-1">
+                                <span id="val-ao" class="text-xl font-bold text-white leading-none">--</span>
+                                <span class="text-gray-600 text-xs">/ <span id="meta-ao">--</span></span>
                             </div>
-                            <div class="flex items-baseline gap-1 mb-1.5">
-                                <span id="val-agendas-out" class="text-xl font-bold text-white leading-none">--</span>
-                                <span class="text-gray-500 text-xs">/ <span id="meta-agendas-out">--</span></span>
-                            </div>
-                            <div class="progress-bar-bg rounded-full h-1 overflow-hidden">
-                                <div id="bar-agendas-out" class="progress-bar-fill h-full bg-gradient-to-r from-orange-400 to-yellow-400 rounded-full" style="width:0%"></div>
-                            </div>
+                            <div class="flex justify-between items-center mb-1"><span id="pct-ao" class="text-xs font-bold text-orange-400">--%</span><span class="text-gray-600 text-xs">da meta</span></div>
+                            <div class="progress-bar-bg rounded-full h-1 overflow-hidden"><div id="bar-ao" class="progress-bar-fill h-full bg-gradient-to-r from-orange-400 to-yellow-400 rounded-full" style="width:0%"></div></div>
                         </div>
-                        <div>
-                            <div class="flex justify-between items-center mb-1">
-                                <p class="text-gray-400 text-xs">Qualificações</p>
-                                <span id="pct-quals-out" class="text-sm font-bold text-white">--%</span>
+                        <div class="glass-card rounded-lg p-2.5">
+                            <p class="text-gray-500 text-xs mb-1">Qualificações</p>
+                            <div class="flex items-baseline gap-1 mb-1">
+                                <span id="val-qo" class="text-xl font-bold text-white leading-none">--</span>
+                                <span class="text-gray-600 text-xs">/ <span id="meta-qo">--</span></span>
                             </div>
-                            <div class="flex items-baseline gap-1 mb-1.5">
-                                <span id="val-quals-out" class="text-xl font-bold text-white leading-none">--</span>
-                                <span class="text-gray-500 text-xs">/ <span id="meta-quals-out">--</span></span>
-                            </div>
-                            <div class="progress-bar-bg rounded-full h-1 overflow-hidden">
-                                <div id="bar-quals-out" class="progress-bar-fill h-full bg-gradient-to-r from-orange-300 to-amber-400 rounded-full" style="width:0%"></div>
-                            </div>
+                            <div class="flex justify-between items-center mb-1"><span id="pct-qo" class="text-xs font-bold text-orange-400">--%</span><span class="text-gray-600 text-xs">da meta</span></div>
+                            <div class="progress-bar-bg rounded-full h-1 overflow-hidden"><div id="bar-qo" class="progress-bar-fill h-full bg-gradient-to-r from-orange-400 to-red-400 rounded-full" style="width:0%"></div></div>
                         </div>
-                        <div>
-                            <div class="flex justify-between items-center mb-1">
-                                <p class="text-gray-400 text-xs">Vendas</p>
-                                <span id="pct-vendas-out" class="text-sm font-bold text-white">--%</span>
+                        <div class="glass-card rounded-lg p-2.5">
+                            <p class="text-gray-500 text-xs mb-1">Vendas</p>
+                            <div class="flex items-baseline gap-1 mb-1">
+                                <span id="val-vo" class="text-xl font-bold text-white leading-none">--</span>
+                                <span class="text-gray-600 text-xs">/ <span id="meta-vo">--</span></span>
                             </div>
-                            <div class="flex items-baseline gap-1 mb-1.5">
-                                <span id="val-vendas-out" class="text-xl font-bold text-white leading-none">--</span>
-                                <span class="text-gray-500 text-xs">/ <span id="meta-vendas-out">--</span></span>
-                            </div>
-                            <div class="progress-bar-bg rounded-full h-1 overflow-hidden">
-                                <div id="bar-vendas-out" class="progress-bar-fill h-full bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full" style="width:0%"></div>
-                            </div>
+                            <div class="flex justify-between items-center mb-1"><span id="pct-vo" class="text-xs font-bold text-orange-400">--%</span><span class="text-gray-600 text-xs">da meta</span></div>
+                            <div class="progress-bar-bg rounded-full h-1 overflow-hidden"><div id="bar-vo" class="progress-bar-fill h-full bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full" style="width:0%"></div></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- YOU PARCEIRO block -->
-                <div class="rounded-xl p-3" style="background:linear-gradient(145deg,rgba(10,20,35,0.85),rgba(5,10,20,0.95));border:1px solid rgba(6,182,212,0.2);">
-                    <p class="text-xs font-semibold uppercase tracking-widest mb-2.5" style="color:rgba(34,211,238,0.7);">🤝 You Parceiro</p>
+                <!-- You Parceiro -->
+                <div class="bottom-card-par rounded-xl p-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="section-label text-cyan-400/70">🤝 You Parceiro</span>
+                        <div class="flex-1 h-px" style="background:rgba(6,182,212,0.15)"></div>
+                    </div>
                     <div class="grid grid-cols-3 gap-3">
-                        <div>
-                            <div class="flex justify-between items-center mb-1">
-                                <p class="text-gray-400 text-xs">Apresentações</p>
-                                <span id="pct-apres" class="text-sm font-bold text-white">--%</span>
+                        <div class="glass-card rounded-lg p-2.5">
+                            <p class="text-gray-500 text-xs mb-1">Apresentações</p>
+                            <div class="flex items-baseline gap-1 mb-1">
+                                <span id="val-ap" class="text-xl font-bold text-white leading-none">--</span>
+                                <span class="text-gray-600 text-xs">/ <span id="meta-ap">--</span></span>
                             </div>
-                            <div class="flex items-baseline gap-1 mb-1.5">
-                                <span id="val-apres" class="text-xl font-bold parceiro-value leading-none">--</span>
-                                <span class="text-gray-500 text-xs">/ <span id="meta-apres">--</span></span>
-                            </div>
-                            <div class="progress-bar-bg rounded-full h-1 overflow-hidden">
-                                <div id="bar-apres" class="progress-bar-fill h-full rounded-full" style="width:0%;background:linear-gradient(90deg,#22d3ee,#0ea5e9);"></div>
-                            </div>
+                            <div class="flex justify-between items-center mb-1"><span id="pct-ap" class="text-xs font-bold text-cyan-400">--%</span><span class="text-gray-600 text-xs">da meta</span></div>
+                            <div class="progress-bar-bg rounded-full h-1 overflow-hidden"><div id="bar-ap" class="progress-bar-fill h-full bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full" style="width:0%"></div></div>
                         </div>
-                        <div>
-                            <div class="flex justify-between items-center mb-1">
-                                <p class="text-gray-400 text-xs">Contratos</p>
-                                <span id="pct-contratos" class="text-sm font-bold text-white">--%</span>
+                        <div class="glass-card rounded-lg p-2.5">
+                            <p class="text-gray-500 text-xs mb-1">Contratos</p>
+                            <div class="flex items-baseline gap-1 mb-1">
+                                <span id="val-co" class="text-xl font-bold text-white leading-none">--</span>
+                                <span class="text-gray-600 text-xs">/ <span id="meta-co">--</span></span>
                             </div>
-                            <div class="flex items-baseline gap-1 mb-1.5">
-                                <span id="val-contratos" class="text-xl font-bold parceiro-value leading-none">--</span>
-                                <span class="text-gray-500 text-xs">/ <span id="meta-contratos">--</span></span>
-                            </div>
-                            <div class="progress-bar-bg rounded-full h-1 overflow-hidden">
-                                <div id="bar-contratos" class="progress-bar-fill h-full rounded-full" style="width:0%;background:linear-gradient(90deg,#22d3ee,#0ea5e9);"></div>
-                            </div>
+                            <div class="flex justify-between items-center mb-1"><span id="pct-co" class="text-xs font-bold text-cyan-400">--%</span><span class="text-gray-600 text-xs">da meta</span></div>
+                            <div class="progress-bar-bg rounded-full h-1 overflow-hidden"><div id="bar-co" class="progress-bar-fill h-full bg-gradient-to-r from-cyan-400 to-teal-400 rounded-full" style="width:0%"></div></div>
                         </div>
-                        <div>
-                            <div class="flex justify-between items-center mb-1">
-                                <p class="text-gray-400 text-xs">Indicações</p>
-                                <span id="pct-indicacoes" class="text-sm font-bold text-white">--%</span>
+                        <div class="glass-card rounded-lg p-2.5">
+                            <p class="text-gray-500 text-xs mb-1">Indicações</p>
+                            <div class="flex items-baseline gap-1 mb-1">
+                                <span id="val-in2" class="text-xl font-bold text-white leading-none">--</span>
+                                <span class="text-gray-600 text-xs">/ <span id="meta-in2">--</span></span>
                             </div>
-                            <div class="flex items-baseline gap-1 mb-1.5">
-                                <span id="val-indicacoes" class="text-xl font-bold parceiro-value leading-none">--</span>
-                                <span class="text-gray-500 text-xs">/ <span id="meta-indicacoes">--</span></span>
-                            </div>
-                            <div class="progress-bar-bg rounded-full h-1 overflow-hidden">
-                                <div id="bar-indicacoes" class="progress-bar-fill h-full rounded-full" style="width:0%;background:linear-gradient(90deg,#22d3ee,#0ea5e9);"></div>
-                            </div>
+                            <div class="flex justify-between items-center mb-1"><span id="pct-in2" class="text-xs font-bold text-cyan-400">--%</span><span class="text-gray-600 text-xs">da meta</span></div>
+                            <div class="progress-bar-bg rounded-full h-1 overflow-hidden"><div id="bar-in2" class="progress-bar-fill h-full bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full" style="width:0%"></div></div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- ══ BANNER ══ -->
-            <div class="glass-card rounded-xl p-4 text-center relative overflow-hidden group cursor-pointer hover:border-cyan-500/30 transition-all duration-300 bg-gradient-to-r from-cyan-900/20 to-blue-900/20">
-                <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div class="relative z-10 flex items-center justify-center gap-2">
-                    <svg class="w-5 h-5 text-cyan-400 animate-pulse-slow" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/>
-                    </svg>
-                    <p class="text-base font-semibold text-cyan-400">Cada lead qualificado é uma venda mais perto de acontecer. Bora transformar pipeline em resultado!</p>
                 </div>
             </div>
 
@@ -361,112 +456,144 @@
 
     <script>
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby0z8bATH-bki-RIbqsT6BaZDwTlCq0WWeTwnrf_5KmsBjr8Ifoz5jS3nu69WXuVIRdhw/exec';
-        const INTERVALO_ATUALIZACAO_MS = 60 * 1000;
+        const INTERVALO_MS = 60 * 1000;
 
-        document.addEventListener('DOMContentLoaded', function() {
-            initCharts();
-            buscarDados();
-            setInterval(buscarDados, INTERVALO_ATUALIZACAO_MS);
-        });
+        document.addEventListener('DOMContentLoaded', () => { initCharts(); buscarDados(); setInterval(buscarDados, INTERVALO_MS); });
 
         async function buscarDados() {
             try {
-                const resp = await fetch(APPS_SCRIPT_URL + '?aba=prevendas&nocache=' + Date.now());
-                if (!resp.ok) throw new Error('HTTP ' + resp.status);
-                const d = await resp.json();
-                if (d.erro) throw new Error(d.erro);
+                const r = await fetch(APPS_SCRIPT_URL + '?aba=prevendas&nocache=' + Date.now());
+                if (!r.ok) throw new Error('HTTP ' + r.status);
+                const d = await r.json();
+                if (d.erro) throw d.erro;
                 renderizar(d);
                 document.getElementById('error-banner').style.display = 'none';
-                document.getElementById('last-update').textContent =
-                    'Atualizado às ' + new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
-            } catch(err) {
-                console.error(err);
+                document.getElementById('last-update').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+            } catch(e) {
+                console.error(e);
                 document.getElementById('error-banner').style.display = 'block';
             } finally {
-                const o = document.getElementById('loading-overlay');
-                o.style.opacity = '0';
-                setTimeout(() => o.style.display = 'none', 500);
+                const ov = document.getElementById('loading-overlay');
+                ov.style.opacity = '0';
+                setTimeout(() => ov.style.display = 'none', 500);
             }
         }
 
+        const pct = (v, m) => Math.min(Math.round((+v||0) / (+m||1) * 100), 100);
+        const ring = (id, p) => document.getElementById(id).style.strokeDashoffset = 125.7 - 125.7 * p / 100;
+
+        function setBar(valId, metaId, pctId, barId, v, m) {
+            const p = pct(v, m);
+            document.getElementById(valId).textContent = v ?? '--';
+            document.getElementById(metaId).textContent = m ?? '--';
+            document.getElementById(pctId).textContent = p + '%';
+            document.getElementById(barId).style.width = p + '%';
+        }
+
         function renderizar(d) {
-            // INBOUND — rings
-            setRing('circle-leads',    'pct-leads',    'val-leads',    'meta-leads',    'leads-variacao',    d.leads_valor,     d.leads_meta,     d.leads_variacao);
-            setRing('circle-agendas',  'pct-agendas',  'val-agendas',  'meta-agendas',  'agendas-variacao',  d.agendas_in_valor,d.agendas_in_meta,d.agendas_in_variacao);
-            setRing('circle-leadsqual','pct-leadsqual','val-leadsqual','meta-leadsqual','leadsqual-variacao',d.leads_qual_valor,d.leads_qual_meta,d.leads_qual_variacao);
+            const leads = +d.leads_valor||0, lq = +d.leads_qual_valor||0, vd = +d.vendas_valor||0;
 
-            // TAXAS — calculadas aqui com os dados reais, não confiar na planilha
-            const leads      = parseFloat(d.leads_valor)     || 0;
-            const leadsQual  = parseFloat(d.leads_qual_valor) || 0;
-            const vendas     = parseFloat(d.vendas_valor)     || 0;
-            const metaConvLQ = parseFloat(d.conv_lq_meta)     || 25; // meta vinda da planilha
-            const metaConvQV = parseFloat(d.conv_qv_meta)     || 25;
+            // Seção 1 — Resultados time
+            const pr = pct(d.prevendas_reuniao_valor, d.prevendas_reuniao_meta);
+            document.getElementById('val-reuniao').textContent  = d.prevendas_reuniao_valor ?? '--';
+            document.getElementById('meta-reuniao').textContent = d.prevendas_reuniao_meta  ?? '--';
+            document.getElementById('pct-reuniao').textContent  = pr + '%'; ring('circle-reuniao', pr);
 
-            // Lead → Qualificado = leads_qual / leads * 100
-            const taxaLQ = leads > 0 ? (leadsQual / leads * 100) : 0;
-            // Qualificado → Venda = vendas / leads_qual * 100
-            const taxaQV = leadsQual > 0 ? (vendas / leadsQual * 100) : 0;
+            const pa = pct(d.prevendas_agendamento_valor, d.prevendas_agendamento_meta);
+            document.getElementById('val-agend').textContent    = d.prevendas_agendamento_valor ?? '--';
+            document.getElementById('meta-agend').textContent   = d.prevendas_agendamento_meta  ?? '--';
+            document.getElementById('pct-agend').textContent    = pa + '%'; ring('circle-agend', pa);
 
-            setBarPctCalc('val-conv-lq', 'meta-conv-lq', 'pct-conv-lq', 'bar-conv-lq', taxaLQ, metaConvLQ);
-            setBarPctCalc('val-conv-qv', 'meta-conv-qv', 'pct-conv-qv', 'bar-conv-qv', taxaQV, metaConvQV);
-            setBar('val-vendas','meta-vendas','pct-vendas','bar-vendas', d.vendas_valor, d.vendas_meta);
+            const pv = pct(d.vendas_valor, d.vendas_meta);
+            document.getElementById('val-vendas').textContent   = d.vendas_valor ?? '--';
+            document.getElementById('meta-vendas').textContent  = d.vendas_meta  ?? '--';
+            document.getElementById('vendas-variacao').textContent = d.vendas_variacao ?? '-';
+            document.getElementById('pct-vendas').textContent   = pv + '%'; ring('circle-vendas', pv);
 
-            // OUTBOUND
-            setBar('val-agendas-out','meta-agendas-out','pct-agendas-out','bar-agendas-out',d.agendas_out_valor,d.agendas_out_meta);
-            setBar('val-quals-out',  'meta-quals-out',  'pct-quals-out',  'bar-quals-out', d.quals_out_valor,  d.quals_out_meta);
-            setBar('val-vendas-out', 'meta-vendas-out', 'pct-vendas-out', 'bar-vendas-out',d.vendas_out_valor, d.vendas_out_meta);
+            // Seção 2 — Taxas
+            const mg = +d.conv_geral_meta||3, tg = leads > 0 ? vd/leads*100 : 0;
+            const pgc = Math.min(Math.round(tg/mg*100), 100);
+            document.getElementById('val-cg').textContent = tg.toFixed(2) + '%';
+            document.getElementById('pct-cg').textContent = pgc + '%';
+            document.getElementById('bar-cg').style.width = pgc + '%';
 
-            // YOU PARCEIRO
-            setBar('val-apres',     'meta-apres',     'pct-apres',     'bar-apres',     d.apres_valor,     d.apres_meta);
-            setBar('val-contratos', 'meta-contratos', 'pct-contratos', 'bar-contratos', d.contratos_valor, d.contratos_meta);
-            setBar('val-indicacoes','meta-indicacoes','pct-indicacoes','bar-indicacoes',d.indicacoes_valor,d.indicacoes_meta);
-        }
+            const taxaLQ = leads > 0 ? lq/leads*100 : 0;
+            const pLQ = Math.min(Math.round(taxaLQ/(+d.conv_lq_meta||25)*100), 100);
+            document.getElementById('val-lq').textContent  = taxaLQ.toFixed(2) + '%';
+            document.getElementById('meta-lq').textContent = d.conv_lq_meta || 25;
+            document.getElementById('pct-lq').textContent  = pLQ + '%';
+            document.getElementById('bar-lq').style.width  = pLQ + '%';
 
-        function pct(v, m) { return Math.min(Math.round((parseFloat(v)||0) / (parseFloat(m)||1) * 100), 100); }
+            const taxaQV = lq > 0 ? vd/lq*100 : 0;
+            const pQV = Math.min(Math.round(taxaQV/(+d.conv_qv_meta||25)*100), 100);
+            document.getElementById('val-qv').textContent  = taxaQV.toFixed(2) + '%';
+            document.getElementById('meta-qv').textContent = d.conv_qv_meta || 25;
+            document.getElementById('pct-qv').textContent  = pQV + '%';
+            document.getElementById('bar-qv').style.width  = pQV + '%';
 
-        function setRing(cId, pId, vId, mId, vrId, v, m, vr) {
-            const p = pct(v, m);
-            document.getElementById(vId).textContent = v ?? '--';
-            document.getElementById(mId).textContent = m ?? '--';
-            if (vrId) document.getElementById(vrId).textContent = vr ?? '-';
-            document.getElementById(pId).textContent = p + '%';
-            document.getElementById(cId).style.strokeDashoffset = 125.7 - (125.7 * p / 100);
-        }
+            setBar('val-vi','meta-vi','pct-vi','bar-vi', d.vendas_valor, d.vendas_meta);
 
-        function setBar(vId, mId, pId, bId, v, m) {
-            const p = pct(v, m);
-            document.getElementById(vId).textContent = v ?? '--';
-            document.getElementById(mId).textContent = m ?? '--';
-            document.getElementById(pId).textContent = p + '%';
-            document.getElementById(bId).style.width = p + '%';
-        }
+            // Seção 3 — Inbound
+            document.getElementById('vr-leads').textContent   = d.leads_variacao       ?? '-';
+            document.getElementById('vr-agendas').textContent = d.agendas_in_variacao  ?? '-';
+            document.getElementById('vr-lq').textContent      = d.leads_qual_variacao  ?? '-';
 
-        function setBarPctCalc(vId, mId, pId, bId, taxa, meta) {
-            // taxa e meta já são números em %
-            const p = Math.min(Math.round((taxa / meta) * 100), 100);
-            document.getElementById(vId).textContent = taxa.toFixed(2) + '%';
-            document.getElementById(mId).textContent = meta.toFixed(0);
-            document.getElementById(pId).textContent = p + '%';
-            document.getElementById(bId).style.width = p + '%';
+            const pl = pct(d.leads_valor, d.leads_meta);
+            document.getElementById('val-leads').textContent  = d.leads_valor  ?? '--';
+            document.getElementById('meta-leads').textContent = d.leads_meta   ?? '--';
+            document.getElementById('pct-leads').textContent  = pl + '%'; ring('circle-leads', pl);
+
+            const pai = pct(d.agendas_in_valor, d.agendas_in_meta);
+            document.getElementById('val-agendas-in').textContent  = d.agendas_in_valor ?? '--';
+            document.getElementById('meta-agendas-in').textContent = d.agendas_in_meta  ?? '--';
+            document.getElementById('pct-agendas-in').textContent  = pai + '%'; ring('circle-agendas-in', pai);
+
+            const plq = pct(d.leads_qual_valor, d.leads_qual_meta);
+            document.getElementById('val-lq-in').textContent  = d.leads_qual_valor ?? '--';
+            document.getElementById('meta-lq-in').textContent = d.leads_qual_meta  ?? '--';
+            document.getElementById('pct-lq-in').textContent  = plq + '%'; ring('circle-lq', plq);
+
+            // Seção 4 — Bottom
+            setBar('val-ao','meta-ao','pct-ao','bar-ao', d.agendas_out_valor,  d.agendas_out_meta);
+            setBar('val-qo','meta-qo','pct-qo','bar-qo', d.quals_out_valor,    d.quals_out_meta);
+            setBar('val-vo','meta-vo','pct-vo','bar-vo', d.vendas_out_valor,   d.vendas_out_meta);
+            setBar('val-ap','meta-ap','pct-ap','bar-ap', d.apres_valor,        d.apres_meta);
+            setBar('val-co','meta-co','pct-co','bar-co', d.contratos_valor,    d.contratos_meta);
+            setBar('val-in2','meta-in2','pct-in2','bar-in2', d.indicacoes_valor, d.indicacoes_meta);
         }
 
         function initCharts() {
+            // IDÊNTICO ao de vendas: height 45px, mesmas opções
             const opts = {
                 responsive: true, maintainAspectRatio: false,
-                plugins: { legend:{display:false}, tooltip:{enabled:false} },
-                scales: { x:{display:false}, y:{display:false, min:0, max:50} },
-                elements: { point:{radius:0}, line:{tension:0.4, borderWidth:2} }
+                plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                scales: { x: { display: false }, y: { display: false, min: 0, max: 50 } },
+                elements: { point: { radius: 0 }, line: { tension: 0.4, borderWidth: 2 } }
             };
             const grad = (ctx, c1, c2) => {
-                const g = ctx.createLinearGradient(0,0,0,45);
-                g.addColorStop(0,c1); g.addColorStop(1,c2); return g;
+                const g = ctx.createLinearGradient(0, 0, 0, 45);
+                g.addColorStop(0, c1); g.addColorStop(1, c2); return g;
             };
-            const c1 = document.getElementById('chart1').getContext('2d');
-            new Chart(c1, {type:'line', data:{labels:Array(10).fill(''), datasets:[{data:[5,10,18,22,28,33,38,42,46,48], borderColor:'#4ade80', backgroundColor:grad(c1,'rgba(74,222,128,0.4)','rgba(74,222,128,0)'), fill:true}]}, options:opts});
-            const c2 = document.getElementById('chart2').getContext('2d');
-            new Chart(c2, {type:'line', data:{labels:Array(10).fill(''), datasets:[{data:[8,12,15,20,24,29,33,37,41,45], borderColor:'#60a5fa', backgroundColor:grad(c2,'rgba(96,165,250,0.4)','rgba(96,165,250,0)'), fill:true}]}, options:opts});
-            const c3 = document.getElementById('chart3').getContext('2d');
-            new Chart(c3, {type:'line', data:{labels:Array(10).fill(''), datasets:[{data:[10,14,20,25,30,34,38,42,45,48], borderColor:'#c084fc', backgroundColor:grad(c3,'rgba(192,132,252,0.4)','rgba(192,132,252,0)'), fill:true}]}, options:opts});
+
+            // Seção 1 — gráficos dos cards principais
+            const cr = document.getElementById('chart-reuniao').getContext('2d');
+            new Chart(cr, { type:'line', data:{ labels:Array(10).fill(''), datasets:[{ data:[5,10,15,20,25,30,35,40,45,48], borderColor:'#c084fc', backgroundColor:grad(cr,'rgba(192,132,252,0.4)','rgba(192,132,252,0)'), fill:true }]}, options:opts });
+
+            const ca = document.getElementById('chart-agend').getContext('2d');
+            new Chart(ca, { type:'line', data:{ labels:Array(10).fill(''), datasets:[{ data:[8,12,15,18,22,28,32,36,40,45], borderColor:'#60a5fa', backgroundColor:grad(ca,'rgba(96,165,250,0.4)','rgba(96,165,250,0)'), fill:true }]}, options:opts });
+
+            const cv = document.getElementById('chart-vendas').getContext('2d');
+            new Chart(cv, { type:'line', data:{ labels:Array(10).fill(''), datasets:[{ data:[3,6,9,12,15,18,22,26,30,34], borderColor:'#f59e0b', backgroundColor:grad(cv,'rgba(245,158,11,0.4)','rgba(245,158,11,0)'), fill:true }]}, options:opts });
+
+            // Seção 3 — gráficos Inbound
+            const cl = document.getElementById('chart-leads').getContext('2d');
+            new Chart(cl, { type:'line', data:{ labels:Array(10).fill(''), datasets:[{ data:[5,10,18,22,28,33,38,42,46,48], borderColor:'#4ade80', backgroundColor:grad(cl,'rgba(74,222,128,0.4)','rgba(74,222,128,0)'), fill:true }]}, options:opts });
+
+            const cai = document.getElementById('chart-agendas-in').getContext('2d');
+            new Chart(cai, { type:'line', data:{ labels:Array(10).fill(''), datasets:[{ data:[8,12,15,20,24,29,33,37,41,45], borderColor:'#60a5fa', backgroundColor:grad(cai,'rgba(96,165,250,0.4)','rgba(96,165,250,0)'), fill:true }]}, options:opts });
+
+            const clq = document.getElementById('chart-lq').getContext('2d');
+            new Chart(clq, { type:'line', data:{ labels:Array(10).fill(''), datasets:[{ data:[10,14,20,25,30,34,38,42,45,48], borderColor:'#c084fc', backgroundColor:grad(clq,'rgba(192,132,252,0.4)','rgba(192,132,252,0)'), fill:true }]}, options:opts });
         }
     </script>
 </body>
