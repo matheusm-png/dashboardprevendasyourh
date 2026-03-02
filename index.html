@@ -3,25 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Pré Vendas</title>
+    <title>Dashboard Pré Vendas - TV 4K</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         html, body {
-            margin: 0; padding: 0;
             font-family: 'Inter', sans-serif;
             background: #0a0e1a;
             color: #fff;
-            min-height: 100vh;
-            font-size: clamp(14px, 0.9vw, 18px);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            font-size: 16px;
         }
 
         #dashboard-area {
-            padding: 1.6em 3.5em 2em 3.5em;
-            max-width: 1920px;
-            margin: 0 auto;
+            height: 100vh;
+            width: 100vw;
+            padding: 2vh 3vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         /* HEADER */
@@ -30,39 +35,40 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-radius: 1rem;
+            border-radius: 1.2rem;
             overflow: hidden;
-            padding: 2em 2.5em;
-            margin-bottom: 1.4em;
-            min-height: 130px;
+            padding: 2vh 2.5vw;
+            height: 12vh;
+            min-height: 100px;
             background: linear-gradient(135deg, #050a05 0%, #0a1a0a 60%, #0a0e1a 100%);
             border: 1px solid rgba(97,222,117,0.22);
+            flex-shrink: 0;
         }
         .header-glow {
-            position: absolute; top: -80px; left: -80px;
-            width: 500px; height: 340px;
+            position: absolute; top: -60%; left: -5%;
+            width: 30vw; height: 20vh;
             background: radial-gradient(ellipse, rgba(97,222,117,0.12) 0%, transparent 70%);
             pointer-events: none;
         }
         .header-watermark {
-            position: absolute; right: 24px; top: -40px;
-            opacity: 0.07; transform: scale(4.5); transform-origin: right top;
+            position: absolute; right: 2vw; top: -2vh;
+            opacity: 0.06; transform: scale(3.5); transform-origin: right top;
             pointer-events: none;
         }
         .header-title {
-            font-size: clamp(2.4rem, 3.2vw, 4rem);
+            font-size: clamp(2rem, 4vh, 3.5rem);
             font-weight: 900;
             line-height: 1;
-            letter-spacing: -1.5px;
+            letter-spacing: -1px;
             background: linear-gradient(90deg, #61de75 0%, #a8f5b4 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .header-subtitle { color: rgba(255,255,255,0.4); font-size: 0.9em; margin-top: 0.4em; }
+        .header-subtitle { color: rgba(255,255,255,0.4); font-size: 0.9em; margin-top: 0.3em; }
         .header-lastupdate {
             display: flex; align-items: center; gap: 0.4em;
-            color: rgba(255,255,255,0.28); font-size: 0.75em; margin-top: 0.35em;
+            color: rgba(255,255,255,0.28); font-size: 0.75em; margin-top: 0.3em;
         }
         .header-lastupdate::before {
             content: ''; display: inline-block;
@@ -71,92 +77,122 @@
         }
 
         /* SECTION LABELS */
-        .section-label { font-size: 0.65em; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
-        .section-divider { flex: 1; height: 1px; }
-        .flex-label { display: flex; align-items: center; gap: 0.6em; margin-bottom: 0.6em; }
+        .section-label { font-size: 0.75em; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
+        .section-divider { flex: 1; height: 1px; margin-left: 1em; }
+        .flex-label { display: flex; align-items: center; margin-bottom: 1vh; }
 
         /* METRIC CARDS */
         .metric-card {
             background: linear-gradient(145deg, rgba(20,30,48,0.85) 0%, rgba(10,14,26,0.95) 100%);
             border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 0.85rem; padding: 1.1em 1.2em 0.9em;
+            border-radius: 1rem; 
+            padding: 2vh 1.5vw;
             position: relative; overflow: hidden;
             transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
         .metric-card:hover { transform: translateY(-2px); border-color: rgba(168,85,247,0.22); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
 
         .metric-card-gold {
             background: linear-gradient(145deg, rgba(30,20,5,0.92) 0%, rgba(15,10,2,0.97) 100%);
             border: 1px solid rgba(245,158,11,0.22);
-            border-radius: 0.85rem; padding: 1.1em 1.2em 0.9em;
+            border-radius: 1rem; 
+            padding: 2vh 1.5vw;
             position: relative; overflow: hidden;
             transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
         .metric-card-gold:hover { transform: translateY(-2px); border-color: rgba(245,158,11,0.38); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
 
         .inbound-card {
             background: linear-gradient(145deg, rgba(4,14,8,0.88) 0%, rgba(2,8,4,0.95) 100%);
             border: 1px solid rgba(74,222,128,0.1);
-            border-radius: 0.85rem; padding: 1.1em 1.2em 0.9em;
+            border-radius: 1rem; 
+            padding: 2vh 1.5vw;
             position: relative; overflow: hidden;
             transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
         .inbound-card:hover { transform: translateY(-2px); border-color: rgba(74,222,128,0.26); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
 
         /* ICON */
-        .card-icon { width: 2.1em; height: 2.1em; border-radius: 0.5em; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .card-icon { width: 2.5em; height: 2.5em; border-radius: 0.6em; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
         /* BADGES */
-        .badge { padding: 0.18em 0.55em; border-radius: 9999px; font-size: 0.72em; font-weight: 600; border: 1px solid; white-space: nowrap; }
+        .badge { padding: 0.3em 0.8em; border-radius: 9999px; font-size: 0.8em; font-weight: 600; border: 1px solid; white-space: nowrap; }
         .badge-green  { background: rgba(34,197,94,0.15);  color: #4ade80; border-color: rgba(34,197,94,0.3); }
         .badge-blue   { background: rgba(59,130,246,0.15); color: #60a5fa; border-color: rgba(59,130,246,0.3); }
         .badge-purple { background: rgba(168,85,247,0.15); color: #c084fc; border-color: rgba(168,85,247,0.3); }
         .badge-gold   { background: rgba(245,158,11,0.15); color: #fbbf24; border-color: rgba(245,158,11,0.3); }
 
         /* RING */
-        .ring-wrap { position: relative; width: 3em; height: 3em; flex-shrink: 0; }
+        .ring-wrap { position: relative; width: 3.5em; height: 3.5em; flex-shrink: 0; }
         .ring-wrap svg { transform: rotate(-90deg); transform-origin: 50% 50%; width: 100%; height: 100%; }
         .ring-bg   { stroke: rgba(255,255,255,0.08); }
         .ring-fill { transition: stroke-dashoffset 1s ease-in-out; stroke-linecap: round; }
-        .ring-pct  { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.62em; font-weight: 700; }
+        .ring-pct  { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.7em; font-weight: 700; }
 
         /* VALUES */
-        .metric-value { font-size: clamp(1.6rem, 2.4vw, 2.8rem); font-weight: 800; line-height: 1; }
-        .metric-label { font-size: 0.8em; font-weight: 500; color: rgba(255,255,255,0.7); }
-        .metric-sub   { font-size: 0.7em; color: rgba(255,255,255,0.35); margin-top: 0.1em; }
-        .metric-meta  { font-size: 0.82em; color: rgba(255,255,255,0.32); }
+        .metric-value { font-size: clamp(1.8rem, 3.5vh, 3rem); font-weight: 800; line-height: 1; }
+        .metric-label { font-size: 0.95em; font-weight: 500; color: rgba(255,255,255,0.7); }
+        .metric-sub   { font-size: 0.8em; color: rgba(255,255,255,0.35); margin-top: 0.2em; }
+        .metric-meta  { font-size: 0.9em; color: rgba(255,255,255,0.32); }
 
         /* CHART */
-        .chart-wrap { position: relative; height: 48px; overflow: hidden; margin-top: 0.5em; }
+        .chart-wrap { position: relative; height: 6vh; min-height: 40px; overflow: hidden; margin-top: auto; }
         .chart-wrap canvas { position: absolute; bottom: 0; left: 0; right: 0; }
 
         /* GLASS */
-        .glass-card { background: rgba(20,25,40,0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.06); border-radius: 0.6rem; }
+        .glass-card { background: rgba(20,25,40,0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.06); border-radius: 0.8rem; }
 
         /* BARS */
-        .bar-bg   { background: rgba(255,255,255,0.05); border-radius: 9999px; height: 5px; overflow: hidden; }
+        .bar-bg   { background: rgba(255,255,255,0.05); border-radius: 9999px; height: 6px; overflow: hidden; }
         .bar-fill { height: 100%; border-radius: 9999px; transition: width 1s ease-out; box-shadow: 0 0 8px rgba(255,255,255,0.15); }
 
         /* BOTTOM */
-        .bottom-card-out { background: linear-gradient(145deg, rgba(20,12,4,0.82) 0%, rgba(10,6,2,0.92) 100%); border: 1px solid rgba(251,146,60,0.12); border-radius: 0.85rem; padding: 1em 1.2em; }
-        .bottom-card-par { background: linear-gradient(145deg, rgba(4,12,20,0.82) 0%, rgba(2,6,12,0.92) 100%); border: 1px solid rgba(6,182,212,0.15); border-radius: 0.85rem; padding: 1em 1.2em; }
-        .mini-metric { padding: 0.7em 0.9em; }
-        .mini-metric-value { font-size: 1.2em; font-weight: 800; }
-        .mini-metric-label { font-size: 0.68em; color: rgba(255,255,255,0.4); }
-        .mini-metric-pct   { font-size: 0.72em; font-weight: 700; }
+        .bottom-card-out { 
+            background: linear-gradient(145deg, rgba(20,12,4,0.82) 0%, rgba(10,6,2,0.92) 100%); 
+            border: 1px solid rgba(251,146,60,0.12); 
+            border-radius: 1rem; 
+            padding: 2vh 1.5vw; 
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .bottom-card-par { 
+            background: linear-gradient(145deg, rgba(4,12,20,0.82) 0%, rgba(2,6,12,0.92) 100%); 
+            border: 1px solid rgba(6,182,212,0.15); 
+            border-radius: 1rem; 
+            padding: 2vh 1.5vw; 
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .mini-metric { padding: 1.5vh 1vw; flex: 1; }
+        .mini-metric-value { font-size: 1.6em; font-weight: 800; }
+        .mini-metric-label { font-size: 0.75em; color: rgba(255,255,255,0.4); }
+        .mini-metric-pct   { font-size: 0.85em; font-weight: 700; }
 
         /* GRIDS */
-        .grid-3     { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1em; }
-        .grid-2     { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1em; }
-        .grid-3-sub { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7em; }
-        .mb-cards   { margin-bottom: 1.2em; }
+        .grid-3     { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5vw; height: 100%; }
+        .grid-2     { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5vw; height: 100%; }
+        .grid-3-sub { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1vw; height: 100%; }
+        
+        .section-container { flex: 1; display: flex; flex-direction: column; min-height: 0; margin-bottom: 1vh; }
+        .section-container:last-child { margin-bottom: 0; }
 
         /* LOADING */
         #loading-overlay { position: fixed; inset: 0; background: #0a0e1a; display: flex; align-items: center; justify-content: center; z-index: 100; transition: opacity 0.5s; }
-        .loading-spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #4ade80; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .loading-spinner { width: 50px; height: 50px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #4ade80; border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        #last-update-fixed { position: fixed; bottom: 10px; right: 14px; font-size: 0.68em; color: rgba(255,255,255,0.25); }
-        #error-banner { display: none; position: fixed; bottom: 10px; left: 14px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #f87171; font-size: 0.68em; padding: 5px 10px; border-radius: 8px; }
+        #last-update-fixed { position: fixed; bottom: 1vh; right: 1vw; font-size: 0.75em; color: rgba(255,255,255,0.25); }
+        #error-banner { display: none; position: fixed; bottom: 1vh; left: 1vw; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #f87171; font-size: 0.75em; padding: 0.5em 1em; border-radius: 8px; }
     </style>
 </head>
 <body>
@@ -194,292 +230,300 @@
         </div>
 
         <!-- SEÇÃO 1 — RESULTADOS DO TIME -->
-        <div class="flex-label">
-            <span class="section-label" style="color:rgba(192,132,252,0.8)">🏢 Pré Vendas — Resultados do Time</span>
-            <div class="section-divider" style="background:rgba(168,85,247,0.2)"></div>
-        </div>
-        <div class="grid-3 mb-cards">
-
-            <div class="metric-card">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6em">
-                    <div style="display:flex;align-items:center;gap:0.5em">
-                        <div class="card-icon" style="background:rgba(168,85,247,0.18)">
-                            <svg style="width:1em;height:1em" fill="none" stroke="#c084fc" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                        </div>
-                        <span class="badge badge-purple">Time total</span>
-                    </div>
-                    <div class="ring-wrap">
-                        <svg viewBox="0 0 48 48"><circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none"/><circle class="ring-fill" id="circle-reuniao" cx="24" cy="24" r="20" stroke="#c084fc" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/></svg>
-                        <span class="ring-pct" id="pct-reuniao">--%</span>
-                    </div>
-                </div>
-                <div class="metric-label">Reunião Qualificada</div>
-                <div class="metric-sub">Total do time</div>
-                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.3em">
-                    <span class="metric-value" id="val-reuniao">--</span>
-                    <span class="metric-meta">/ <span id="meta-reuniao">--</span></span>
-                </div>
-                <div class="chart-wrap"><canvas id="chart-reuniao"></canvas></div>
+        <div class="section-container">
+            <div class="flex-label">
+                <span class="section-label" style="color:rgba(192,132,252,0.8)">🏢 Pré Vendas — Resultados do Time</span>
+                <div class="section-divider" style="background:rgba(168,85,247,0.2)"></div>
             </div>
+            <div class="grid-3">
 
-            <div class="metric-card">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6em">
-                    <div style="display:flex;align-items:center;gap:0.5em">
-                        <div class="card-icon" style="background:rgba(59,130,246,0.18)">
-                            <svg style="width:1em;height:1em" fill="none" stroke="#60a5fa" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <div class="metric-card">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1vh">
+                        <div style="display:flex;align-items:center;gap:0.5em">
+                            <div class="card-icon" style="background:rgba(168,85,247,0.18)">
+                                <svg style="width:1.2em;height:1.2em" fill="none" stroke="#c084fc" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            </div>
+                            <span class="badge badge-purple">Time total</span>
                         </div>
-                        <span class="badge badge-blue">Time total</span>
+                        <div class="ring-wrap">
+                            <svg viewBox="0 0 48 48"><circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none"/><circle class="ring-fill" id="circle-reuniao" cx="24" cy="24" r="20" stroke="#c084fc" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/></svg>
+                            <span class="ring-pct" id="pct-reuniao">--%</span>
+                        </div>
                     </div>
-                    <div class="ring-wrap">
-                        <svg viewBox="0 0 48 48"><circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none"/><circle class="ring-fill" id="circle-agend" cx="24" cy="24" r="20" stroke="#60a5fa" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/></svg>
-                        <span class="ring-pct" id="pct-agend">--%</span>
+                    <div class="metric-label">Reunião Qualificada</div>
+                    <div class="metric-sub">Total do time</div>
+                    <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.5em">
+                        <span class="metric-value" id="val-reuniao">--</span>
+                        <span class="metric-meta">/ <span id="meta-reuniao">--</span></span>
                     </div>
+                    <div class="chart-wrap"><canvas id="chart-reuniao"></canvas></div>
                 </div>
-                <div class="metric-label">Agendamento</div>
-                <div class="metric-sub">Total do time</div>
-                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.3em">
-                    <span class="metric-value" id="val-agend">--</span>
-                    <span class="metric-meta">/ <span id="meta-agend">--</span></span>
-                </div>
-                <div class="chart-wrap"><canvas id="chart-agend"></canvas></div>
-            </div>
 
-            <div class="metric-card-gold">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6em">
-                    <div style="display:flex;align-items:center;gap:0.5em">
-                        <div class="card-icon" style="background:rgba(245,158,11,0.18)"><span style="font-size:1em">🏆</span></div>
-                        <span class="badge badge-gold">+<span id="vendas-variacao">-</span></span>
+                <div class="metric-card">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1vh">
+                        <div style="display:flex;align-items:center;gap:0.5em">
+                            <div class="card-icon" style="background:rgba(59,130,246,0.18)">
+                                <svg style="width:1.2em;height:1.2em" fill="none" stroke="#60a5fa" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            </div>
+                            <span class="badge badge-blue">Time total</span>
+                        </div>
+                        <div class="ring-wrap">
+                            <svg viewBox="0 0 48 48"><circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none"/><circle class="ring-fill" id="circle-agend" cx="24" cy="24" r="20" stroke="#60a5fa" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/></svg>
+                            <span class="ring-pct" id="pct-agend">--%</span>
+                        </div>
                     </div>
-                    <div class="ring-wrap">
-                        <svg viewBox="0 0 48 48"><circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none"/><circle class="ring-fill" id="circle-vendas" cx="24" cy="24" r="20" stroke="#f59e0b" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/></svg>
-                        <span class="ring-pct" id="pct-vendas">--%</span>
+                    <div class="metric-label">Agendamento</div>
+                    <div class="metric-sub">Total do time</div>
+                    <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.5em">
+                        <span class="metric-value" id="val-agend">--</span>
+                        <span class="metric-meta">/ <span id="meta-agend">--</span></span>
                     </div>
+                    <div class="chart-wrap"><canvas id="chart-agend"></canvas></div>
                 </div>
-                <div class="metric-label">Vendas Realizadas</div>
-                <div class="metric-sub">Total do time</div>
-                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.3em">
-                    <span class="metric-value" id="val-vendas" style="background:linear-gradient(135deg,#fcd34d,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">--</span>
-                    <span class="metric-meta">/ <span id="meta-vendas">--</span></span>
+
+                <div class="metric-card-gold">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1vh">
+                        <div style="display:flex;align-items:center;gap:0.5em">
+                            <div class="card-icon" style="background:rgba(245,158,11,0.18)"><span style="font-size:1.2em">🏆</span></div>
+                            <span class="badge badge-gold">+<span id="vendas-variacao">-</span></span>
+                        </div>
+                        <div class="ring-wrap">
+                            <svg viewBox="0 0 48 48"><circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none"/><circle class="ring-fill" id="circle-vendas" cx="24" cy="24" r="20" stroke="#f59e0b" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/></svg>
+                            <span class="ring-pct" id="pct-vendas">--%</span>
+                        </div>
+                    </div>
+                    <div class="metric-label">Vendas Realizadas</div>
+                    <div class="metric-sub">Total do time</div>
+                    <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.5em">
+                        <span class="metric-value" id="val-vendas" style="background:linear-gradient(135deg,#fcd34d,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">--</span>
+                        <span class="metric-meta">/ <span id="meta-vendas">--</span></span>
+                    </div>
+                    <div class="chart-wrap"><canvas id="chart-vendas"></canvas></div>
                 </div>
-                <div class="chart-wrap"><canvas id="chart-vendas"></canvas></div>
             </div>
         </div>
 
         <!-- SEÇÃO 2 — TAXAS DE CONVERSÃO -->
-        <div class="flex-label">
-            <span class="section-label" style="color:rgba(192,132,252,0.55)">📊 Taxas de Conversão</span>
-            <div class="section-divider" style="background:rgba(168,85,247,0.1)"></div>
-        </div>
-        <div class="grid-3 mb-cards">
-            <div class="glass-card" style="padding:0.9em 1em">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.55em">
-                    <div>
-                        <div style="font-size:0.72em;color:rgba(255,255,255,0.45);margin-bottom:0.2em">Taxa Conv. Geral</div>
-                        <div style="font-size:1.25em;font-weight:800" id="val-cg">--%</div>
-                    </div>
-                    <div style="text-align:right">
-                        <div style="font-size:1.1em;font-weight:800;color:#c084fc" id="pct-cg">--%</div>
-                        <div style="font-size:0.65em;color:rgba(255,255,255,0.3)">da meta</div>
-                    </div>
-                </div>
-                <div class="bar-bg"><div class="bar-fill" id="bar-cg" style="width:0%;background:linear-gradient(90deg,#a855f7,#ec4899)"></div></div>
+        <div class="section-container">
+            <div class="flex-label">
+                <span class="section-label" style="color:rgba(192,132,252,0.55)">📊 Taxas de Conversão</span>
+                <div class="section-divider" style="background:rgba(168,85,247,0.1)"></div>
             </div>
-            <div class="glass-card" style="padding:0.9em 1em">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.55em">
-                    <div>
-                        <div style="font-size:0.72em;color:rgba(255,255,255,0.45);margin-bottom:0.2em">Lead → Qualificado</div>
-                        <div style="display:flex;align-items:baseline;gap:0.3em">
-                            <span style="font-size:1.25em;font-weight:800" id="val-lq">--%</span>
-                            <span style="font-size:0.7em;color:rgba(255,255,255,0.3)">/ <span id="meta-lq">--</span>%</span>
+            <div class="grid-3">
+                <div class="glass-card" style="padding:2vh 1.5vw; display:flex; flex-direction:column; justify-content:center;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1vh">
+                        <div>
+                            <div style="font-size:0.85em;color:rgba(255,255,255,0.45);margin-bottom:0.3em">Taxa Conv. Geral</div>
+                            <div style="font-size:1.6em;font-weight:800" id="val-cg">--%</div>
+                        </div>
+                        <div style="text-align:right">
+                            <div style="font-size:1.3em;font-weight:800;color:#c084fc" id="pct-cg">--%</div>
+                            <div style="font-size:0.7em;color:rgba(255,255,255,0.3)">da meta</div>
                         </div>
                     </div>
-                    <div style="text-align:right">
-                        <div style="font-size:1.1em;font-weight:800;color:#4ade80" id="pct-lq">--%</div>
-                        <div style="font-size:0.65em;color:rgba(255,255,255,0.3)">da meta</div>
-                    </div>
+                    <div class="bar-bg"><div class="bar-fill" id="bar-cg" style="width:0%;background:linear-gradient(90deg,#a855f7,#ec4899)"></div></div>
                 </div>
-                <div class="bar-bg"><div class="bar-fill" id="bar-lq" style="width:0%;background:linear-gradient(90deg,#4ade80,#22d3ee)"></div></div>
-            </div>
-            <div class="glass-card" style="padding:0.9em 1em">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.55em">
-                    <div>
-                        <div style="font-size:0.72em;color:rgba(255,255,255,0.45);margin-bottom:0.2em">Qualificado → Venda</div>
-                        <div style="display:flex;align-items:baseline;gap:0.3em">
-                            <span style="font-size:1.25em;font-weight:800" id="val-qv">--%</span>
-                            <span style="font-size:0.7em;color:rgba(255,255,255,0.3)">/ <span id="meta-qv">--</span>%</span>
+                <div class="glass-card" style="padding:2vh 1.5vw; display:flex; flex-direction:column; justify-content:center;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1vh">
+                        <div>
+                            <div style="font-size:0.85em;color:rgba(255,255,255,0.45);margin-bottom:0.3em">Lead → Qualificado</div>
+                            <div style="display:flex;align-items:baseline;gap:0.3em">
+                                <span style="font-size:1.6em;font-weight:800" id="val-lq">--%</span>
+                                <span style="font-size:0.8em;color:rgba(255,255,255,0.3)">/ <span id="meta-lq">--</span>%</span>
+                            </div>
+                        </div>
+                        <div style="text-align:right">
+                            <div style="font-size:1.3em;font-weight:800;color:#4ade80" id="pct-lq">--%</div>
+                            <div style="font-size:0.7em;color:rgba(255,255,255,0.3)">da meta</div>
                         </div>
                     </div>
-                    <div style="text-align:right">
-                        <div style="font-size:1.1em;font-weight:800;color:#60a5fa" id="pct-qv">--%</div>
-                        <div style="font-size:0.65em;color:rgba(255,255,255,0.3)">da meta</div>
-                    </div>
+                    <div class="bar-bg"><div class="bar-fill" id="bar-lq" style="width:0%;background:linear-gradient(90deg,#4ade80,#22d3ee)"></div></div>
                 </div>
-                <div class="bar-bg"><div class="bar-fill" id="bar-qv" style="width:0%;background:linear-gradient(90deg,#60a5fa,#a855f7)"></div></div>
+                <div class="glass-card" style="padding:2vh 1.5vw; display:flex; flex-direction:column; justify-content:center;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1vh">
+                        <div>
+                            <div style="font-size:0.85em;color:rgba(255,255,255,0.45);margin-bottom:0.3em">Qualificado → Venda</div>
+                            <div style="display:flex;align-items:baseline;gap:0.3em">
+                                <span style="font-size:1.6em;font-weight:800" id="val-qv">--%</span>
+                                <span style="font-size:0.8em;color:rgba(255,255,255,0.3)">/ <span id="meta-qv">--</span>%</span>
+                            </div>
+                        </div>
+                        <div style="text-align:right">
+                            <div style="font-size:1.3em;font-weight:800;color:#60a5fa" id="pct-qv">--%</div>
+                            <div style="font-size:0.7em;color:rgba(255,255,255,0.3)">da meta</div>
+                        </div>
+                    </div>
+                    <div class="bar-bg"><div class="bar-fill" id="bar-qv" style="width:0%;background:linear-gradient(90deg,#60a5fa,#a855f7)"></div></div>
+                </div>
             </div>
         </div>
 
         <!-- SEÇÃO 3 — INBOUND -->
-        <div class="flex-label">
-            <span class="section-label" style="color:rgba(74,222,128,0.75)">📥 Inbound</span>
-            <div class="section-divider" style="background:rgba(74,222,128,0.15)"></div>
-        </div>
-        <div class="grid-3 mb-cards">
-
-            <div class="inbound-card">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6em">
-                    <div style="display:flex;align-items:center;gap:0.5em">
-                        <div class="card-icon" style="background:rgba(52,211,153,0.18)">
-                            <svg style="width:1em;height:1em" fill="none" stroke="#4ade80" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                        </div>
-                        <span class="badge badge-green">↑ +<span id="vr-leads">--</span></span>
-                    </div>
-                    <div class="ring-wrap">
-                        <svg viewBox="0 0 48 48"><circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none"/><circle class="ring-fill" id="circle-leads" cx="24" cy="24" r="20" stroke="#4ade80" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/></svg>
-                        <span class="ring-pct" id="pct-leads">--%</span>
-                    </div>
-                </div>
-                <div class="metric-label">Leads Captados</div>
-                <div class="metric-sub">Inbound total</div>
-                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.3em">
-                    <span class="metric-value" id="val-leads">--</span>
-                    <span class="metric-meta">/ <span id="meta-leads">--</span></span>
-                </div>
-                <div class="chart-wrap"><canvas id="chart-leads"></canvas></div>
+        <div class="section-container">
+            <div class="flex-label">
+                <span class="section-label" style="color:rgba(74,222,128,0.75)">📥 Inbound</span>
+                <div class="section-divider" style="background:rgba(74,222,128,0.15)"></div>
             </div>
+            <div class="grid-3">
 
-            <div class="inbound-card">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6em">
-                    <div style="display:flex;align-items:center;gap:0.5em">
-                        <div class="card-icon" style="background:rgba(59,130,246,0.18)">
-                            <svg style="width:1em;height:1em" fill="none" stroke="#60a5fa" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <div class="inbound-card">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1vh">
+                        <div style="display:flex;align-items:center;gap:0.5em">
+                            <div class="card-icon" style="background:rgba(52,211,153,0.18)">
+                                <svg style="width:1.2em;height:1.2em" fill="none" stroke="#4ade80" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            </div>
+                            <span class="badge badge-green">↑ +<span id="vr-leads">--</span></span>
                         </div>
-                        <span class="badge badge-blue">↑ +<span id="vr-agendas">--</span></span>
+                        <div class="ring-wrap">
+                            <svg viewBox="0 0 48 48"><circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none"/><circle class="ring-fill" id="circle-leads" cx="24" cy="24" r="20" stroke="#4ade80" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/></svg>
+                            <span class="ring-pct" id="pct-leads">--%</span>
+                        </div>
                     </div>
-                    <div class="ring-wrap">
-                        <svg viewBox="0 0 48 48"><circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none"/><circle class="ring-fill" id="circle-agendas-in" cx="24" cy="24" r="20" stroke="#60a5fa" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/></svg>
-                        <span class="ring-pct" id="pct-agendas-in">--%</span>
+                    <div class="metric-label">Leads Captados</div>
+                    <div class="metric-sub">Inbound total</div>
+                    <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.5em">
+                        <span class="metric-value" id="val-leads">--</span>
+                        <span class="metric-meta">/ <span id="meta-leads">--</span></span>
                     </div>
+                    <div class="chart-wrap"><canvas id="chart-leads"></canvas></div>
                 </div>
-                <div class="metric-label">Agendas Realizadas</div>
-                <div class="metric-sub">Inbound</div>
-                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.3em">
-                    <span class="metric-value" id="val-agendas-in">--</span>
-                    <span class="metric-meta">/ <span id="meta-agendas-in">--</span></span>
-                </div>
-                <div class="chart-wrap"><canvas id="chart-agendas-in"></canvas></div>
-            </div>
 
-            <div class="inbound-card">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6em">
-                    <div style="display:flex;align-items:center;gap:0.5em">
-                        <div class="card-icon" style="background:rgba(168,85,247,0.18)">
-                            <svg style="width:1em;height:1em" fill="none" stroke="#c084fc" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                <div class="inbound-card">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1vh">
+                        <div style="display:flex;align-items:center;gap:0.5em">
+                            <div class="card-icon" style="background:rgba(59,130,246,0.18)">
+                                <svg style="width:1.2em;height:1.2em" fill="none" stroke="#60a5fa" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            </div>
+                            <span class="badge badge-blue">↑ +<span id="vr-agendas">--</span></span>
                         </div>
-                        <span class="badge badge-purple">↑ +<span id="vr-lq">--</span></span>
+                        <div class="ring-wrap">
+                            <svg viewBox="0 0 48 48"><circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none"/><circle class="ring-fill" id="circle-agendas-in" cx="24" cy="24" r="20" stroke="#60a5fa" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/></svg>
+                            <span class="ring-pct" id="pct-agendas-in">--%</span>
+                        </div>
                     </div>
-                    <div class="ring-wrap">
-                        <svg viewBox="0 0 48 48"><circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none"/><circle class="ring-fill" id="circle-lq" cx="24" cy="24" r="20" stroke="#c084fc" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/></svg>
-                        <span class="ring-pct" id="pct-lq-in">--%</span>
+                    <div class="metric-label">Agendas Realizadas</div>
+                    <div class="metric-sub">Inbound</div>
+                    <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.5em">
+                        <span class="metric-value" id="val-agendas-in">--</span>
+                        <span class="metric-meta">/ <span id="meta-agendas-in">--</span></span>
                     </div>
+                    <div class="chart-wrap"><canvas id="chart-agendas-in"></canvas></div>
                 </div>
-                <div class="metric-label">Leads Qualificados</div>
-                <div class="metric-sub">SQLs gerados</div>
-                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.3em">
-                    <span class="metric-value" id="val-lq-in">--</span>
-                    <span class="metric-meta">/ <span id="meta-lq-in">--</span></span>
+
+                <div class="inbound-card">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1vh">
+                        <div style="display:flex;align-items:center;gap:0.5em">
+                            <div class="card-icon" style="background:rgba(168,85,247,0.18)">
+                                <svg style="width:1.2em;height:1.2em" fill="none" stroke="#c084fc" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                            </div>
+                            <span class="badge badge-purple">↑ +<span id="vr-lq">--</span></span>
+                        </div>
+                        <div class="ring-wrap">
+                            <svg viewBox="0 0 48 48"><circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none"/><circle class="ring-fill" id="circle-lq" cx="24" cy="24" r="20" stroke="#c084fc" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/></svg>
+                            <span class="ring-pct" id="pct-lq-in">--%</span>
+                        </div>
+                    </div>
+                    <div class="metric-label">Leads Qualificados</div>
+                    <div class="metric-sub">SQLs gerados</div>
+                    <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.5em">
+                        <span class="metric-value" id="val-lq-in">--</span>
+                        <span class="metric-meta">/ <span id="meta-lq-in">--</span></span>
+                    </div>
+                    <div class="chart-wrap"><canvas id="chart-lq"></canvas></div>
                 </div>
-                <div class="chart-wrap"><canvas id="chart-lq"></canvas></div>
             </div>
         </div>
 
         <!-- SEÇÃO 4 — OUTBOUND + YOU PARCEIRO -->
-        <div class="grid-2">
-            <div class="bottom-card-out">
-                <div class="flex-label" style="margin-bottom:0.7em">
-                    <span class="section-label" style="color:rgba(251,146,60,0.75)">📤 Outbound</span>
-                    <div class="section-divider" style="background:rgba(251,146,60,0.15)"></div>
+        <div class="section-container" style="flex: 0.8;">
+            <div class="grid-2" style="height:100%;">
+                <div class="bottom-card-out">
+                    <div class="flex-label" style="margin-bottom:1vh">
+                        <span class="section-label" style="color:rgba(251,146,60,0.75)">📤 Outbound</span>
+                        <div class="section-divider" style="background:rgba(251,146,60,0.15)"></div>
+                    </div>
+                    <div class="grid-3-sub">
+                        <div class="glass-card mini-metric">
+                            <div class="mini-metric-label">Agendas</div>
+                            <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.3em 0">
+                                <span class="mini-metric-value" id="val-ao">--</span>
+                                <span style="font-size:0.75em;color:rgba(255,255,255,0.3)">/ <span id="meta-ao">--</span></span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4em">
+                                <span class="mini-metric-pct" style="color:#fb923c" id="pct-ao">--%</span>
+                                <span style="font-size:0.7em;color:rgba(255,255,255,0.3)">da meta</span>
+                            </div>
+                            <div class="bar-bg"><div class="bar-fill" id="bar-ao" style="width:0%;background:linear-gradient(90deg,#fb923c,#fbbf24)"></div></div>
+                        </div>
+                        <div class="glass-card mini-metric">
+                            <div class="mini-metric-label">Qualificações</div>
+                            <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.3em 0">
+                                <span class="mini-metric-value" id="val-qo">--</span>
+                                <span style="font-size:0.75em;color:rgba(255,255,255,0.3)">/ <span id="meta-qo">--</span></span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4em">
+                                <span class="mini-metric-pct" style="color:#fb923c" id="pct-qo">--%</span>
+                                <span style="font-size:0.7em;color:rgba(255,255,255,0.3)">da meta</span>
+                            </div>
+                            <div class="bar-bg"><div class="bar-fill" id="bar-qo" style="width:0%;background:linear-gradient(90deg,#fb923c,#ef4444)"></div></div>
+                        </div>
+                        <div class="glass-card mini-metric">
+                            <div class="mini-metric-label">Vendas</div>
+                            <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.3em 0">
+                                <span class="mini-metric-value" id="val-vo">--</span>
+                                <span style="font-size:0.75em;color:rgba(255,255,255,0.3)">/ <span id="meta-vo">--</span></span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4em">
+                                <span class="mini-metric-pct" style="color:#fb923c" id="pct-vo">--%</span>
+                                <span style="font-size:0.7em;color:rgba(255,255,255,0.3)">da meta</span>
+                            </div>
+                            <div class="bar-bg"><div class="bar-fill" id="bar-vo" style="width:0%;background:linear-gradient(90deg,#fbbf24,#f97316)"></div></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="grid-3-sub">
-                    <div class="glass-card mini-metric">
-                        <div class="mini-metric-label">Agendas</div>
-                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.2em 0">
-                            <span class="mini-metric-value" id="val-ao">--</span>
-                            <span style="font-size:0.68em;color:rgba(255,255,255,0.3)">/ <span id="meta-ao">--</span></span>
-                        </div>
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3em">
-                            <span class="mini-metric-pct" style="color:#fb923c" id="pct-ao">--%</span>
-                            <span style="font-size:0.62em;color:rgba(255,255,255,0.3)">da meta</span>
-                        </div>
-                        <div class="bar-bg"><div class="bar-fill" id="bar-ao" style="width:0%;background:linear-gradient(90deg,#fb923c,#fbbf24)"></div></div>
-                    </div>
-                    <div class="glass-card mini-metric">
-                        <div class="mini-metric-label">Qualificações</div>
-                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.2em 0">
-                            <span class="mini-metric-value" id="val-qo">--</span>
-                            <span style="font-size:0.68em;color:rgba(255,255,255,0.3)">/ <span id="meta-qo">--</span></span>
-                        </div>
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3em">
-                            <span class="mini-metric-pct" style="color:#fb923c" id="pct-qo">--%</span>
-                            <span style="font-size:0.62em;color:rgba(255,255,255,0.3)">da meta</span>
-                        </div>
-                        <div class="bar-bg"><div class="bar-fill" id="bar-qo" style="width:0%;background:linear-gradient(90deg,#fb923c,#ef4444)"></div></div>
-                    </div>
-                    <div class="glass-card mini-metric">
-                        <div class="mini-metric-label">Vendas</div>
-                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.2em 0">
-                            <span class="mini-metric-value" id="val-vo">--</span>
-                            <span style="font-size:0.68em;color:rgba(255,255,255,0.3)">/ <span id="meta-vo">--</span></span>
-                        </div>
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3em">
-                            <span class="mini-metric-pct" style="color:#fb923c" id="pct-vo">--%</span>
-                            <span style="font-size:0.62em;color:rgba(255,255,255,0.3)">da meta</span>
-                        </div>
-                        <div class="bar-bg"><div class="bar-fill" id="bar-vo" style="width:0%;background:linear-gradient(90deg,#fbbf24,#f97316)"></div></div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="bottom-card-par">
-                <div class="flex-label" style="margin-bottom:0.7em">
-                    <span class="section-label" style="color:rgba(34,211,238,0.75)">🤝 You Parceiro</span>
-                    <div class="section-divider" style="background:rgba(6,182,212,0.15)"></div>
-                </div>
-                <div class="grid-3-sub">
-                    <div class="glass-card mini-metric">
-                        <div class="mini-metric-label">Apresentações</div>
-                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.2em 0">
-                            <span class="mini-metric-value" id="val-ap">--</span>
-                            <span style="font-size:0.68em;color:rgba(255,255,255,0.3)">/ <span id="meta-ap">--</span></span>
-                        </div>
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3em">
-                            <span class="mini-metric-pct" style="color:#22d3ee" id="pct-ap">--%</span>
-                            <span style="font-size:0.62em;color:rgba(255,255,255,0.3)">da meta</span>
-                        </div>
-                        <div class="bar-bg"><div class="bar-fill" id="bar-ap" style="width:0%;background:linear-gradient(90deg,#22d3ee,#60a5fa)"></div></div>
+                <div class="bottom-card-par">
+                    <div class="flex-label" style="margin-bottom:1vh">
+                        <span class="section-label" style="color:rgba(34,211,238,0.75)">🤝 You Parceiro</span>
+                        <div class="section-divider" style="background:rgba(6,182,212,0.15)"></div>
                     </div>
-                    <div class="glass-card mini-metric">
-                        <div class="mini-metric-label">Contratos</div>
-                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.2em 0">
-                            <span class="mini-metric-value" id="val-co">--</span>
-                            <span style="font-size:0.68em;color:rgba(255,255,255,0.3)">/ <span id="meta-co">--</span></span>
+                    <div class="grid-3-sub">
+                        <div class="glass-card mini-metric">
+                            <div class="mini-metric-label">Apresentações</div>
+                            <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.3em 0">
+                                <span class="mini-metric-value" id="val-ap">--</span>
+                                <span style="font-size:0.75em;color:rgba(255,255,255,0.3)">/ <span id="meta-ap">--</span></span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4em">
+                                <span class="mini-metric-pct" style="color:#22d3ee" id="pct-ap">--%</span>
+                                <span style="font-size:0.7em;color:rgba(255,255,255,0.3)">da meta</span>
+                            </div>
+                            <div class="bar-bg"><div class="bar-fill" id="bar-ap" style="width:0%;background:linear-gradient(90deg,#22d3ee,#60a5fa)"></div></div>
                         </div>
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3em">
-                            <span class="mini-metric-pct" style="color:#22d3ee" id="pct-co">--%</span>
-                            <span style="font-size:0.62em;color:rgba(255,255,255,0.3)">da meta</span>
+                        <div class="glass-card mini-metric">
+                            <div class="mini-metric-label">Contratos</div>
+                            <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.3em 0">
+                                <span class="mini-metric-value" id="val-co">--</span>
+                                <span style="font-size:0.75em;color:rgba(255,255,255,0.3)">/ <span id="meta-co">--</span></span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4em">
+                                <span class="mini-metric-pct" style="color:#22d3ee" id="pct-co">--%</span>
+                                <span style="font-size:0.7em;color:rgba(255,255,255,0.3)">da meta</span>
+                            </div>
+                            <div class="bar-bg"><div class="bar-fill" id="bar-co" style="width:0%;background:linear-gradient(90deg,#22d3ee,#2dd4bf)"></div></div>
                         </div>
-                        <div class="bar-bg"><div class="bar-fill" id="bar-co" style="width:0%;background:linear-gradient(90deg,#22d3ee,#2dd4bf)"></div></div>
-                    </div>
-                    <div class="glass-card mini-metric">
-                        <div class="mini-metric-label">Indicações</div>
-                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.2em 0">
-                            <span class="mini-metric-value" id="val-in2">--</span>
-                            <span style="font-size:0.68em;color:rgba(255,255,255,0.3)">/ <span id="meta-in2">--</span></span>
+                        <div class="glass-card mini-metric">
+                            <div class="mini-metric-label">Indicações</div>
+                            <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.3em 0">
+                                <span class="mini-metric-value" id="val-in2">--</span>
+                                <span style="font-size:0.75em;color:rgba(255,255,255,0.3)">/ <span id="meta-in2">--</span></span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4em">
+                                <span class="mini-metric-pct" style="color:#22d3ee" id="pct-in2">--%</span>
+                                <span style="font-size:0.7em;color:rgba(255,255,255,0.3)">da meta</span>
+                            </div>
+                            <div class="bar-bg"><div class="bar-fill" id="bar-in2" style="width:0%;background:linear-gradient(90deg,#60a5fa,#22d3ee)"></div></div>
                         </div>
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3em">
-                            <span class="mini-metric-pct" style="color:#22d3ee" id="pct-in2">--%</span>
-                            <span style="font-size:0.62em;color:rgba(255,255,255,0.3)">da meta</span>
-                        </div>
-                        <div class="bar-bg"><div class="bar-fill" id="bar-in2" style="width:0%;background:linear-gradient(90deg,#60a5fa,#22d3ee)"></div></div>
                     </div>
                 </div>
             </div>
