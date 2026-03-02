@@ -13,7 +13,7 @@
         .circular-progress { transform: rotate(-90deg); transform-origin: 50% 50%; }
         .progress-ring-circle { transition: stroke-dashoffset 1s ease-in-out; }
 
-        /* ── CARD PADRÃO (igual ao de vendas) ── */
+        /* ── CARD PADRÃO ── */
         .metric-card {
             background: linear-gradient(145deg, rgba(20, 30, 48, 0.8) 0%, rgba(10, 14, 26, 0.9) 100%);
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -21,7 +21,7 @@
         }
         .metric-card:hover { transform: translateY(-2px); border-color: rgba(168, 85, 247, 0.2); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
 
-        /* ── CARD DESTAQUE OURO (Vendas Realizadas) ── */
+        /* ── CARD DESTAQUE OURO ── */
         .metric-card-gold {
             background: linear-gradient(145deg, rgba(30, 20, 5, 0.9) 0%, rgba(15, 10, 2, 0.95) 100%);
             border: 1px solid rgba(245, 158, 11, 0.2);
@@ -29,7 +29,7 @@
         }
         .metric-card-gold:hover { transform: translateY(-2px); border-color: rgba(245, 158, 11, 0.35); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
 
-        /* ── CARDS INBOUND (verde escuro) ── */
+        /* ── CARDS INBOUND ── */
         .inbound-card {
             background: linear-gradient(145deg, rgba(4, 14, 8, 0.85) 0%, rgba(2, 8, 4, 0.92) 100%);
             border: 1px solid rgba(74, 222, 128, 0.1);
@@ -37,7 +37,7 @@
         }
         .inbound-card:hover { transform: translateY(-2px); border-color: rgba(74, 222, 128, 0.25); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
 
-        /* ── BADGES (iguais ao de vendas) ── */
+        /* ── BADGES ── */
         .badge-green  { background: rgba(34, 197, 94, 0.15);  color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
         .badge-blue   { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
         .badge-purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
@@ -46,11 +46,11 @@
         .progress-bar-bg  { background: rgba(255, 255, 255, 0.05); }
         .progress-bar-fill { transition: width 1s ease-out; box-shadow: 0 0 10px rgba(255,255,255,0.2); }
 
-        /* ── GRÁFICO MINI — EXATAMENTE 45px COMO NO DE VENDAS ── */
+        /* ── GRÁFICO MINI 45px ── */
         .chart-container { position: relative; height: 45px; overflow: hidden; }
         .mini-chart { position: absolute; bottom: 0; left: 0; right: 0; }
 
-        /* ── SEÇÕES BOTTOM (outbound/parceiro) ── */
+        /* ── SEÇÕES BOTTOM ── */
         .bottom-card-out { background: linear-gradient(145deg, rgba(20, 12, 4, 0.8) 0%, rgba(10, 6, 2, 0.9) 100%); border: 1px solid rgba(251, 146, 60, 0.12); }
         .bottom-card-par { background: linear-gradient(145deg, rgba(4, 12, 20, 0.8) 0%, rgba(2, 6, 12, 0.9) 100%); border: 1px solid rgba(6, 182, 212, 0.15); }
 
@@ -77,11 +77,12 @@
         </div>
     </div>
 
-    <div id="dashboard-area" class="p-4 px-6">
+    <!-- ✅ BORDA LATERAL: px aumentado de px-6 para px-10 para área de respiro nas laterais -->
+    <div id="dashboard-area" class="p-4 px-10">
         <div>
 
             <!-- ══════════════════════════════════════
-                 HEADER — cópia fiel do de vendas
+                 HEADER
             ══════════════════════════════════════ -->
             <div class="relative flex items-center justify-between mb-6 rounded-2xl overflow-hidden px-8 py-5"
                  style="background: linear-gradient(135deg, #050a05 0%, #0a1a0a 60%, #0a0e1a 100%); border: 1px solid rgba(97,222,117,0.2); min-height: 110px;">
@@ -107,8 +108,6 @@
 
             <!-- ══════════════════════════════════════
                  SEÇÃO 1 — RESULTADOS DO TIME
-                 3 cards protagonistas (mesmo layout dos
-                 main cards do dashboard de vendas)
             ══════════════════════════════════════ -->
             <div class="flex items-center gap-3 mb-3">
                 <span class="section-label text-purple-400/80">🏢 Pré Vendas — Resultados do Time</span>
@@ -203,8 +202,6 @@
 
             <!-- ══════════════════════════════════════
                  SEÇÃO 2 — TAXAS DE CONVERSÃO
-                 (equivalente ao "Progress Bars Section"
-                 do de vendas: glass-card compactos)
             ══════════════════════════════════════ -->
             <div class="flex items-center gap-3 mb-3">
                 <span class="section-label text-purple-300/60">📊 Taxas de Conversão</span>
@@ -272,8 +269,6 @@
 
             <!-- ══════════════════════════════════════
                  SEÇÃO 3 — INBOUND
-                 (mesmo padrão dos main cards, mas com
-                 cor verde — gráficos 45px idênticos)
             ══════════════════════════════════════ -->
             <div class="flex items-center gap-3 mb-3">
                 <span class="section-label text-emerald-400/70">📥 Inbound</span>
@@ -368,8 +363,6 @@
 
             <!-- ══════════════════════════════════════
                  SEÇÃO 4 — OUTBOUND + YOU PARCEIRO
-                 (compacto — equivalente à barra inferior
-                 do de vendas, sem gráficos)
             ══════════════════════════════════════ -->
             <div class="grid grid-cols-2 gap-4">
 
@@ -493,7 +486,11 @@
         function renderizar(d) {
             const leads = +d.leads_valor||0, lq = +d.leads_qual_valor||0, vd = +d.vendas_valor||0;
 
-            // Seção 1 — Resultados time
+            // ─────────────────────────────────────────────────────────────
+            // Seção 1 — Resultados do time
+            // ✅ FIX #1: chaves corrigidas para prevendas_reuniao_* e prevendas_agendamento_*
+            // ✅ FIX #2: vendas_variacao agora existe no Apps Script (E7)
+            // ─────────────────────────────────────────────────────────────
             const pr = pct(d.prevendas_reuniao_valor, d.prevendas_reuniao_meta);
             document.getElementById('val-reuniao').textContent  = d.prevendas_reuniao_valor ?? '--';
             document.getElementById('meta-reuniao').textContent = d.prevendas_reuniao_meta  ?? '--';
@@ -510,7 +507,9 @@
             document.getElementById('vendas-variacao').textContent = d.vendas_variacao ?? '-';
             document.getElementById('pct-vendas').textContent   = pv + '%'; ring('circle-vendas', pv);
 
-            // Seção 2 — Taxas
+            // ─────────────────────────────────────────────────────────────
+            // Seção 2 — Taxas de conversão
+            // ─────────────────────────────────────────────────────────────
             const mg = +d.conv_geral_meta||3, tg = leads > 0 ? vd/leads*100 : 0;
             const pgc = Math.min(Math.round(tg/mg*100), 100);
             document.getElementById('val-cg').textContent = tg.toFixed(2) + '%';
@@ -531,9 +530,9 @@
             document.getElementById('pct-qv').textContent  = pQV + '%';
             document.getElementById('bar-qv').style.width  = pQV + '%';
 
-            setBar('val-vi','meta-vi','pct-vi','bar-vi', d.vendas_valor, d.vendas_meta);
-
+            // ─────────────────────────────────────────────────────────────
             // Seção 3 — Inbound
+            // ─────────────────────────────────────────────────────────────
             document.getElementById('vr-leads').textContent   = d.leads_variacao       ?? '-';
             document.getElementById('vr-agendas').textContent = d.agendas_in_variacao  ?? '-';
             document.getElementById('vr-lq').textContent      = d.leads_qual_variacao  ?? '-';
@@ -553,7 +552,10 @@
             document.getElementById('meta-lq-in').textContent = d.leads_qual_meta  ?? '--';
             document.getElementById('pct-lq-in').textContent  = plq + '%'; ring('circle-lq', plq);
 
-            // Seção 4 — Bottom
+            // ─────────────────────────────────────────────────────────────
+            // Seção 4 — Outbound + You Parceiro
+            // ✅ FIX #3: removido setBar('val-vi',...) que referenciava IDs inexistentes
+            // ─────────────────────────────────────────────────────────────
             setBar('val-ao','meta-ao','pct-ao','bar-ao', d.agendas_out_valor,  d.agendas_out_meta);
             setBar('val-qo','meta-qo','pct-qo','bar-qo', d.quals_out_valor,    d.quals_out_meta);
             setBar('val-vo','meta-vo','pct-vo','bar-vo', d.vendas_out_valor,   d.vendas_out_meta);
@@ -563,7 +565,6 @@
         }
 
         function initCharts() {
-            // IDÊNTICO ao de vendas: height 45px, mesmas opções
             const opts = {
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { display: false }, tooltip: { enabled: false } },
@@ -575,7 +576,6 @@
                 g.addColorStop(0, c1); g.addColorStop(1, c2); return g;
             };
 
-            // Seção 1 — gráficos dos cards principais
             const cr = document.getElementById('chart-reuniao').getContext('2d');
             new Chart(cr, { type:'line', data:{ labels:Array(10).fill(''), datasets:[{ data:[5,10,15,20,25,30,35,40,45,48], borderColor:'#c084fc', backgroundColor:grad(cr,'rgba(192,132,252,0.4)','rgba(192,132,252,0)'), fill:true }]}, options:opts });
 
@@ -585,7 +585,6 @@
             const cv = document.getElementById('chart-vendas').getContext('2d');
             new Chart(cv, { type:'line', data:{ labels:Array(10).fill(''), datasets:[{ data:[3,6,9,12,15,18,22,26,30,34], borderColor:'#f59e0b', backgroundColor:grad(cv,'rgba(245,158,11,0.4)','rgba(245,158,11,0)'), fill:true }]}, options:opts });
 
-            // Seção 3 — gráficos Inbound
             const cl = document.getElementById('chart-leads').getContext('2d');
             new Chart(cl, { type:'line', data:{ labels:Array(10).fill(''), datasets:[{ data:[5,10,18,22,28,33,38,42,46,48], borderColor:'#4ade80', backgroundColor:grad(cl,'rgba(74,222,128,0.4)','rgba(74,222,128,0)'), fill:true }]}, options:opts });
 
