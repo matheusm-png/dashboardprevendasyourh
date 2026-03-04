@@ -14,12 +14,16 @@
             font-family: 'Inter', sans-serif;
             background: #0a0e1a;
             color: #fff;
-            min-height: 100vh;
-            font-size: clamp(14px, 0.9vw, 18px);
+            height: 100vh;
+            overflow: hidden;
+            font-size: clamp(11px, 0.72vw, 15px);
         }
 
         #dashboard-area {
-            padding: 1.6em 3.5em 2em 3.5em;
+            padding: 0.7em 2.2em 0.7em 2.2em;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
             max-width: 1920px;
             margin: 0 auto;
         }
@@ -30,94 +34,93 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-radius: 1rem;
+            border-radius: 0.8rem;
             overflow: hidden;
-            padding: 2em 2.5em;
-            margin-bottom: 1.4em;
-            min-height: 130px;
+            padding: 0.9em 2em;
+            margin-bottom: 0.65em;
+            flex-shrink: 0;
             background: linear-gradient(135deg, #050a05 0%, #0a1a0a 60%, #0a0e1a 100%);
             border: 1px solid rgba(97,222,117,0.22);
         }
         .header-glow {
-            position: absolute; top: -80px; left: -80px;
-            width: 500px; height: 340px;
+            position: absolute; top: -60px; left: -60px;
+            width: 400px; height: 260px;
             background: radial-gradient(ellipse, rgba(97,222,117,0.12) 0%, transparent 70%);
             pointer-events: none;
         }
         .header-watermark {
-            position: absolute; right: 24px; top: -40px;
-            opacity: 0.07; transform: scale(4.5); transform-origin: right top;
+            position: absolute; right: 20px; top: -30px;
+            opacity: 0.07; transform: scale(3.8); transform-origin: right top;
             pointer-events: none;
         }
         .header-title {
-            font-size: clamp(2.4rem, 3.2vw, 4rem);
+            font-size: clamp(1.8rem, 2.4vw, 3rem);
             font-weight: 900;
             line-height: 1;
-            letter-spacing: -1.5px;
+            letter-spacing: -1px;
             background: linear-gradient(90deg, #61de75 0%, #a8f5b4 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .header-subtitle { color: rgba(255,255,255,0.4); font-size: 0.9em; margin-top: 0.4em; }
+        .header-subtitle { color: rgba(255,255,255,0.4); font-size: 0.78em; margin-top: 0.25em; }
         .header-lastupdate {
             display: flex; align-items: center; gap: 0.4em;
-            color: rgba(255,255,255,0.28); font-size: 0.75em; margin-top: 0.35em;
+            color: rgba(255,255,255,0.28); font-size: 0.68em; margin-top: 0.2em;
         }
         .header-lastupdate::before {
             content: ''; display: inline-block;
-            width: 7px; height: 7px; border-radius: 50%;
-            background: #4ade80; box-shadow: 0 0 6px #4ade80; flex-shrink: 0;
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #4ade80; box-shadow: 0 0 5px #4ade80; flex-shrink: 0;
         }
 
         /* SECTION LABELS */
-        .section-label { font-size: 0.65em; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
+        .section-label { font-size: 0.6em; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
         .section-divider { flex: 1; height: 1px; }
-        .flex-label { display: flex; align-items: center; gap: 0.6em; margin-bottom: 0.6em; }
+        .flex-label { display: flex; align-items: center; gap: 0.5em; margin-bottom: 0.4em; flex-shrink: 0; }
 
         /* METRIC CARDS */
         .metric-card {
             background: linear-gradient(145deg, rgba(20,30,48,0.85) 0%, rgba(10,14,26,0.95) 100%);
             border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 0.85rem; padding: 1.1em 1.2em 0.9em;
+            border-radius: 0.7rem; padding: 0.65em 0.85em 0.55em;
             position: relative; overflow: hidden;
             transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
         }
-        .metric-card:hover { transform: translateY(-2px); border-color: rgba(168,85,247,0.22); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .metric-card:hover { transform: translateY(-2px); border-color: rgba(168,85,247,0.22); box-shadow: 0 16px 32px rgba(0,0,0,0.4); }
 
         .metric-card-gold {
             background: linear-gradient(145deg, rgba(30,20,5,0.92) 0%, rgba(15,10,2,0.97) 100%);
             border: 1px solid rgba(245,158,11,0.22);
-            border-radius: 0.85rem; padding: 1.1em 1.2em 0.9em;
+            border-radius: 0.7rem; padding: 0.65em 0.85em 0.55em;
             position: relative; overflow: hidden;
             transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
         }
-        .metric-card-gold:hover { transform: translateY(-2px); border-color: rgba(245,158,11,0.38); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .metric-card-gold:hover { transform: translateY(-2px); border-color: rgba(245,158,11,0.38); box-shadow: 0 16px 32px rgba(0,0,0,0.4); }
 
-        /* ✅ NOVO: Card pace do mês */
         .metric-card-pace {
             background: linear-gradient(145deg, rgba(30,22,4,0.88) 0%, rgba(15,11,2,0.95) 100%);
             border: 1px solid rgba(245,158,11,0.18);
-            border-radius: 0.85rem; padding: 1.1em 1.2em 0.9em;
+            border-radius: 0.7rem; padding: 0.65em 0.85em 0.55em;
             position: relative; overflow: hidden;
             transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
         }
-        .metric-card-pace:hover { transform: translateY(-2px); border-color: rgba(245,158,11,0.35); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .metric-card-pace:hover { transform: translateY(-2px); border-color: rgba(245,158,11,0.35); box-shadow: 0 16px 32px rgba(0,0,0,0.4); }
 
         .inbound-card {
             background: linear-gradient(145deg, rgba(4,14,8,0.88) 0%, rgba(2,8,4,0.95) 100%);
             border: 1px solid rgba(74,222,128,0.1);
-            border-radius: 0.85rem; padding: 1.1em 1.2em 0.9em;
+            border-radius: 0.7rem; padding: 0.65em 0.85em 0.55em;
             position: relative; overflow: hidden;
             transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
         }
-        .inbound-card:hover { transform: translateY(-2px); border-color: rgba(74,222,128,0.26); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .inbound-card:hover { transform: translateY(-2px); border-color: rgba(74,222,128,0.26); box-shadow: 0 16px 32px rgba(0,0,0,0.4); }
 
         /* ICON */
-        .card-icon { width: 2.1em; height: 2.1em; border-radius: 0.5em; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .card-icon { width: 1.8em; height: 1.8em; border-radius: 0.4em; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
         /* BADGES */
-        .badge { padding: 0.18em 0.55em; border-radius: 9999px; font-size: 0.72em; font-weight: 600; border: 1px solid; white-space: nowrap; }
+        .badge { padding: 0.14em 0.45em; border-radius: 9999px; font-size: 0.68em; font-weight: 600; border: 1px solid; white-space: nowrap; }
         .badge-green  { background: rgba(34,197,94,0.15);  color: #4ade80; border-color: rgba(34,197,94,0.3); }
         .badge-blue   { background: rgba(59,130,246,0.15); color: #60a5fa; border-color: rgba(59,130,246,0.3); }
         .badge-purple { background: rgba(168,85,247,0.15); color: #c084fc; border-color: rgba(168,85,247,0.3); }
@@ -125,52 +128,51 @@
         .badge-amber  { background: rgba(245,158,11,0.15); color: #fbbf24; border-color: rgba(245,158,11,0.3); }
 
         /* RING */
-        .ring-wrap { position: relative; width: 3em; height: 3em; flex-shrink: 0; }
+        .ring-wrap { position: relative; width: 2.6em; height: 2.6em; flex-shrink: 0; }
         .ring-wrap svg { transform: rotate(-90deg); transform-origin: 50% 50%; width: 100%; height: 100%; }
         .ring-bg   { stroke: rgba(255,255,255,0.08); }
         .ring-fill { transition: stroke-dashoffset 1s ease-in-out; stroke-linecap: round; }
-        .ring-pct  { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.62em; font-weight: 700; }
+        .ring-pct  { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.58em; font-weight: 700; }
 
         /* VALUES */
-        .metric-value { font-size: clamp(1.6rem, 2.4vw, 2.8rem); font-weight: 800; line-height: 1; }
-        .metric-label { font-size: 0.8em; font-weight: 500; color: rgba(255,255,255,0.7); }
-        .metric-sub   { font-size: 0.7em; color: rgba(255,255,255,0.35); margin-top: 0.1em; }
-        .metric-meta  { font-size: 0.82em; color: rgba(255,255,255,0.32); }
+        .metric-value { font-size: clamp(1.3rem, 1.9vw, 2.2rem); font-weight: 800; line-height: 1; }
+        .metric-label { font-size: 0.76em; font-weight: 500; color: rgba(255,255,255,0.7); }
+        .metric-sub   { font-size: 0.66em; color: rgba(255,255,255,0.35); margin-top: 0.05em; }
+        .metric-meta  { font-size: 0.76em; color: rgba(255,255,255,0.32); }
 
         /* CHART */
-        .chart-wrap { position: relative; height: 48px; overflow: hidden; margin-top: 0.5em; }
+        .chart-wrap { position: relative; height: 32px; overflow: hidden; margin-top: 0.35em; }
         .chart-wrap canvas { position: absolute; bottom: 0; left: 0; right: 0; }
 
         /* GLASS */
-        .glass-card { background: rgba(20,25,40,0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.06); border-radius: 0.6rem; }
+        .glass-card { background: rgba(20,25,40,0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; }
 
         /* BARS */
-        .bar-bg   { background: rgba(255,255,255,0.05); border-radius: 9999px; height: 5px; overflow: hidden; }
-        .bar-fill { height: 100%; border-radius: 9999px; transition: width 1s ease-out; box-shadow: 0 0 8px rgba(255,255,255,0.15); }
+        .bar-bg   { background: rgba(255,255,255,0.05); border-radius: 9999px; height: 4px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 9999px; transition: width 1s ease-out; box-shadow: 0 0 6px rgba(255,255,255,0.15); }
 
         /* BOTTOM */
-        .bottom-card-out { background: linear-gradient(145deg, rgba(20,12,4,0.82) 0%, rgba(10,6,2,0.92) 100%); border: 1px solid rgba(251,146,60,0.12); border-radius: 0.85rem; padding: 1em 1.2em; }
-        .bottom-card-par { background: linear-gradient(145deg, rgba(4,12,20,0.82) 0%, rgba(2,6,12,0.92) 100%); border: 1px solid rgba(6,182,212,0.15); border-radius: 0.85rem; padding: 1em 1.2em; }
-        .mini-metric { padding: 0.7em 0.9em; }
-        .mini-metric-value { font-size: 1.2em; font-weight: 800; }
-        .mini-metric-label { font-size: 0.68em; color: rgba(255,255,255,0.4); }
-        .mini-metric-pct   { font-size: 0.72em; font-weight: 700; }
+        .bottom-card-out { background: linear-gradient(145deg, rgba(20,12,4,0.82) 0%, rgba(10,6,2,0.92) 100%); border: 1px solid rgba(251,146,60,0.12); border-radius: 0.7rem; padding: 0.6em 0.85em; }
+        .bottom-card-par { background: linear-gradient(145deg, rgba(4,12,20,0.82) 0%, rgba(2,6,12,0.92) 100%); border: 1px solid rgba(6,182,212,0.15); border-radius: 0.7rem; padding: 0.6em 0.85em; }
+        .mini-metric { padding: 0.5em 0.7em; }
+        .mini-metric-value { font-size: 1.1em; font-weight: 800; }
+        .mini-metric-label { font-size: 0.65em; color: rgba(255,255,255,0.4); }
+        .mini-metric-pct   { font-size: 0.68em; font-weight: 700; }
 
         /* GRIDS */
-        .grid-3     { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1em; }
-        .grid-4     { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1em; }
-        .grid-2     { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1em; }
-        .grid-3-sub { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7em; }
-        .mb-cards   { margin-bottom: 1.2em; }
+        .grid-3     { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.65em; }
+        .grid-4     { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.65em; }
+        .grid-2     { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.65em; }
+        .grid-3-sub { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5em; }
+        .mb-cards   { margin-bottom: 0.65em; }
 
         /* LOADING */
         #loading-overlay { position: fixed; inset: 0; background: #0a0e1a; display: flex; align-items: center; justify-content: center; z-index: 100; transition: opacity 0.5s; }
-        .loading-spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #4ade80; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .loading-spinner { width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #4ade80; border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        #last-update-fixed { position: fixed; bottom: 10px; right: 14px; font-size: 0.68em; color: rgba(255,255,255,0.25); }
-        #error-banner { display: none; position: fixed; bottom: 10px; left: 14px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #f87171; font-size: 0.68em; padding: 5px 10px; border-radius: 8px; }
+        #last-update-fixed { position: fixed; bottom: 8px; right: 12px; font-size: 0.62em; color: rgba(255,255,255,0.22); }
+        #error-banner { display: none; position: fixed; bottom: 8px; left: 12px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #f87171; font-size: 0.62em; padding: 4px 9px; border-radius: 6px; }
 
-        /* Pace ring transition */
         .pace-ring { transition: stroke-dashoffset 1.2s ease-in-out; stroke-linecap: round; }
     </style>
 </head>
@@ -197,8 +199,8 @@
                 <div class="header-lastupdate" id="last-update-header">Carregando...</div>
             </div>
             <div style="position:relative;z-index:1;display:flex;align-items:center;gap:1em">
-                <svg width="52" height="44" viewBox="0 0 66 44"><path d="M47.548,4.818v6.26l8.04-.435c-14.822,16-20.871,22.77-27.435,22.77-5.238,0-7.686-3.36-8.757-7.021,14.412-.5,19.342-9.319,19.342-14.846C38.738,6.092,35.533,0,26.72,0,17.191,0,12.512,9.451,11.881,18.583a8.806,8.806,0,0,1-5.065-8.314,17.589,17.589,0,0,1,1.3-6.724C6.529,2.918,1.7,1.282,1.7,1.282A30.663,30.663,0,0,0,0,10.628,15.478,15.478,0,0,0,12.252,25.76c1.725,9.229,8.252,14.106,15.9,14.106,9.9,0,16.675-8.377,32.28-24.966l-.5,8.56h6.26V4.818H47.548ZM26.6,6.975a4.651,4.651,0,0,1,5.048,4.967c0,3.827-4.487,8.147-12.371,8.147-.211,0-.419,0-.625-.009C18.81,12.6,21.721,6.975,26.6,6.975" fill="#61de75"/></svg>
-                <svg height="48" viewBox="75 -3 210 50" style="width:auto">
+                <svg width="42" height="35" viewBox="0 0 66 44"><path d="M47.548,4.818v6.26l8.04-.435c-14.822,16-20.871,22.77-27.435,22.77-5.238,0-7.686-3.36-8.757-7.021,14.412-.5,19.342-9.319,19.342-14.846C38.738,6.092,35.533,0,26.72,0,17.191,0,12.512,9.451,11.881,18.583a8.806,8.806,0,0,1-5.065-8.314,17.589,17.589,0,0,1,1.3-6.724C6.529,2.918,1.7,1.282,1.7,1.282A30.663,30.663,0,0,0,0,10.628,15.478,15.478,0,0,0,12.252,25.76c1.725,9.229,8.252,14.106,15.9,14.106,9.9,0,16.675-8.377,32.28-24.966l-.5,8.56h6.26V4.818H47.548ZM26.6,6.975a4.651,4.651,0,0,1,5.048,4.967c0,3.827-4.487,8.147-12.371,8.147-.211,0-.419,0-.625-.009C18.81,12.6,21.721,6.975,26.6,6.975" fill="#61de75"/></svg>
+                <svg height="38" viewBox="75 -3 210 50" style="width:auto">
                     <path d="M167.439,7.486c-4.842,12.1-10.076,24.144-13.871,33.435-4.253,10.01-8.244,15.311-14.918,15.311-4.711,0-7.917-1.963-9.684-5.1l7.852-6.543.785.066c.327,3.01,1.832,5.3,4.515,5.3,3.86,0,6.215-3.729,7.393-7.72-2.094,0-5.954-.131-8.048-.393-3.6-11.058-8.637-24.536-12.825-34.351a90.474,90.474,0,0,0,14.591,0c2.159,8.375,5.234,19.3,8.113,28.331,2.682-9.749,5.1-21.265,6.347-28.331a60.68,60.68,0,0,0,9.749,0" transform="translate(-45.794,-2.665)" fill="white"/>
                     <path d="M186.956,23.825c0-10.73,7.262-17.862,19.237-17.862s19.3,7.132,19.3,17.862c0,10.927-7.328,18.255-19.3,18.255s-19.237-7.328-19.237-18.255m24.667-.261c0-11.647-1.9-15.376-5.431-15.376-3.4,0-5.5,3.8-5.5,15.638,0,12.17,2.094,15.965,5.562,15.965,3.4,0,5.365-3.86,5.365-16.226" transform="translate(-66.555,-2.123)" fill="white"/>
                     <path d="M287.188,41.706h-5.5L275.345,33c-1.505,5.758-5.823,9.618-12.17,9.618-6.608,0-11.712-3.4-11.777-14.133-.066-8.375,0-14.329-.131-21a90.885,90.885,0,0,0,13.348,0c-.066,12.3,0,11.385.131,20.807.065,6.805.981,9.226,3.6,9.16,3.468-.065,5.562-4.318,5.562-12.759,0-8.9,0-10.8-.2-17.208a92.672,92.672,0,0,0,13.478,0c-.327,11.581-.392,22.639,0,34.22" transform="translate(-89.449,-2.665)" fill="white"/>
@@ -208,7 +210,7 @@
             </div>
         </div>
 
-        <!-- SEÇÃO 1 — RESULTADOS DO TIME (agora grid-4) -->
+        <!-- SEÇÃO 1 -->
         <div class="flex-label">
             <span class="section-label" style="color:rgba(192,132,252,0.8)">🏢 Pré Vendas — Resultados do Time</span>
             <div class="section-divider" style="background:rgba(168,85,247,0.2)"></div>
@@ -216,10 +218,10 @@
         <div class="grid-4 mb-cards">
 
             <div class="metric-card">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6em">
-                    <div style="display:flex;align-items:center;gap:0.5em">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.4em">
+                    <div style="display:flex;align-items:center;gap:0.4em">
                         <div class="card-icon" style="background:rgba(168,85,247,0.18)">
-                            <svg style="width:1em;height:1em" fill="none" stroke="#c084fc" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            <svg style="width:0.9em;height:0.9em" fill="none" stroke="#c084fc" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                         </div>
                         <span class="badge badge-purple">Time total</span>
                     </div>
@@ -230,7 +232,7 @@
                 </div>
                 <div class="metric-label">Reunião Qualificada</div>
                 <div class="metric-sub">Total do time</div>
-                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.3em">
+                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.25em">
                     <span class="metric-value" id="val-reuniao">--</span>
                     <span class="metric-meta">/ <span id="meta-reuniao">--</span></span>
                 </div>
@@ -238,10 +240,10 @@
             </div>
 
             <div class="metric-card">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6em">
-                    <div style="display:flex;align-items:center;gap:0.5em">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.4em">
+                    <div style="display:flex;align-items:center;gap:0.4em">
                         <div class="card-icon" style="background:rgba(59,130,246,0.18)">
-                            <svg style="width:1em;height:1em" fill="none" stroke="#60a5fa" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <svg style="width:0.9em;height:0.9em" fill="none" stroke="#60a5fa" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                         </div>
                         <span class="badge badge-blue">Time total</span>
                     </div>
@@ -252,7 +254,7 @@
                 </div>
                 <div class="metric-label">Agendamento</div>
                 <div class="metric-sub">Total do time</div>
-                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.3em">
+                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.25em">
                     <span class="metric-value" id="val-agend">--</span>
                     <span class="metric-meta">/ <span id="meta-agend">--</span></span>
                 </div>
@@ -260,9 +262,9 @@
             </div>
 
             <div class="metric-card-gold">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6em">
-                    <div style="display:flex;align-items:center;gap:0.5em">
-                        <div class="card-icon" style="background:rgba(245,158,11,0.18)"><span style="font-size:1em">🏆</span></div>
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.4em">
+                    <div style="display:flex;align-items:center;gap:0.4em">
+                        <div class="card-icon" style="background:rgba(245,158,11,0.18)"><span style="font-size:0.9em">🏆</span></div>
                         <span class="badge badge-gold">+<span id="vendas-variacao">-</span></span>
                     </div>
                     <div class="ring-wrap">
@@ -272,19 +274,19 @@
                 </div>
                 <div class="metric-label">Vendas Realizadas</div>
                 <div class="metric-sub">Total do time</div>
-                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.3em">
+                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.25em">
                     <span class="metric-value" id="val-vendas" style="background:linear-gradient(135deg,#fcd34d,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">--</span>
                     <span class="metric-meta">/ <span id="meta-vendas">--</span></span>
                 </div>
                 <div class="chart-wrap"><canvas id="chart-vendas"></canvas></div>
             </div>
 
-            <!-- ✅ NOVO: Pace do Mês -->
+            <!-- Pace do Mês -->
             <div class="metric-card-pace">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6em">
-                    <div style="display:flex;align-items:center;gap:0.5em">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.4em">
+                    <div style="display:flex;align-items:center;gap:0.4em">
                         <div class="card-icon" style="background:rgba(245,158,11,0.15)">
-                            <svg style="width:1em;height:1em" fill="none" stroke="#fbbf24" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <svg style="width:0.9em;height:0.9em" fill="none" stroke="#fbbf24" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                         </div>
                         <span class="badge badge-amber">📅 <span id="pace-nome-mes">--</span></span>
                     </div>
@@ -298,64 +300,64 @@
                 </div>
                 <div class="metric-label">Pace do Mês</div>
                 <div class="metric-sub">Progresso do calendário</div>
-                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.3em">
+                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.25em">
                     <span class="metric-value" id="pace-pct" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">--%</span>
                     <span class="metric-meta">do mês</span>
                 </div>
-                <div style="font-size:0.72em;color:rgba(255,255,255,0.35);margin-top:0.25em">
+                <div style="font-size:0.68em;color:rgba(255,255,255,0.35);margin-top:0.2em">
                     Dia <span id="pace-dia-atual" style="color:rgba(255,255,255,0.6);font-weight:600">--</span> de <span id="pace-total-dias" style="color:rgba(255,255,255,0.6);font-weight:600">--</span> dias
                 </div>
             </div>
 
         </div>
 
-        <!-- SEÇÃO 2 — TAXAS DE CONVERSÃO -->
+        <!-- SEÇÃO 2 — TAXAS -->
         <div class="flex-label">
             <span class="section-label" style="color:rgba(192,132,252,0.55)">📊 Taxas de Conversão</span>
             <div class="section-divider" style="background:rgba(168,85,247,0.1)"></div>
         </div>
         <div class="grid-3 mb-cards">
-            <div class="glass-card" style="padding:0.9em 1em">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.55em">
+            <div class="glass-card" style="padding:0.6em 0.85em">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4em">
                     <div>
-                        <div style="font-size:0.72em;color:rgba(255,255,255,0.45);margin-bottom:0.2em">Taxa Conv. Geral</div>
-                        <div style="font-size:1.25em;font-weight:800" id="val-cg">--%</div>
+                        <div style="font-size:0.68em;color:rgba(255,255,255,0.45);margin-bottom:0.15em">Taxa Conv. Geral</div>
+                        <div style="font-size:1.1em;font-weight:800" id="val-cg">--%</div>
                     </div>
                     <div style="text-align:right">
-                        <div style="font-size:1.1em;font-weight:800;color:#c084fc" id="pct-cg">--%</div>
-                        <div style="font-size:0.65em;color:rgba(255,255,255,0.3)">da meta</div>
+                        <div style="font-size:1em;font-weight:800;color:#c084fc" id="pct-cg">--%</div>
+                        <div style="font-size:0.6em;color:rgba(255,255,255,0.3)">da meta</div>
                     </div>
                 </div>
                 <div class="bar-bg"><div class="bar-fill" id="bar-cg" style="width:0%;background:linear-gradient(90deg,#a855f7,#ec4899)"></div></div>
             </div>
-            <div class="glass-card" style="padding:0.9em 1em">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.55em">
+            <div class="glass-card" style="padding:0.6em 0.85em">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4em">
                     <div>
-                        <div style="font-size:0.72em;color:rgba(255,255,255,0.45);margin-bottom:0.2em">Lead → Qualificado</div>
+                        <div style="font-size:0.68em;color:rgba(255,255,255,0.45);margin-bottom:0.15em">Lead → Qualificado</div>
                         <div style="display:flex;align-items:baseline;gap:0.3em">
-                            <span style="font-size:1.25em;font-weight:800" id="val-lq">--%</span>
-                            <span style="font-size:0.7em;color:rgba(255,255,255,0.3)">/ <span id="meta-lq">--</span>%</span>
+                            <span style="font-size:1.1em;font-weight:800" id="val-lq">--%</span>
+                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span id="meta-lq">--</span>%</span>
                         </div>
                     </div>
                     <div style="text-align:right">
-                        <div style="font-size:1.1em;font-weight:800;color:#4ade80" id="pct-lq">--%</div>
-                        <div style="font-size:0.65em;color:rgba(255,255,255,0.3)">da meta</div>
+                        <div style="font-size:1em;font-weight:800;color:#4ade80" id="pct-lq">--%</div>
+                        <div style="font-size:0.6em;color:rgba(255,255,255,0.3)">da meta</div>
                     </div>
                 </div>
                 <div class="bar-bg"><div class="bar-fill" id="bar-lq" style="width:0%;background:linear-gradient(90deg,#4ade80,#22d3ee)"></div></div>
             </div>
-            <div class="glass-card" style="padding:0.9em 1em">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.55em">
+            <div class="glass-card" style="padding:0.6em 0.85em">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4em">
                     <div>
-                        <div style="font-size:0.72em;color:rgba(255,255,255,0.45);margin-bottom:0.2em">Qualificado → Venda</div>
+                        <div style="font-size:0.68em;color:rgba(255,255,255,0.45);margin-bottom:0.15em">Qualificado → Venda</div>
                         <div style="display:flex;align-items:baseline;gap:0.3em">
-                            <span style="font-size:1.25em;font-weight:800" id="val-qv">--%</span>
-                            <span style="font-size:0.7em;color:rgba(255,255,255,0.3)">/ <span id="meta-qv">--</span>%</span>
+                            <span style="font-size:1.1em;font-weight:800" id="val-qv">--%</span>
+                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span id="meta-qv">--</span>%</span>
                         </div>
                     </div>
                     <div style="text-align:right">
-                        <div style="font-size:1.1em;font-weight:800;color:#60a5fa" id="pct-qv">--%</div>
-                        <div style="font-size:0.65em;color:rgba(255,255,255,0.3)">da meta</div>
+                        <div style="font-size:1em;font-weight:800;color:#60a5fa" id="pct-qv">--%</div>
+                        <div style="font-size:0.6em;color:rgba(255,255,255,0.3)">da meta</div>
                     </div>
                 </div>
                 <div class="bar-bg"><div class="bar-fill" id="bar-qv" style="width:0%;background:linear-gradient(90deg,#60a5fa,#a855f7)"></div></div>
@@ -370,10 +372,10 @@
         <div class="grid-3 mb-cards">
 
             <div class="inbound-card">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6em">
-                    <div style="display:flex;align-items:center;gap:0.5em">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.4em">
+                    <div style="display:flex;align-items:center;gap:0.4em">
                         <div class="card-icon" style="background:rgba(52,211,153,0.18)">
-                            <svg style="width:1em;height:1em" fill="none" stroke="#4ade80" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            <svg style="width:0.9em;height:0.9em" fill="none" stroke="#4ade80" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                         </div>
                         <span class="badge badge-green">↑ +<span id="vr-leads">--</span></span>
                     </div>
@@ -384,7 +386,7 @@
                 </div>
                 <div class="metric-label">Leads Captados</div>
                 <div class="metric-sub">Inbound total</div>
-                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.3em">
+                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.25em">
                     <span class="metric-value" id="val-leads">--</span>
                     <span class="metric-meta">/ <span id="meta-leads">--</span></span>
                 </div>
@@ -392,10 +394,10 @@
             </div>
 
             <div class="inbound-card">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6em">
-                    <div style="display:flex;align-items:center;gap:0.5em">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.4em">
+                    <div style="display:flex;align-items:center;gap:0.4em">
                         <div class="card-icon" style="background:rgba(59,130,246,0.18)">
-                            <svg style="width:1em;height:1em" fill="none" stroke="#60a5fa" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <svg style="width:0.9em;height:0.9em" fill="none" stroke="#60a5fa" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                         </div>
                         <span class="badge badge-blue">↑ +<span id="vr-agendas">--</span></span>
                     </div>
@@ -406,7 +408,7 @@
                 </div>
                 <div class="metric-label">Agendas Realizadas</div>
                 <div class="metric-sub">Inbound</div>
-                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.3em">
+                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.25em">
                     <span class="metric-value" id="val-agendas-in">--</span>
                     <span class="metric-meta">/ <span id="meta-agendas-in">--</span></span>
                 </div>
@@ -414,10 +416,10 @@
             </div>
 
             <div class="inbound-card">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6em">
-                    <div style="display:flex;align-items:center;gap:0.5em">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.4em">
+                    <div style="display:flex;align-items:center;gap:0.4em">
                         <div class="card-icon" style="background:rgba(168,85,247,0.18)">
-                            <svg style="width:1em;height:1em" fill="none" stroke="#c084fc" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                            <svg style="width:0.9em;height:0.9em" fill="none" stroke="#c084fc" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
                         </div>
                         <span class="badge badge-purple">↑ +<span id="vr-lq">--</span></span>
                     </div>
@@ -428,7 +430,7 @@
                 </div>
                 <div class="metric-label">Leads Qualificados</div>
                 <div class="metric-sub">SQLs gerados</div>
-                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.3em">
+                <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.25em">
                     <span class="metric-value" id="val-lq-in">--</span>
                     <span class="metric-meta">/ <span id="meta-lq-in">--</span></span>
                 </div>
@@ -439,44 +441,44 @@
         <!-- SEÇÃO 4 — OUTBOUND + YOU PARCEIRO -->
         <div class="grid-2">
             <div class="bottom-card-out">
-                <div class="flex-label" style="margin-bottom:0.7em">
+                <div class="flex-label" style="margin-bottom:0.5em">
                     <span class="section-label" style="color:rgba(251,146,60,0.75)">📤 Outbound</span>
                     <div class="section-divider" style="background:rgba(251,146,60,0.15)"></div>
                 </div>
                 <div class="grid-3-sub">
                     <div class="glass-card mini-metric">
                         <div class="mini-metric-label">Agendas</div>
-                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.2em 0">
+                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.15em 0">
                             <span class="mini-metric-value" id="val-ao">--</span>
-                            <span style="font-size:0.68em;color:rgba(255,255,255,0.3)">/ <span id="meta-ao">--</span></span>
+                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span id="meta-ao">--</span></span>
                         </div>
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3em">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25em">
                             <span class="mini-metric-pct" style="color:#fb923c" id="pct-ao">--%</span>
-                            <span style="font-size:0.62em;color:rgba(255,255,255,0.3)">da meta</span>
+                            <span style="font-size:0.58em;color:rgba(255,255,255,0.3)">da meta</span>
                         </div>
                         <div class="bar-bg"><div class="bar-fill" id="bar-ao" style="width:0%;background:linear-gradient(90deg,#fb923c,#fbbf24)"></div></div>
                     </div>
                     <div class="glass-card mini-metric">
                         <div class="mini-metric-label">Qualificações</div>
-                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.2em 0">
+                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.15em 0">
                             <span class="mini-metric-value" id="val-qo">--</span>
-                            <span style="font-size:0.68em;color:rgba(255,255,255,0.3)">/ <span id="meta-qo">--</span></span>
+                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span id="meta-qo">--</span></span>
                         </div>
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3em">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25em">
                             <span class="mini-metric-pct" style="color:#fb923c" id="pct-qo">--%</span>
-                            <span style="font-size:0.62em;color:rgba(255,255,255,0.3)">da meta</span>
+                            <span style="font-size:0.58em;color:rgba(255,255,255,0.3)">da meta</span>
                         </div>
                         <div class="bar-bg"><div class="bar-fill" id="bar-qo" style="width:0%;background:linear-gradient(90deg,#fb923c,#ef4444)"></div></div>
                     </div>
                     <div class="glass-card mini-metric">
                         <div class="mini-metric-label">Vendas</div>
-                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.2em 0">
+                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.15em 0">
                             <span class="mini-metric-value" id="val-vo">--</span>
-                            <span style="font-size:0.68em;color:rgba(255,255,255,0.3)">/ <span id="meta-vo">--</span></span>
+                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span id="meta-vo">--</span></span>
                         </div>
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3em">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25em">
                             <span class="mini-metric-pct" style="color:#fb923c" id="pct-vo">--%</span>
-                            <span style="font-size:0.62em;color:rgba(255,255,255,0.3)">da meta</span>
+                            <span style="font-size:0.58em;color:rgba(255,255,255,0.3)">da meta</span>
                         </div>
                         <div class="bar-bg"><div class="bar-fill" id="bar-vo" style="width:0%;background:linear-gradient(90deg,#fbbf24,#f97316)"></div></div>
                     </div>
@@ -484,44 +486,44 @@
             </div>
 
             <div class="bottom-card-par">
-                <div class="flex-label" style="margin-bottom:0.7em">
+                <div class="flex-label" style="margin-bottom:0.5em">
                     <span class="section-label" style="color:rgba(34,211,238,0.75)">🤝 You Parceiro</span>
                     <div class="section-divider" style="background:rgba(6,182,212,0.15)"></div>
                 </div>
                 <div class="grid-3-sub">
                     <div class="glass-card mini-metric">
                         <div class="mini-metric-label">Apresentações</div>
-                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.2em 0">
+                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.15em 0">
                             <span class="mini-metric-value" id="val-ap">--</span>
-                            <span style="font-size:0.68em;color:rgba(255,255,255,0.3)">/ <span id="meta-ap">--</span></span>
+                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span id="meta-ap">--</span></span>
                         </div>
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3em">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25em">
                             <span class="mini-metric-pct" style="color:#22d3ee" id="pct-ap">--%</span>
-                            <span style="font-size:0.62em;color:rgba(255,255,255,0.3)">da meta</span>
+                            <span style="font-size:0.58em;color:rgba(255,255,255,0.3)">da meta</span>
                         </div>
                         <div class="bar-bg"><div class="bar-fill" id="bar-ap" style="width:0%;background:linear-gradient(90deg,#22d3ee,#60a5fa)"></div></div>
                     </div>
                     <div class="glass-card mini-metric">
                         <div class="mini-metric-label">Contratos</div>
-                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.2em 0">
+                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.15em 0">
                             <span class="mini-metric-value" id="val-co">--</span>
-                            <span style="font-size:0.68em;color:rgba(255,255,255,0.3)">/ <span id="meta-co">--</span></span>
+                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span id="meta-co">--</span></span>
                         </div>
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3em">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25em">
                             <span class="mini-metric-pct" style="color:#22d3ee" id="pct-co">--%</span>
-                            <span style="font-size:0.62em;color:rgba(255,255,255,0.3)">da meta</span>
+                            <span style="font-size:0.58em;color:rgba(255,255,255,0.3)">da meta</span>
                         </div>
                         <div class="bar-bg"><div class="bar-fill" id="bar-co" style="width:0%;background:linear-gradient(90deg,#22d3ee,#2dd4bf)"></div></div>
                     </div>
                     <div class="glass-card mini-metric">
                         <div class="mini-metric-label">Indicações</div>
-                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.2em 0">
+                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.15em 0">
                             <span class="mini-metric-value" id="val-in2">--</span>
-                            <span style="font-size:0.68em;color:rgba(255,255,255,0.3)">/ <span id="meta-in2">--</span></span>
+                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span id="meta-in2">--</span></span>
                         </div>
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3em">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25em">
                             <span class="mini-metric-pct" style="color:#22d3ee" id="pct-in2">--%</span>
-                            <span style="font-size:0.62em;color:rgba(255,255,255,0.3)">da meta</span>
+                            <span style="font-size:0.58em;color:rgba(255,255,255,0.3)">da meta</span>
                         </div>
                         <div class="bar-bg"><div class="bar-fill" id="bar-in2" style="width:0%;background:linear-gradient(90deg,#60a5fa,#22d3ee)"></div></div>
                     </div>
@@ -542,32 +544,25 @@
             initCharts();
             buscarDados();
             setInterval(buscarDados, INTERVALO_MS);
-            calcularPaceMes(); // ✅ Roda imediatamente no load
+            calcularPaceMes();
         });
 
-        // ============================================================
-        // ✅ PACE DO MÊS — 100% frontend, sem deps externas
-        // ============================================================
         function calcularPaceMes() {
-            const agora      = new Date();
-            const diaAtual   = agora.getDate();
-            const mes        = agora.getMonth();
-            const ano        = agora.getFullYear();
-            const totalDias  = new Date(ano, mes + 1, 0).getDate();
-            const pct        = Math.round((diaAtual / totalDias) * 100);
-
-            const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
-                           'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+            const agora     = new Date();
+            const diaAtual  = agora.getDate();
+            const mes       = agora.getMonth();
+            const ano       = agora.getFullYear();
+            const totalDias = new Date(ano, mes + 1, 0).getDate();
+            const p         = Math.round((diaAtual / totalDias) * 100);
+            const meses     = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                               'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
             document.getElementById('pace-nome-mes').textContent    = meses[mes];
-            document.getElementById('pace-pct').textContent         = pct + '%';
-            document.getElementById('pct-pace-circulo').textContent = pct + '%';
+            document.getElementById('pace-pct').textContent         = p + '%';
+            document.getElementById('pct-pace-circulo').textContent = p + '%';
             document.getElementById('pace-dia-atual').textContent   = diaAtual;
             document.getElementById('pace-total-dias').textContent  = totalDias;
-
-            // Anima o anel
-            document.getElementById('circle-pace').style.strokeDashoffset =
-                125.7 - (125.7 * pct / 100);
+            document.getElementById('circle-pace').style.strokeDashoffset = 125.7 - (125.7 * p / 100);
         }
 
         async function buscarDados() {
@@ -676,7 +671,7 @@
                 elements: { point: { radius: 0 }, line: { tension: 0.4, borderWidth: 2 } }
             };
             const grad = (ctx, c1, c2) => {
-                const g = ctx.createLinearGradient(0, 0, 0, 48);
+                const g = ctx.createLinearGradient(0, 0, 0, 32);
                 g.addColorStop(0, c1); g.addColorStop(1, c2); return g;
             };
             [
