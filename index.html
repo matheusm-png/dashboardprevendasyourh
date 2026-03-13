@@ -1,16 +1,23 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Pré Vendas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <style>
-        * { box-sizing: border-box; }
-        html, body {
-            margin: 0; padding: 0;
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
             font-family: 'Inter', sans-serif;
             background: #0a0e1a;
             color: #fff;
@@ -40,19 +47,29 @@
             margin-bottom: 0.65em;
             flex-shrink: 0;
             background: linear-gradient(135deg, #050a05 0%, #0a1a0a 60%, #0a0e1a 100%);
-            border: 1px solid rgba(97,222,117,0.22);
+            border: 1px solid rgba(97, 222, 117, 0.22);
         }
+
         .header-glow {
-            position: absolute; top: -60px; left: -60px;
-            width: 400px; height: 260px;
-            background: radial-gradient(ellipse, rgba(97,222,117,0.12) 0%, transparent 70%);
+            position: absolute;
+            top: -60px;
+            left: -60px;
+            width: 400px;
+            height: 260px;
+            background: radial-gradient(ellipse, rgba(97, 222, 117, 0.12) 0%, transparent 70%);
             pointer-events: none;
         }
+
         .header-watermark {
-            position: absolute; right: 20px; top: -30px;
-            opacity: 0.07; transform: scale(3.8); transform-origin: right top;
+            position: absolute;
+            right: 20px;
+            top: -30px;
+            opacity: 0.07;
+            transform: scale(3.8);
+            transform-origin: right top;
             pointer-events: none;
         }
+
         .header-title {
             font-size: clamp(1.8rem, 2.4vw, 3rem);
             font-weight: 900;
@@ -63,119 +80,442 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .header-subtitle { color: rgba(255,255,255,0.4); font-size: 0.78em; margin-top: 0.25em; }
-        .header-lastupdate {
-            display: flex; align-items: center; gap: 0.4em;
-            color: rgba(255,255,255,0.28); font-size: 0.68em; margin-top: 0.2em;
+
+        .header-subtitle {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.78em;
+            margin-top: 0.25em;
         }
+
+        .header-lastupdate {
+            display: flex;
+            align-items: center;
+            gap: 0.4em;
+            color: rgba(255, 255, 255, 0.28);
+            font-size: 0.68em;
+            margin-top: 0.2em;
+        }
+
         .header-lastupdate::before {
-            content: ''; display: inline-block;
-            width: 6px; height: 6px; border-radius: 50%;
-            background: #4ade80; box-shadow: 0 0 5px #4ade80; flex-shrink: 0;
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #4ade80;
+            box-shadow: 0 0 5px #4ade80;
+            flex-shrink: 0;
         }
 
         /* SECTION LABELS */
-        .section-label { font-size: 0.6em; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
-        .section-divider { flex: 1; height: 1px; }
-        .flex-label { display: flex; align-items: center; gap: 0.5em; margin-bottom: 0.4em; flex-shrink: 0; }
+        .section-label {
+            font-size: 0.6em;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .section-divider {
+            flex: 1;
+            height: 1px;
+        }
+
+        .flex-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            margin-bottom: 0.4em;
+            flex-shrink: 0;
+        }
 
         /* METRIC CARDS */
         .metric-card {
-            background: linear-gradient(145deg, rgba(20,30,48,0.85) 0%, rgba(10,14,26,0.95) 100%);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 0.7rem; padding: 0.65em 0.85em 0.55em;
-            position: relative; overflow: hidden;
+            background: linear-gradient(145deg, rgba(20, 30, 48, 0.85) 0%, rgba(10, 14, 26, 0.95) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 0.7rem;
+            padding: 0.65em 0.85em 0.55em;
+            position: relative;
+            overflow: hidden;
             transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
         }
-        .metric-card:hover { transform: translateY(-2px); border-color: rgba(168,85,247,0.22); box-shadow: 0 16px 32px rgba(0,0,0,0.4); }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(168, 85, 247, 0.22);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+        }
 
         .metric-card-gold {
-            background: linear-gradient(145deg, rgba(30,20,5,0.92) 0%, rgba(15,10,2,0.97) 100%);
-            border: 1px solid rgba(245,158,11,0.22);
-            border-radius: 0.7rem; padding: 0.65em 0.85em 0.55em;
-            position: relative; overflow: hidden;
+            background: linear-gradient(145deg, rgba(30, 20, 5, 0.92) 0%, rgba(15, 10, 2, 0.97) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.22);
+            border-radius: 0.7rem;
+            padding: 0.65em 0.85em 0.55em;
+            position: relative;
+            overflow: hidden;
             transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
         }
-        .metric-card-gold:hover { transform: translateY(-2px); border-color: rgba(245,158,11,0.38); box-shadow: 0 16px 32px rgba(0,0,0,0.4); }
+
+        .metric-card-gold:hover {
+            transform: translateY(-2px);
+            border-color: rgba(245, 158, 11, 0.38);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+        }
 
         .metric-card-pace {
-            background: linear-gradient(145deg, rgba(30,22,4,0.88) 0%, rgba(15,11,2,0.95) 100%);
-            border: 1px solid rgba(245,158,11,0.18);
-            border-radius: 0.7rem; padding: 0.65em 0.85em 0.55em;
-            position: relative; overflow: hidden;
+            background: linear-gradient(145deg, rgba(30, 22, 4, 0.88) 0%, rgba(15, 11, 2, 0.95) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.18);
+            border-radius: 0.7rem;
+            padding: 0.65em 0.85em 0.55em;
+            position: relative;
+            overflow: hidden;
             transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
         }
-        .metric-card-pace:hover { transform: translateY(-2px); border-color: rgba(245,158,11,0.35); box-shadow: 0 16px 32px rgba(0,0,0,0.4); }
+
+        .metric-card-pace:hover {
+            transform: translateY(-2px);
+            border-color: rgba(245, 158, 11, 0.35);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+        }
 
         .inbound-card {
-            background: linear-gradient(145deg, rgba(4,14,8,0.88) 0%, rgba(2,8,4,0.95) 100%);
-            border: 1px solid rgba(74,222,128,0.1);
-            border-radius: 0.7rem; padding: 0.65em 0.85em 0.55em;
-            position: relative; overflow: hidden;
+            background: linear-gradient(145deg, rgba(4, 14, 8, 0.88) 0%, rgba(2, 8, 4, 0.95) 100%);
+            border: 1px solid rgba(74, 222, 128, 0.1);
+            border-radius: 0.7rem;
+            padding: 0.65em 0.85em 0.55em;
+            position: relative;
+            overflow: hidden;
             transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
         }
-        .inbound-card:hover { transform: translateY(-2px); border-color: rgba(74,222,128,0.26); box-shadow: 0 16px 32px rgba(0,0,0,0.4); }
+
+        .inbound-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(74, 222, 128, 0.26);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+        }
 
         /* ICON */
-        .card-icon { width: 1.8em; height: 1.8em; border-radius: 0.4em; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .card-icon {
+            width: 1.8em;
+            height: 1.8em;
+            border-radius: 0.4em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
 
         /* BADGES */
-        .badge { padding: 0.14em 0.45em; border-radius: 9999px; font-size: 0.68em; font-weight: 600; border: 1px solid; white-space: nowrap; }
-        .badge-green  { background: rgba(34,197,94,0.15);  color: #4ade80; border-color: rgba(34,197,94,0.3); }
-        .badge-blue   { background: rgba(59,130,246,0.15); color: #60a5fa; border-color: rgba(59,130,246,0.3); }
-        .badge-purple { background: rgba(168,85,247,0.15); color: #c084fc; border-color: rgba(168,85,247,0.3); }
-        .badge-gold   { background: rgba(245,158,11,0.15); color: #fbbf24; border-color: rgba(245,158,11,0.3); }
-        .badge-amber  { background: rgba(245,158,11,0.15); color: #fbbf24; border-color: rgba(245,158,11,0.3); }
+        .badge {
+            padding: 0.14em 0.45em;
+            border-radius: 9999px;
+            font-size: 0.68em;
+            font-weight: 600;
+            border: 1px solid;
+            white-space: nowrap;
+        }
+
+        .badge-green {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .badge-blue {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .badge-purple {
+            background: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+            border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        .badge-gold {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .badge-amber {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border-color: rgba(245, 158, 11, 0.3);
+        }
 
         /* RING */
-        .ring-wrap { position: relative; width: 2.6em; height: 2.6em; flex-shrink: 0; }
-        .ring-wrap svg { transform: rotate(-90deg); transform-origin: 50% 50%; width: 100%; height: 100%; }
-        .ring-bg   { stroke: rgba(255,255,255,0.08); }
-        .ring-fill { transition: stroke-dashoffset 1s ease-in-out; stroke-linecap: round; }
-        .ring-pct  { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.58em; font-weight: 700; }
+        .ring-wrap {
+            position: relative;
+            width: 2.6em;
+            height: 2.6em;
+            flex-shrink: 0;
+        }
+
+        .ring-wrap svg {
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            width: 100%;
+            height: 100%;
+        }
+
+        .ring-bg {
+            stroke: rgba(255, 255, 255, 0.08);
+        }
+
+        .ring-fill {
+            transition: stroke-dashoffset 1s ease-in-out;
+            stroke-linecap: round;
+        }
+
+        .ring-pct {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.58em;
+            font-weight: 700;
+        }
 
         /* VALUES */
-        .metric-value { font-size: clamp(1.3rem, 1.9vw, 2.2rem); font-weight: 800; line-height: 1; }
-        .metric-label { font-size: 0.76em; font-weight: 500; color: rgba(255,255,255,0.7); }
-        .metric-sub   { font-size: 0.66em; color: rgba(255,255,255,0.35); margin-top: 0.05em; }
-        .metric-meta  { font-size: 0.76em; color: rgba(255,255,255,0.32); }
+        .metric-value {
+            font-size: clamp(1.3rem, 1.9vw, 2.2rem);
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .metric-label {
+            font-size: 0.76em;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .metric-sub {
+            font-size: 0.66em;
+            color: rgba(255, 255, 255, 0.35);
+            margin-top: 0.05em;
+        }
+
+        .metric-meta {
+            font-size: 0.76em;
+            color: rgba(255, 255, 255, 0.32);
+        }
 
         /* CHART */
-        .chart-wrap { position: relative; height: 32px; overflow: hidden; margin-top: 0.35em; }
-        .chart-wrap canvas { position: absolute; bottom: 0; left: 0; right: 0; }
+        .chart-wrap {
+            position: relative;
+            height: 32px;
+            overflow: hidden;
+            margin-top: 0.35em;
+        }
+
+        .chart-wrap canvas {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
 
         /* GLASS */
-        .glass-card { background: rgba(20,25,40,0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; }
+        .glass-card {
+            background: rgba(20, 25, 40, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 0.5rem;
+        }
 
         /* BARS */
-        .bar-bg   { background: rgba(255,255,255,0.05); border-radius: 9999px; height: 4px; overflow: hidden; }
-        .bar-fill { height: 100%; border-radius: 9999px; transition: width 1s ease-out; box-shadow: 0 0 6px rgba(255,255,255,0.15); }
+        .bar-bg {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 9999px;
+            height: 4px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 1s ease-out;
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.15);
+        }
 
         /* BOTTOM */
-        .bottom-card-out { background: linear-gradient(145deg, rgba(20,12,4,0.82) 0%, rgba(10,6,2,0.92) 100%); border: 1px solid rgba(251,146,60,0.12); border-radius: 0.7rem; padding: 0.6em 0.85em; }
-        .bottom-card-par { background: linear-gradient(145deg, rgba(4,12,20,0.82) 0%, rgba(2,6,12,0.92) 100%); border: 1px solid rgba(6,182,212,0.15); border-radius: 0.7rem; padding: 0.6em 0.85em; }
-        .mini-metric { padding: 0.5em 0.7em; }
-        .mini-metric-value { font-size: 1.1em; font-weight: 800; }
-        .mini-metric-label { font-size: 0.65em; color: rgba(255,255,255,0.4); }
-        .mini-metric-pct   { font-size: 0.68em; font-weight: 700; }
+        .bottom-card-out {
+            background: linear-gradient(145deg, rgba(20, 12, 4, 0.82) 0%, rgba(10, 6, 2, 0.92) 100%);
+            border: 1px solid rgba(251, 146, 60, 0.12);
+            border-radius: 0.7rem;
+            padding: 0.6em 0.85em;
+        }
+
+        .bottom-card-par {
+            background: linear-gradient(145deg, rgba(4, 12, 20, 0.82) 0%, rgba(2, 6, 12, 0.92) 100%);
+            border: 1px solid rgba(6, 182, 212, 0.15);
+            border-radius: 0.7rem;
+            padding: 0.6em 0.85em;
+        }
+
+        .mini-metric {
+            padding: 0.5em 0.7em;
+        }
+
+        .mini-metric-value {
+            font-size: 1.1em;
+            font-weight: 800;
+        }
+
+        .mini-metric-label {
+            font-size: 0.65em;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .mini-metric-pct {
+            font-size: 0.68em;
+            font-weight: 700;
+        }
 
         /* GRIDS */
-        .grid-3     { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.65em; }
-        .grid-4     { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.65em; }
-        .grid-2     { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.65em; }
-        .grid-3-sub { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5em; }
-        .mb-cards   { margin-bottom: 0.65em; }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.65em;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.65em;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.65em;
+        }
+
+        .grid-3-sub {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5em;
+        }
+
+        .mb-cards {
+            margin-bottom: 0.65em;
+        }
 
         /* LOADING */
-        #loading-overlay { position: fixed; inset: 0; background: #0a0e1a; display: flex; align-items: center; justify-content: center; z-index: 100; transition: opacity 0.5s; }
-        .loading-spinner { width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #4ade80; border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        #last-update-fixed { position: fixed; bottom: 8px; right: 12px; font-size: 0.62em; color: rgba(255,255,255,0.22); }
-        #error-banner { display: none; position: fixed; bottom: 8px; left: 12px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #f87171; font-size: 0.62em; padding: 4px 9px; border-radius: 6px; }
+        #loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: #0a0e1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            transition: opacity 0.5s;
+        }
 
-        .pace-ring { transition: stroke-dashoffset 1.2s ease-in-out; stroke-linecap: round; }
+        .loading-spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #4ade80;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        #last-update-fixed {
+            position: fixed;
+            bottom: 8px;
+            right: 12px;
+            font-size: 0.62em;
+            color: rgba(255, 255, 255, 0.22);
+        }
+
+        #error-banner {
+            display: none;
+            position: fixed;
+            bottom: 8px;
+            left: 12px;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            font-size: 0.62em;
+            padding: 4px 9px;
+            border-radius: 6px;
+        }
+
+        .pace-ring {
+            transition: stroke-dashoffset 1.2s ease-in-out;
+            stroke-linecap: round;
+        }
+
+        /* Pipeline cards — Pré Vendas */
+        .pipeline-card-pv {
+            border-radius: 0.7rem;
+            padding: 0.6em 0.85em;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .pipeline-card-pv:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 32px rgba(0,0,0,0.4);
+        }
+        .pipeline-analise {
+            background: linear-gradient(145deg, rgba(30,22,4,0.88) 0%, rgba(15,11,2,0.95) 100%);
+            border: 1px solid rgba(245,158,11,0.2);
+        }
+        .pipeline-analise:hover { border-color: rgba(245,158,11,0.4); }
+        .pipeline-descartado {
+            background: linear-gradient(145deg, rgba(30,10,10,0.88) 0%, rgba(15,5,5,0.95) 100%);
+            border: 1px solid rgba(239,68,68,0.2);
+        }
+        .pipeline-descartado:hover { border-color: rgba(239,68,68,0.4); }
+
+        /* Frases motivacionais */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.65; }
+        }
+        .animate-pulse-slow { animation: pulse-glow 3s infinite; }
+
+        /* Escalabilidade dinâmica para TV (Copiado de Vendas) */
+        @media (min-width: 1536px) {
+            html {
+                font-size: 14px;
+            }
+
+            .chart-wrap {
+                height: 45px;
+            }
+        }
+
+        @media (min-width: 1920px) {
+            html {
+                font-size: 18px;
+            }
+
+            .chart-wrap {
+                height: 60px;
+            }
+        }
+
+        @media (min-width: 2560px) {
+            html {
+                font-size: 24px;
+            }
+        }
     </style>
 </head>
+
 <body>
 
     <div id="loading-overlay">
@@ -191,7 +531,11 @@
         <div class="header-card">
             <div class="header-glow"></div>
             <div class="header-watermark">
-                <svg width="66" height="44" viewBox="0 0 66 44"><path d="M47.548,4.818v6.26l8.04-.435c-14.822,16-20.871,22.77-27.435,22.77-5.238,0-7.686-3.36-8.757-7.021,14.412-.5,19.342-9.319,19.342-14.846C38.738,6.092,35.533,0,26.72,0,17.191,0,12.512,9.451,11.881,18.583a8.806,8.806,0,0,1-5.065-8.314,17.589,17.589,0,0,1,1.3-6.724C6.529,2.918,1.7,1.282,1.7,1.282A30.663,30.663,0,0,0,0,10.628,15.478,15.478,0,0,0,12.252,25.76c1.725,9.229,8.252,14.106,15.9,14.106,9.9,0,16.675-8.377,32.28-24.966l-.5,8.56h6.26V4.818H47.548ZM26.6,6.975a4.651,4.651,0,0,1,5.048,4.967c0,3.827-4.487,8.147-12.371,8.147-.211,0-.419,0-.625-.009C18.81,12.6,21.721,6.975,26.6,6.975" fill="#61de75"/></svg>
+                <svg width="66" height="44" viewBox="0 0 66 44">
+                    <path
+                        d="M47.548,4.818v6.26l8.04-.435c-14.822,16-20.871,22.77-27.435,22.77-5.238,0-7.686-3.36-8.757-7.021,14.412-.5,19.342-9.319,19.342-14.846C38.738,6.092,35.533,0,26.72,0,17.191,0,12.512,9.451,11.881,18.583a8.806,8.806,0,0,1-5.065-8.314,17.589,17.589,0,0,1,1.3-6.724C6.529,2.918,1.7,1.282,1.7,1.282A30.663,30.663,0,0,0,0,10.628,15.478,15.478,0,0,0,12.252,25.76c1.725,9.229,8.252,14.106,15.9,14.106,9.9,0,16.675-8.377,32.28-24.966l-.5,8.56h6.26V4.818H47.548ZM26.6,6.975a4.651,4.651,0,0,1,5.048,4.967c0,3.827-4.487,8.147-12.371,8.147-.211,0-.419,0-.625-.009C18.81,12.6,21.721,6.975,26.6,6.975"
+                        fill="#61de75" />
+                </svg>
             </div>
             <div style="position:relative;z-index:1">
                 <div class="header-title">Dashboard Pré Vendas</div>
@@ -199,13 +543,27 @@
                 <div class="header-lastupdate" id="last-update-header">Carregando...</div>
             </div>
             <div style="position:relative;z-index:1;display:flex;align-items:center;gap:1em">
-                <svg width="42" height="35" viewBox="0 0 66 44"><path d="M47.548,4.818v6.26l8.04-.435c-14.822,16-20.871,22.77-27.435,22.77-5.238,0-7.686-3.36-8.757-7.021,14.412-.5,19.342-9.319,19.342-14.846C38.738,6.092,35.533,0,26.72,0,17.191,0,12.512,9.451,11.881,18.583a8.806,8.806,0,0,1-5.065-8.314,17.589,17.589,0,0,1,1.3-6.724C6.529,2.918,1.7,1.282,1.7,1.282A30.663,30.663,0,0,0,0,10.628,15.478,15.478,0,0,0,12.252,25.76c1.725,9.229,8.252,14.106,15.9,14.106,9.9,0,16.675-8.377,32.28-24.966l-.5,8.56h6.26V4.818H47.548ZM26.6,6.975a4.651,4.651,0,0,1,5.048,4.967c0,3.827-4.487,8.147-12.371,8.147-.211,0-.419,0-.625-.009C18.81,12.6,21.721,6.975,26.6,6.975" fill="#61de75"/></svg>
+                <svg width="42" height="35" viewBox="0 0 66 44">
+                    <path
+                        d="M47.548,4.818v6.26l8.04-.435c-14.822,16-20.871,22.77-27.435,22.77-5.238,0-7.686-3.36-8.757-7.021,14.412-.5,19.342-9.319,19.342-14.846C38.738,6.092,35.533,0,26.72,0,17.191,0,12.512,9.451,11.881,18.583a8.806,8.806,0,0,1-5.065-8.314,17.589,17.589,0,0,1,1.3-6.724C6.529,2.918,1.7,1.282,1.7,1.282A30.663,30.663,0,0,0,0,10.628,15.478,15.478,0,0,0,12.252,25.76c1.725,9.229,8.252,14.106,15.9,14.106,9.9,0,16.675-8.377,32.28-24.966l-.5,8.56h6.26V4.818H47.548ZM26.6,6.975a4.651,4.651,0,0,1,5.048,4.967c0,3.827-4.487,8.147-12.371,8.147-.211,0-.419,0-.625-.009C18.81,12.6,21.721,6.975,26.6,6.975"
+                        fill="#61de75" />
+                </svg>
                 <svg height="38" viewBox="75 -3 210 50" style="width:auto">
-                    <path d="M167.439,7.486c-4.842,12.1-10.076,24.144-13.871,33.435-4.253,10.01-8.244,15.311-14.918,15.311-4.711,0-7.917-1.963-9.684-5.1l7.852-6.543.785.066c.327,3.01,1.832,5.3,4.515,5.3,3.86,0,6.215-3.729,7.393-7.72-2.094,0-5.954-.131-8.048-.393-3.6-11.058-8.637-24.536-12.825-34.351a90.474,90.474,0,0,0,14.591,0c2.159,8.375,5.234,19.3,8.113,28.331,2.682-9.749,5.1-21.265,6.347-28.331a60.68,60.68,0,0,0,9.749,0" transform="translate(-45.794,-2.665)" fill="white"/>
-                    <path d="M186.956,23.825c0-10.73,7.262-17.862,19.237-17.862s19.3,7.132,19.3,17.862c0,10.927-7.328,18.255-19.3,18.255s-19.237-7.328-19.237-18.255m24.667-.261c0-11.647-1.9-15.376-5.431-15.376-3.4,0-5.5,3.8-5.5,15.638,0,12.17,2.094,15.965,5.562,15.965,3.4,0,5.365-3.86,5.365-16.226" transform="translate(-66.555,-2.123)" fill="white"/>
-                    <path d="M287.188,41.706h-5.5L275.345,33c-1.505,5.758-5.823,9.618-12.17,9.618-6.608,0-11.712-3.4-11.777-14.133-.066-8.375,0-14.329-.131-21a90.885,90.885,0,0,0,13.348,0c-.066,12.3,0,11.385.131,20.807.065,6.805.981,9.226,3.6,9.16,3.468-.065,5.562-4.318,5.562-12.759,0-8.9,0-10.8-.2-17.208a92.672,92.672,0,0,0,13.478,0c-.327,11.581-.392,22.639,0,34.22" transform="translate(-89.449,-2.665)" fill="white"/>
-                    <path d="M361.8,41.566a58.7,58.7,0,0,1-13.564,0A102.564,102.564,0,0,0,338.267,28.9c0,4.139.05,8.378.149,12.666a37.558,37.558,0,0,1-10.572,0c.249-11.669.249-21.992,0-34.309A88.294,88.294,0,0,1,341.158,6.01c4.389,0,17.654.549,17.654,10.672,0,8.128-9.525,11.968-18.052,11.819A102.671,102.671,0,0,0,352.428,30c2.494,3.191,5.585,7.43,9.375,11.569m-23.587-14.91a21.961,21.961,0,0,0,2.244.149c4.04,0,6.982-2.494,6.982-9.525,0-6.931-2.743-9.126-6.383-9.126-.7,0-1.646.1-2.643.2-.149,5.934-.2,12.067-.2,18.3" transform="translate(-116.71,-2.14)" fill="white"/>
-                    <path d="M416.777,41.738a42.058,42.058,0,0,1-10.622,0c.1-5.435.2-10.871.2-16.307-3.889-.1-7.879-.1-11.718,0,0,5.436.1,10.872.2,16.307a42.058,42.058,0,0,1-10.622,0c.249-11.619.249-23.288,0-34.907a42.058,42.058,0,0,1,10.622,0c-.1,5.236-.15,10.472-.2,15.708,3.84.1,7.829.1,11.718,0-.05-5.236-.1-10.472-.2-15.708a42.058,42.058,0,0,1,10.622,0c-.249,11.619-.249,23.288,0,34.907" transform="translate(-136.777,-2.312)" fill="white"/>
+                    <path
+                        d="M167.439,7.486c-4.842,12.1-10.076,24.144-13.871,33.435-4.253,10.01-8.244,15.311-14.918,15.311-4.711,0-7.917-1.963-9.684-5.1l7.852-6.543.785.066c.327,3.01,1.832,5.3,4.515,5.3,3.86,0,6.215-3.729,7.393-7.72-2.094,0-5.954-.131-8.048-.393-3.6-11.058-8.637-24.536-12.825-34.351a90.474,90.474,0,0,0,14.591,0c2.159,8.375,5.234,19.3,8.113,28.331,2.682-9.749,5.1-21.265,6.347-28.331a60.68,60.68,0,0,0,9.749,0"
+                        transform="translate(-45.794,-2.665)" fill="white" />
+                    <path
+                        d="M186.956,23.825c0-10.73,7.262-17.862,19.237-17.862s19.3,7.132,19.3,17.862c0,10.927-7.328,18.255-19.3,18.255s-19.237-7.328-19.237-18.255m24.667-.261c0-11.647-1.9-15.376-5.431-15.376-3.4,0-5.5,3.8-5.5,15.638,0,12.17,2.094,15.965,5.562,15.965,3.4,0,5.365-3.86,5.365-16.226"
+                        transform="translate(-66.555,-2.123)" fill="white" />
+                    <path
+                        d="M287.188,41.706h-5.5L275.345,33c-1.505,5.758-5.823,9.618-12.17,9.618-6.608,0-11.712-3.4-11.777-14.133-.066-8.375,0-14.329-.131-21a90.885,90.885,0,0,0,13.348,0c-.066,12.3,0,11.385.131,20.807.065,6.805.981,9.226,3.6,9.16,3.468-.065,5.562-4.318,5.562-12.759,0-8.9,0-10.8-.2-17.208a92.672,92.672,0,0,0,13.478,0c-.327,11.581-.392,22.639,0,34.22"
+                        transform="translate(-89.449,-2.665)" fill="white" />
+                    <path
+                        d="M361.8,41.566a58.7,58.7,0,0,1-13.564,0A102.564,102.564,0,0,0,338.267,28.9c0,4.139.05,8.378.149,12.666a37.558,37.558,0,0,1-10.572,0c.249-11.669.249-21.992,0-34.309A88.294,88.294,0,0,1,341.158,6.01c4.389,0,17.654.549,17.654,10.672,0,8.128-9.525,11.968-18.052,11.819A102.671,102.671,0,0,0,352.428,30c2.494,3.191,5.585,7.43,9.375,11.569m-23.587-14.91a21.961,21.961,0,0,0,2.244.149c4.04,0,6.982-2.494,6.982-9.525,0-6.931-2.743-9.126-6.383-9.126-.7,0-1.646.1-2.643.2-.149,5.934-.2,12.067-.2,18.3"
+                        transform="translate(-116.71,-2.14)" fill="white" />
+                    <path
+                        d="M416.777,41.738a42.058,42.058,0,0,1-10.622,0c.1-5.435.2-10.871.2-16.307-3.889-.1-7.879-.1-11.718,0,0,5.436.1,10.872.2,16.307a42.058,42.058,0,0,1-10.622,0c.249-11.619.249-23.288,0-34.907a42.058,42.058,0,0,1,10.622,0c-.1,5.236-.15,10.472-.2,15.708,3.84.1,7.829.1,11.718,0-.05-5.236-.1-10.472-.2-15.708a42.058,42.058,0,0,1,10.622,0c-.249,11.619-.249,23.288,0,34.907"
+                        transform="translate(-136.777,-2.312)" fill="white" />
                 </svg>
             </div>
         </div>
@@ -221,12 +579,19 @@
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.4em">
                     <div style="display:flex;align-items:center;gap:0.4em">
                         <div class="card-icon" style="background:rgba(168,85,247,0.18)">
-                            <svg style="width:0.9em;height:0.9em" fill="none" stroke="#c084fc" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            <svg style="width:0.9em;height:0.9em" fill="none" stroke="#c084fc" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
                         </div>
                         <span class="badge badge-purple">Time total</span>
                     </div>
                     <div class="ring-wrap">
-                        <svg viewBox="0 0 48 48"><circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none"/><circle class="ring-fill" id="circle-reuniao" cx="24" cy="24" r="20" stroke="#c084fc" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/></svg>
+                        <svg viewBox="0 0 48 48">
+                            <circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none" />
+                            <circle class="ring-fill" id="circle-reuniao" cx="24" cy="24" r="20" stroke="#c084fc"
+                                stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" />
+                        </svg>
                         <span class="ring-pct" id="pct-reuniao">--%</span>
                     </div>
                 </div>
@@ -243,12 +608,19 @@
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.4em">
                     <div style="display:flex;align-items:center;gap:0.4em">
                         <div class="card-icon" style="background:rgba(59,130,246,0.18)">
-                            <svg style="width:0.9em;height:0.9em" fill="none" stroke="#60a5fa" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <svg style="width:0.9em;height:0.9em" fill="none" stroke="#60a5fa" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
                         </div>
                         <span class="badge badge-blue">Time total</span>
                     </div>
                     <div class="ring-wrap">
-                        <svg viewBox="0 0 48 48"><circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none"/><circle class="ring-fill" id="circle-agend" cx="24" cy="24" r="20" stroke="#60a5fa" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/></svg>
+                        <svg viewBox="0 0 48 48">
+                            <circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none" />
+                            <circle class="ring-fill" id="circle-agend" cx="24" cy="24" r="20" stroke="#60a5fa"
+                                stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" />
+                        </svg>
                         <span class="ring-pct" id="pct-agend">--%</span>
                     </div>
                 </div>
@@ -264,18 +636,24 @@
             <div class="metric-card-gold">
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.4em">
                     <div style="display:flex;align-items:center;gap:0.4em">
-                        <div class="card-icon" style="background:rgba(245,158,11,0.18)"><span style="font-size:0.9em">🏆</span></div>
+                        <div class="card-icon" style="background:rgba(245,158,11,0.18)"><span
+                                style="font-size:0.9em">🏆</span></div>
                         <span class="badge badge-gold">+<span id="vendas-variacao">-</span></span>
                     </div>
                     <div class="ring-wrap">
-                        <svg viewBox="0 0 48 48"><circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none"/><circle class="ring-fill" id="circle-vendas" cx="24" cy="24" r="20" stroke="#f59e0b" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/></svg>
+                        <svg viewBox="0 0 48 48">
+                            <circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none" />
+                            <circle class="ring-fill" id="circle-vendas" cx="24" cy="24" r="20" stroke="#f59e0b"
+                                stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" />
+                        </svg>
                         <span class="ring-pct" id="pct-vendas">--%</span>
                     </div>
                 </div>
                 <div class="metric-label">Vendas Realizadas</div>
                 <div class="metric-sub">Total do time</div>
                 <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.25em">
-                    <span class="metric-value" id="val-vendas" style="background:linear-gradient(135deg,#fcd34d,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">--</span>
+                    <span class="metric-value" id="val-vendas"
+                        style="background:linear-gradient(135deg,#fcd34d,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">--</span>
                     <span class="metric-meta">/ <span id="meta-vendas">--</span></span>
                 </div>
                 <div class="chart-wrap"><canvas id="chart-vendas"></canvas></div>
@@ -286,14 +664,18 @@
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.4em">
                     <div style="display:flex;align-items:center;gap:0.4em">
                         <div class="card-icon" style="background:rgba(245,158,11,0.15)">
-                            <svg style="width:0.9em;height:0.9em" fill="none" stroke="#fbbf24" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <svg style="width:0.9em;height:0.9em" fill="none" stroke="#fbbf24" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
                         </div>
                         <span class="badge badge-amber">📅 <span id="pace-nome-mes">--</span></span>
                     </div>
                     <div class="ring-wrap">
                         <svg viewBox="0 0 48 48">
-                            <circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none"/>
-                            <circle class="pace-ring" id="circle-pace" cx="24" cy="24" r="20" stroke="#f59e0b" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/>
+                            <circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none" />
+                            <circle class="pace-ring" id="circle-pace" cx="24" cy="24" r="20" stroke="#f59e0b"
+                                stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" />
                         </svg>
                         <span class="ring-pct" id="pct-pace-circulo" style="color:#fbbf24">--%</span>
                     </div>
@@ -301,11 +683,13 @@
                 <div class="metric-label">Pace do Mês</div>
                 <div class="metric-sub">Progresso do calendário</div>
                 <div style="display:flex;align-items:baseline;gap:0.3em;margin-top:0.25em">
-                    <span class="metric-value" id="pace-pct" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">--%</span>
+                    <span class="metric-value" id="pace-pct"
+                        style="background:linear-gradient(135deg,#fbbf24,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">--%</span>
                     <span class="metric-meta">do mês</span>
                 </div>
                 <div style="font-size:0.68em;color:rgba(255,255,255,0.35);margin-top:0.2em">
-                    Dia <span id="pace-dia-atual" style="color:rgba(255,255,255,0.6);font-weight:600">--</span> de <span id="pace-total-dias" style="color:rgba(255,255,255,0.6);font-weight:600">--</span> dias
+                    Dia <span id="pace-dia-atual" style="color:rgba(255,255,255,0.6);font-weight:600">--</span> de <span
+                        id="pace-total-dias" style="color:rgba(255,255,255,0.6);font-weight:600">--</span> dias
                 </div>
             </div>
 
@@ -320,7 +704,8 @@
             <div class="glass-card" style="padding:0.6em 0.85em">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4em">
                     <div>
-                        <div style="font-size:0.68em;color:rgba(255,255,255,0.45);margin-bottom:0.15em">Taxa Conv. Geral</div>
+                        <div style="font-size:0.68em;color:rgba(255,255,255,0.45);margin-bottom:0.15em">Taxa Conv. Geral
+                        </div>
                         <div style="font-size:1.1em;font-weight:800" id="val-cg">--%</div>
                     </div>
                     <div style="text-align:right">
@@ -328,15 +713,20 @@
                         <div style="font-size:0.6em;color:rgba(255,255,255,0.3)">da meta</div>
                     </div>
                 </div>
-                <div class="bar-bg"><div class="bar-fill" id="bar-cg" style="width:0%;background:linear-gradient(90deg,#a855f7,#ec4899)"></div></div>
+                <div class="bar-bg">
+                    <div class="bar-fill" id="bar-cg"
+                        style="width:0%;background:linear-gradient(90deg,#a855f7,#ec4899)"></div>
+                </div>
             </div>
             <div class="glass-card" style="padding:0.6em 0.85em">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4em">
                     <div>
-                        <div style="font-size:0.68em;color:rgba(255,255,255,0.45);margin-bottom:0.15em">Lead → Qualificado</div>
+                        <div style="font-size:0.68em;color:rgba(255,255,255,0.45);margin-bottom:0.15em">Lead →
+                            Qualificado</div>
                         <div style="display:flex;align-items:baseline;gap:0.3em">
                             <span style="font-size:1.1em;font-weight:800" id="val-lq">--%</span>
-                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span id="meta-lq">--</span>%</span>
+                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span
+                                    id="meta-lq">--</span>%</span>
                         </div>
                     </div>
                     <div style="text-align:right">
@@ -344,15 +734,20 @@
                         <div style="font-size:0.6em;color:rgba(255,255,255,0.3)">da meta</div>
                     </div>
                 </div>
-                <div class="bar-bg"><div class="bar-fill" id="bar-lq" style="width:0%;background:linear-gradient(90deg,#4ade80,#22d3ee)"></div></div>
+                <div class="bar-bg">
+                    <div class="bar-fill" id="bar-lq"
+                        style="width:0%;background:linear-gradient(90deg,#4ade80,#22d3ee)"></div>
+                </div>
             </div>
             <div class="glass-card" style="padding:0.6em 0.85em">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4em">
                     <div>
-                        <div style="font-size:0.68em;color:rgba(255,255,255,0.45);margin-bottom:0.15em">Qualificado → Venda</div>
+                        <div style="font-size:0.68em;color:rgba(255,255,255,0.45);margin-bottom:0.15em">Qualificado →
+                            Venda</div>
                         <div style="display:flex;align-items:baseline;gap:0.3em">
                             <span style="font-size:1.1em;font-weight:800" id="val-qv">--%</span>
-                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span id="meta-qv">--</span>%</span>
+                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span
+                                    id="meta-qv">--</span>%</span>
                         </div>
                     </div>
                     <div style="text-align:right">
@@ -360,7 +755,10 @@
                         <div style="font-size:0.6em;color:rgba(255,255,255,0.3)">da meta</div>
                     </div>
                 </div>
-                <div class="bar-bg"><div class="bar-fill" id="bar-qv" style="width:0%;background:linear-gradient(90deg,#60a5fa,#a855f7)"></div></div>
+                <div class="bar-bg">
+                    <div class="bar-fill" id="bar-qv"
+                        style="width:0%;background:linear-gradient(90deg,#60a5fa,#a855f7)"></div>
+                </div>
             </div>
         </div>
 
@@ -375,12 +773,19 @@
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.4em">
                     <div style="display:flex;align-items:center;gap:0.4em">
                         <div class="card-icon" style="background:rgba(52,211,153,0.18)">
-                            <svg style="width:0.9em;height:0.9em" fill="none" stroke="#4ade80" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            <svg style="width:0.9em;height:0.9em" fill="none" stroke="#4ade80" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
                         </div>
                         <span class="badge badge-green">↑ +<span id="vr-leads">--</span></span>
                     </div>
                     <div class="ring-wrap">
-                        <svg viewBox="0 0 48 48"><circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none"/><circle class="ring-fill" id="circle-leads" cx="24" cy="24" r="20" stroke="#4ade80" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/></svg>
+                        <svg viewBox="0 0 48 48">
+                            <circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none" />
+                            <circle class="ring-fill" id="circle-leads" cx="24" cy="24" r="20" stroke="#4ade80"
+                                stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" />
+                        </svg>
                         <span class="ring-pct" id="pct-leads">--%</span>
                     </div>
                 </div>
@@ -397,12 +802,19 @@
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.4em">
                     <div style="display:flex;align-items:center;gap:0.4em">
                         <div class="card-icon" style="background:rgba(59,130,246,0.18)">
-                            <svg style="width:0.9em;height:0.9em" fill="none" stroke="#60a5fa" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <svg style="width:0.9em;height:0.9em" fill="none" stroke="#60a5fa" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
                         </div>
                         <span class="badge badge-blue">↑ +<span id="vr-agendas">--</span></span>
                     </div>
                     <div class="ring-wrap">
-                        <svg viewBox="0 0 48 48"><circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none"/><circle class="ring-fill" id="circle-agendas-in" cx="24" cy="24" r="20" stroke="#60a5fa" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/></svg>
+                        <svg viewBox="0 0 48 48">
+                            <circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none" />
+                            <circle class="ring-fill" id="circle-agendas-in" cx="24" cy="24" r="20" stroke="#60a5fa"
+                                stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" />
+                        </svg>
                         <span class="ring-pct" id="pct-agendas-in">--%</span>
                     </div>
                 </div>
@@ -419,12 +831,19 @@
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.4em">
                     <div style="display:flex;align-items:center;gap:0.4em">
                         <div class="card-icon" style="background:rgba(168,85,247,0.18)">
-                            <svg style="width:0.9em;height:0.9em" fill="none" stroke="#c084fc" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                            <svg style="width:0.9em;height:0.9em" fill="none" stroke="#c084fc" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                            </svg>
                         </div>
                         <span class="badge badge-purple">↑ +<span id="vr-lq">--</span></span>
                     </div>
                     <div class="ring-wrap">
-                        <svg viewBox="0 0 48 48"><circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none"/><circle class="ring-fill" id="circle-lq" cx="24" cy="24" r="20" stroke="#c084fc" stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/></svg>
+                        <svg viewBox="0 0 48 48">
+                            <circle class="ring-bg" cx="24" cy="24" r="20" stroke-width="3" fill="none" />
+                            <circle class="ring-fill" id="circle-lq" cx="24" cy="24" r="20" stroke="#c084fc"
+                                stroke-width="3" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7" />
+                        </svg>
                         <span class="ring-pct" id="pct-lq-in">--%</span>
                     </div>
                 </div>
@@ -435,6 +854,57 @@
                     <span class="metric-meta">/ <span id="meta-lq-in">--</span></span>
                 </div>
                 <div class="chart-wrap"><canvas id="chart-lq"></canvas></div>
+            </div>
+        </div>
+
+        <!-- SEÇÃO 3.5 — PIPELINE -->
+        <div class="flex-label">
+            <span class="section-label" style="color:rgba(96,165,250,0.75)">🔍 Pipeline Leads</span>
+            <div class="section-divider" style="background:rgba(96,165,250,0.15)"></div>
+        </div>
+        <div class="grid-2 mb-cards">
+            <!-- Em Tentativa -->
+            <div class="pipeline-card-pv pipeline-analise">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35em">
+                    <div style="display:flex;align-items:center;gap:0.5em">
+                        <svg style="width:1.1em;height:1.1em" fill="none" stroke="#fbbf24" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span style="font-size:0.72em;color:rgba(255,255,255,0.5)">Em Tentativa</span>
+                    </div>
+                    <div style="text-align:right">
+                        <span id="pct-analise" style="font-size:1.1em;font-weight:800;color:#fbbf24">--%</span>
+                        <div style="font-size:0.6em;color:rgba(255,255,255,0.3)">dos leads presos</div>
+                    </div>
+                </div>
+                <div style="display:flex;align-items:baseline;gap:0.3em;margin-bottom:0.25em">
+                    <span id="val-analise" style="font-size:clamp(1.3rem,1.9vw,2.2rem);font-weight:800;background:linear-gradient(135deg,#fbbf24,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">--</span>
+                    <span style="font-size:0.72em;color:rgba(255,255,255,0.32)">leads &bull; meta: <span style="color:rgba(74,222,128,0.7);font-weight:700">0</span></span>
+                </div>
+                <div style="font-size:0.62em;color:rgba(255,255,255,0.3);margin-bottom:0.3em" id="sub-analise">Finalizar o mês sem nenhum lead parado</div>
+                <div class="bar-bg"><div class="bar-fill" id="bar-analise" style="width:0%;background:linear-gradient(90deg,#fbbf24cc,#fbbf24)"></div></div>
+            </div>
+
+            <!-- Descartados -->
+            <div class="pipeline-card-pv pipeline-descartado">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35em">
+                    <div style="display:flex;align-items:center;gap:0.5em">
+                        <svg style="width:1.1em;height:1.1em" fill="none" stroke="#f87171" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                        <span style="font-size:0.72em;color:rgba(255,255,255,0.5)">Descartados</span>
+                    </div>
+                    <div style="text-align:right">
+                        <span id="pct-descartado" style="font-size:1.1em;font-weight:800;color:#f87171">--%</span>
+                        <div style="font-size:0.6em;color:rgba(255,255,255,0.3)">dos leads (limite 35%)</div>
+                    </div>
+                </div>
+                <div style="display:flex;align-items:baseline;gap:0.3em;margin-bottom:0.25em">
+                    <span id="val-descartado" style="font-size:clamp(1.3rem,1.9vw,2.2rem);font-weight:800;background:linear-gradient(135deg,#f87171,#dc2626);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">--</span>
+                    <span style="font-size:0.72em;color:rgba(255,255,255,0.32)">descartes &bull; máx: <span id="meta-descartado-val" style="color:rgba(255,255,255,0.55);font-weight:700">--</span></span>
+                </div>
+                <div style="font-size:0.62em;color:rgba(255,255,255,0.3);margin-bottom:0.3em" id="sub-descartado">Máximo 35% dos leads captados</div>
+                <div class="bar-bg"><div class="bar-fill" id="bar-descartado" style="width:0%;background:linear-gradient(90deg,#f87171cc,#f87171)"></div></div>
             </div>
         </div>
 
@@ -450,37 +920,49 @@
                         <div class="mini-metric-label">Agendas</div>
                         <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.15em 0">
                             <span class="mini-metric-value" id="val-ao">--</span>
-                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span id="meta-ao">--</span></span>
+                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span
+                                    id="meta-ao">--</span></span>
                         </div>
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25em">
                             <span class="mini-metric-pct" style="color:#fb923c" id="pct-ao">--%</span>
                             <span style="font-size:0.58em;color:rgba(255,255,255,0.3)">da meta</span>
                         </div>
-                        <div class="bar-bg"><div class="bar-fill" id="bar-ao" style="width:0%;background:linear-gradient(90deg,#fb923c,#fbbf24)"></div></div>
+                        <div class="bar-bg">
+                            <div class="bar-fill" id="bar-ao"
+                                style="width:0%;background:linear-gradient(90deg,#fb923c,#fbbf24)"></div>
+                        </div>
                     </div>
                     <div class="glass-card mini-metric">
                         <div class="mini-metric-label">Qualificações</div>
                         <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.15em 0">
                             <span class="mini-metric-value" id="val-qo">--</span>
-                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span id="meta-qo">--</span></span>
+                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span
+                                    id="meta-qo">--</span></span>
                         </div>
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25em">
                             <span class="mini-metric-pct" style="color:#fb923c" id="pct-qo">--%</span>
                             <span style="font-size:0.58em;color:rgba(255,255,255,0.3)">da meta</span>
                         </div>
-                        <div class="bar-bg"><div class="bar-fill" id="bar-qo" style="width:0%;background:linear-gradient(90deg,#fb923c,#ef4444)"></div></div>
+                        <div class="bar-bg">
+                            <div class="bar-fill" id="bar-qo"
+                                style="width:0%;background:linear-gradient(90deg,#fb923c,#ef4444)"></div>
+                        </div>
                     </div>
                     <div class="glass-card mini-metric">
                         <div class="mini-metric-label">Vendas</div>
                         <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.15em 0">
                             <span class="mini-metric-value" id="val-vo">--</span>
-                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span id="meta-vo">--</span></span>
+                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span
+                                    id="meta-vo">--</span></span>
                         </div>
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25em">
                             <span class="mini-metric-pct" style="color:#fb923c" id="pct-vo">--%</span>
                             <span style="font-size:0.58em;color:rgba(255,255,255,0.3)">da meta</span>
                         </div>
-                        <div class="bar-bg"><div class="bar-fill" id="bar-vo" style="width:0%;background:linear-gradient(90deg,#fbbf24,#f97316)"></div></div>
+                        <div class="bar-bg">
+                            <div class="bar-fill" id="bar-vo"
+                                style="width:0%;background:linear-gradient(90deg,#fbbf24,#f97316)"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -492,42 +974,65 @@
                 </div>
                 <div class="grid-3-sub">
                     <div class="glass-card mini-metric">
-                        <div class="mini-metric-label">Apresentações</div>
+                        <div class="mini-metric-label">Agendamentos</div>
                         <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.15em 0">
-                            <span class="mini-metric-value" id="val-ap">--</span>
-                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span id="meta-ap">--</span></span>
+                            <span class="mini-metric-value" id="val-agp">--</span>
+                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span
+                                    id="meta-agp">--</span></span>
                         </div>
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25em">
-                            <span class="mini-metric-pct" style="color:#22d3ee" id="pct-ap">--%</span>
+                            <span class="mini-metric-pct" style="color:#22d3ee" id="pct-agp">--%</span>
                             <span style="font-size:0.58em;color:rgba(255,255,255,0.3)">da meta</span>
                         </div>
-                        <div class="bar-bg"><div class="bar-fill" id="bar-ap" style="width:0%;background:linear-gradient(90deg,#22d3ee,#60a5fa)"></div></div>
+                        <div class="bar-bg">
+                            <div class="bar-fill" id="bar-agp"
+                                style="width:0%;background:linear-gradient(90deg,#22d3ee,#60a5fa)"></div>
+                        </div>
                     </div>
                     <div class="glass-card mini-metric">
-                        <div class="mini-metric-label">Contratos</div>
+                        <div class="mini-metric-label">Qualificações</div>
                         <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.15em 0">
-                            <span class="mini-metric-value" id="val-co">--</span>
-                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span id="meta-co">--</span></span>
+                            <span class="mini-metric-value" id="val-qup">--</span>
+                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span
+                                    id="meta-qup">--</span></span>
                         </div>
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25em">
-                            <span class="mini-metric-pct" style="color:#22d3ee" id="pct-co">--%</span>
+                            <span class="mini-metric-pct" style="color:#22d3ee" id="pct-qup">--%</span>
                             <span style="font-size:0.58em;color:rgba(255,255,255,0.3)">da meta</span>
                         </div>
-                        <div class="bar-bg"><div class="bar-fill" id="bar-co" style="width:0%;background:linear-gradient(90deg,#22d3ee,#2dd4bf)"></div></div>
+                        <div class="bar-bg">
+                            <div class="bar-fill" id="bar-qup"
+                                style="width:0%;background:linear-gradient(90deg,#22d3ee,#2dd4bf)"></div>
+                        </div>
                     </div>
                     <div class="glass-card mini-metric">
-                        <div class="mini-metric-label">Indicações</div>
+                        <div class="mini-metric-label">Vendas</div>
                         <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.15em 0">
-                            <span class="mini-metric-value" id="val-in2">--</span>
-                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span id="meta-in2">--</span></span>
+                            <span class="mini-metric-value" id="val-vep">--</span>
+                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span
+                                    id="meta-vep">--</span></span>
                         </div>
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25em">
-                            <span class="mini-metric-pct" style="color:#22d3ee" id="pct-in2">--%</span>
+                            <span class="mini-metric-pct" style="color:#22d3ee" id="pct-vep">--%</span>
                             <span style="font-size:0.58em;color:rgba(255,255,255,0.3)">da meta</span>
                         </div>
-                        <div class="bar-bg"><div class="bar-fill" id="bar-in2" style="width:0%;background:linear-gradient(90deg,#60a5fa,#22d3ee)"></div></div>
+                        <div class="bar-bg">
+                            <div class="bar-fill" id="bar-vep"
+                                style="width:0%;background:linear-gradient(90deg,#60a5fa,#22d3ee)"></div>
+                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- BANNER MOTIVACIONAL -->
+        <div id="banner-motivacional" style="margin-top:0.65em;border-radius:0.7rem;padding:0.55em 1.2em;text-align:center;position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(17,24,39,0.7),rgba(10,14,26,0.9));border:1px solid rgba(96,165,250,0.15);cursor:pointer;transition:border-color 0.3s">
+            <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(74,222,128,0.07),rgba(96,165,250,0.07),rgba(192,132,252,0.07));opacity:0;transition:opacity 0.5s" id="banner-hover-bg"></div>
+            <div style="position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:0.5em">
+                <svg id="mensagem-icon" class="animate-pulse-slow" style="width:1.1em;height:1.1em;flex-shrink:0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/>
+                </svg>
+                <span id="mensagem-motivacional" style="font-size:clamp(0.85rem,1.1vw,1.4rem);font-weight:800;letter-spacing:0.02em;color:#4ade80">Carregando dados...</span>
             </div>
         </div>
 
@@ -537,31 +1042,83 @@
     <div id="error-banner">⚠ Erro ao carregar dados. Tentando novamente...</div>
 
     <script>
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby0z8bATH-bki-RIbqsT6BaZDwTlCq0WWeTwnrf_5KmsBjr8Ifoz5jS3nu69WXuVIRdhw/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxFfB4AUtNybn_W5k5F2H7nCjHlPT99x35uzxe_r4bLaEMwnejmhKN89KGvB--L0Z00fQ/exec';
         const INTERVALO_MS = 60 * 1000;
+
+        const FRASE_CONFIG = {
+            meta_batida: [
+                "Meta batida! Esse time é imparável! Vamos secar mais leads!",
+                "100% realizado! Excelência em Pré Vendas — o funil está perfeito!",
+                "Missão cumprida! Agora é acelerar para superar todos os recordes!",
+                "Extraordinário! Pipeline abastecido e meta entregue. Que time!"
+            ],
+            excelente: [
+                "Ritmo incrível! Leads fluindo acima do pace — continue qualificando!",
+                "Performance de elite! O funil está verde e a meta está na mira!",
+                "Velocidade máxima! Se mantendo assim, vamos bater a meta antes do prazo!",
+                "Que execução! Cada lead qualificado é um passo a mais rumo ao fechamento!"
+            ],
+            no_ritmo: [
+                "Foco total! Cada lead qualificado conta para abastecermos o comercial.",
+                "Constância é a chave. Vamos manter a cadência e aquecer o pipeline!",
+                "Pipeline se aquecendo! Hora de transformar contatos em oportunidades reais.",
+                "Ritmo sólido. Vamos acelerar as qualificações para garantir o mês!"
+            ],
+            alerta: [
+                "Alerta de ritmo! Precisamos de mais velocidade para buscar o resultado!",
+                "O tempo voa! Vamos focar nos leads em análise e avançar o funil!",
+                "Jogo ainda aberto! Foco total em qualificações e agendamentos agora!",
+                "A meta nos desafia. Como vamos reagir hoje? Vamos pra cima!"
+            ]
+        };
+
+        // Efeito hover no banner
+        const bannerEl = document.getElementById('banner-motivacional');
+        const bannerHover = document.getElementById('banner-hover-bg');
+        if (bannerEl) {
+            bannerEl.addEventListener('mouseenter', () => { bannerHover.style.opacity = '1'; bannerEl.style.borderColor = 'rgba(74,222,128,0.3)'; });
+            bannerEl.addEventListener('mouseleave', () => { bannerHover.style.opacity = '0'; bannerEl.style.borderColor = 'rgba(96,165,250,0.15)'; });
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             initCharts();
             buscarDados();
             setInterval(buscarDados, INTERVALO_MS);
             calcularPaceMes();
+            agendarRecarregamento(); // Previne memory leak limitando runtime a 24h
         });
 
-        function calcularPaceMes() {
-            const agora     = new Date();
-            const diaAtual  = agora.getDate();
-            const mes       = agora.getMonth();
-            const ano       = agora.getFullYear();
-            const totalDias = new Date(ano, mes + 1, 0).getDate();
-            const p         = Math.round((diaAtual / totalDias) * 100);
-            const meses     = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
-                               'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+        // Forçar reload às 03:00 para manter saúde da TV/Navegador
+        function agendarRecarregamento() {
+            const agora = new Date();
+            const recarregar = new Date();
+            recarregar.setHours(3, 0, 0, 0);
 
-            document.getElementById('pace-nome-mes').textContent    = meses[mes];
-            document.getElementById('pace-pct').textContent         = p + '%';
+            if (agora > recarregar) {
+                recarregar.setDate(recarregar.getDate() + 1);
+            }
+
+            const tempoAteRecarregar = recarregar.getTime() - agora.getTime();
+            setTimeout(() => {
+                window.location.reload(true);
+            }, tempoAteRecarregar);
+        }
+
+        function calcularPaceMes() {
+            const agora = new Date();
+            const diaAtual = agora.getDate();
+            const mes = agora.getMonth();
+            const ano = agora.getFullYear();
+            const totalDias = new Date(ano, mes + 1, 0).getDate();
+            const p = Math.round((diaAtual / totalDias) * 100);
+            const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+            document.getElementById('pace-nome-mes').textContent = meses[mes];
+            document.getElementById('pace-pct').textContent = p + '%';
             document.getElementById('pct-pace-circulo').textContent = p + '%';
-            document.getElementById('pace-dia-atual').textContent   = diaAtual;
-            document.getElementById('pace-total-dias').textContent  = totalDias;
+            document.getElementById('pace-dia-atual').textContent = diaAtual;
+            document.getElementById('pace-total-dias').textContent = totalDias;
             document.getElementById('circle-pace').style.strokeDashoffset = 125.7 - (125.7 * p / 100);
         }
 
@@ -573,10 +1130,10 @@
                 if (d.erro) throw d.erro;
                 renderizar(d);
                 document.getElementById('error-banner').style.display = 'none';
-                const ts = new Date().toLocaleString('pt-BR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+                const ts = new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
                 document.getElementById('last-update-header').textContent = 'Última atualização: ' + ts;
-                document.getElementById('last-update-fixed').textContent  = 'Atualizado às ' + ts;
-            } catch(e) {
+                document.getElementById('last-update-fixed').textContent = 'Atualizado às ' + ts;
+            } catch (e) {
                 console.error(e);
                 document.getElementById('error-banner').style.display = 'block';
             } finally {
@@ -586,86 +1143,199 @@
             }
         }
 
-        const pct  = (v, m) => Math.min(Math.round((+v||0) / (+m||1) * 100), 100);
-        const ring = (id, p) => document.getElementById(id).style.strokeDashoffset = 125.7 - 125.7 * p / 100;
+        const pct = (v, m) => Math.round((+v || 0) / (+m || 1) * 100);
+
+        function getColorByPct(p) {
+            if (p >= 100) return '#4ade80'; // Esmeralda
+            if (p >= 80) return '#fbbf24'; // Dourado
+            if (p >= 50) return '#f59e0b'; // Laranja
+            return '#ef4444';               // Vermelho
+        }
+
+        const ring = (id, p) => {
+            const displayPct = Math.min(p, 100);
+            const circle = document.getElementById(id);
+            circle.style.transition = 'none'; // previne ghosts no print
+            circle.style.strokeDashoffset = 125.7 - 125.7 * displayPct / 100;
+
+            const color = getColorByPct(p);
+            circle.style.stroke = color;
+
+            const pctLabel = document.getElementById(id.replace('circle-', 'pct-'));
+            if (pctLabel) pctLabel.style.color = color;
+        };
 
         function setBar(valId, metaId, pctId, barId, v, m) {
             const p = pct(v, m);
-            document.getElementById(valId).textContent  = v ?? '--';
+            const displayPct = Math.min(p, 100);
+
+            document.getElementById(valId).textContent = v ?? '--';
             document.getElementById(metaId).textContent = m ?? '--';
-            document.getElementById(pctId).textContent  = p + '%';
-            document.getElementById(barId).style.width  = p + '%';
+
+            const pctLabel = document.getElementById(pctId);
+            pctLabel.textContent = p + '%';
+
+            const color = getColorByPct(p);
+            pctLabel.style.color = color;
+
+            const bar = document.getElementById(barId);
+            bar.style.transition = 'none'; // previne mid-animation
+            bar.style.width = displayPct + '%';
+            bar.style.background = `linear-gradient(90deg, ${color}cc, ${color})`;
         }
 
         function renderizar(d) {
-            const leads = +d.leads_valor||0, lq = +d.leads_qual_valor||0, vd = +d.vendas_valor||0;
+            const leads = +d.leads_valor || 0, lq = +d.leads_qual_valor || 0, vd = +d.vendas_valor || 0;
 
             const pr = pct(d.prevendas_reuniao_valor, d.prevendas_reuniao_meta);
-            document.getElementById('val-reuniao').textContent  = d.prevendas_reuniao_valor ?? '--';
-            document.getElementById('meta-reuniao').textContent = d.prevendas_reuniao_meta  ?? '--';
-            document.getElementById('pct-reuniao').textContent  = pr + '%'; ring('circle-reuniao', pr);
+            document.getElementById('val-reuniao').textContent = d.prevendas_reuniao_valor ?? '--';
+            document.getElementById('meta-reuniao').textContent = d.prevendas_reuniao_meta ?? '--';
+            document.getElementById('pct-reuniao').textContent = pr + '%'; ring('circle-reuniao', pr);
 
             const pa = pct(d.prevendas_agendamento_valor, d.prevendas_agendamento_meta);
-            document.getElementById('val-agend').textContent    = d.prevendas_agendamento_valor ?? '--';
-            document.getElementById('meta-agend').textContent   = d.prevendas_agendamento_meta  ?? '--';
-            document.getElementById('pct-agend').textContent    = pa + '%'; ring('circle-agend', pa);
+            document.getElementById('val-agend').textContent = d.prevendas_agendamento_valor ?? '--';
+            document.getElementById('meta-agend').textContent = d.prevendas_agendamento_meta ?? '--';
+            document.getElementById('pct-agend').textContent = pa + '%'; ring('circle-agend', pa);
 
             const pv = pct(d.vendas_valor, d.vendas_meta);
-            document.getElementById('val-vendas').textContent   = d.vendas_valor ?? '--';
-            document.getElementById('meta-vendas').textContent  = d.vendas_meta  ?? '--';
+            document.getElementById('val-vendas').textContent = d.vendas_valor ?? '--';
+            document.getElementById('meta-vendas').textContent = d.vendas_meta ?? '--';
             document.getElementById('vendas-variacao').textContent = d.vendas_variacao ?? '-';
-            document.getElementById('pct-vendas').textContent   = pv + '%'; ring('circle-vendas', pv);
+            document.getElementById('pct-vendas').textContent = pv + '%'; ring('circle-vendas', pv);
 
-            const mg = +d.conv_geral_meta||3, tg = leads > 0 ? vd/leads*100 : 0;
-            const pgc = Math.min(Math.round(tg/mg*100), 100);
+            const mg = +d.conv_geral_meta || 3, tg = leads > 0 ? vd / leads * 100 : 0;
+            const pgc = Math.round(tg / mg * 100);
+            const pgcColor = getColorByPct(pgc);
             document.getElementById('val-cg').textContent = tg.toFixed(2) + '%';
             document.getElementById('pct-cg').textContent = pgc + '%';
-            document.getElementById('bar-cg').style.width = pgc + '%';
+            document.getElementById('pct-cg').style.color = pgcColor;
+            document.getElementById('bar-cg').style.transition = 'none';
+            document.getElementById('bar-cg').style.width = Math.min(pgc, 100) + '%';
+            document.getElementById('bar-cg').style.background = `linear-gradient(90deg, ${pgcColor}cc, ${pgcColor})`;
 
-            const taxaLQ = leads > 0 ? lq/leads*100 : 0;
-            const pLQ = Math.min(Math.round(taxaLQ/(+d.conv_lq_meta||25)*100), 100);
-            document.getElementById('val-lq').textContent  = taxaLQ.toFixed(2) + '%';
+            const taxaLQ = leads > 0 ? lq / leads * 100 : 0;
+            const pLQ = Math.round(taxaLQ / (+d.conv_lq_meta || 25) * 100);
+            const pLQColor = getColorByPct(pLQ);
+            document.getElementById('val-lq').textContent = taxaLQ.toFixed(2) + '%';
             document.getElementById('meta-lq').textContent = d.conv_lq_meta || 25;
-            document.getElementById('pct-lq').textContent  = pLQ + '%';
-            document.getElementById('bar-lq').style.width  = pLQ + '%';
+            document.getElementById('pct-lq').textContent = pLQ + '%';
+            document.getElementById('pct-lq').style.color = pLQColor;
+            document.getElementById('bar-lq').style.transition = 'none';
+            document.getElementById('bar-lq').style.width = Math.min(pLQ, 100) + '%';
+            document.getElementById('bar-lq').style.background = `linear-gradient(90deg, ${pLQColor}cc, ${pLQColor})`;
 
-            const taxaQV = lq > 0 ? vd/lq*100 : 0;
-            const pQV = Math.min(Math.round(taxaQV/(+d.conv_qv_meta||25)*100), 100);
-            document.getElementById('val-qv').textContent  = taxaQV.toFixed(2) + '%';
+            const taxaQV = lq > 0 ? vd / lq * 100 : 0;
+            const pQV = Math.round(taxaQV / (+d.conv_qv_meta || 25) * 100);
+            const pQVColor = getColorByPct(pQV);
+            document.getElementById('val-qv').textContent = taxaQV.toFixed(2) + '%';
             document.getElementById('meta-qv').textContent = d.conv_qv_meta || 25;
-            document.getElementById('pct-qv').textContent  = pQV + '%';
-            document.getElementById('bar-qv').style.width  = pQV + '%';
+            document.getElementById('pct-qv').textContent = pQV + '%';
+            document.getElementById('pct-qv').style.color = pQVColor;
+            document.getElementById('bar-qv').style.transition = 'none';
+            document.getElementById('bar-qv').style.width = Math.min(pQV, 100) + '%';
+            document.getElementById('bar-qv').style.background = `linear-gradient(90deg, ${pQVColor}cc, ${pQVColor})`;
 
-            document.getElementById('vr-leads').textContent   = d.leads_variacao      ?? '-';
+            document.getElementById('vr-leads').textContent = d.leads_variacao ?? '-';
             document.getElementById('vr-agendas').textContent = d.agendas_in_variacao ?? '-';
-            document.getElementById('vr-lq').textContent      = d.leads_qual_variacao ?? '-';
+            document.getElementById('vr-lq').textContent = d.leads_qual_variacao ?? '-';
 
             const pl = pct(d.leads_valor, d.leads_meta);
-            document.getElementById('val-leads').textContent  = d.leads_valor  ?? '--';
-            document.getElementById('meta-leads').textContent = d.leads_meta   ?? '--';
-            document.getElementById('pct-leads').textContent  = pl + '%'; ring('circle-leads', pl);
+            document.getElementById('val-leads').textContent = d.leads_valor ?? '--';
+            document.getElementById('meta-leads').textContent = d.leads_meta ?? '--';
+            document.getElementById('pct-leads').textContent = pl + '%'; ring('circle-leads', pl);
 
             const pai = pct(d.agendas_in_valor, d.agendas_in_meta);
-            document.getElementById('val-agendas-in').textContent  = d.agendas_in_valor ?? '--';
-            document.getElementById('meta-agendas-in').textContent = d.agendas_in_meta  ?? '--';
-            document.getElementById('pct-agendas-in').textContent  = pai + '%'; ring('circle-agendas-in', pai);
+            document.getElementById('val-agendas-in').textContent = d.agendas_in_valor ?? '--';
+            document.getElementById('meta-agendas-in').textContent = d.agendas_in_meta ?? '--';
+            document.getElementById('pct-agendas-in').textContent = pai + '%'; ring('circle-agendas-in', pai);
 
             const plq = pct(d.leads_qual_valor, d.leads_qual_meta);
-            document.getElementById('val-lq-in').textContent  = d.leads_qual_valor ?? '--';
-            document.getElementById('meta-lq-in').textContent = d.leads_qual_meta  ?? '--';
-            document.getElementById('pct-lq-in').textContent  = plq + '%'; ring('circle-lq', plq);
+            document.getElementById('val-lq-in').textContent = d.leads_qual_valor ?? '--';
+            document.getElementById('meta-lq-in').textContent = d.leads_qual_meta ?? '--';
+            document.getElementById('pct-lq-in').textContent = plq + '%'; ring('circle-lq', plq);
 
-            setBar('val-ao','meta-ao','pct-ao','bar-ao', d.agendas_out_valor, d.agendas_out_meta);
-            setBar('val-qo','meta-qo','pct-qo','bar-qo', d.quals_out_valor,   d.quals_out_meta);
-            setBar('val-vo','meta-vo','pct-vo','bar-vo', d.vendas_out_valor,  d.vendas_out_meta);
-            setBar('val-ap','meta-ap','pct-ap','bar-ap', d.apres_valor,       d.apres_meta);
-            setBar('val-co','meta-co','pct-co','bar-co', d.contratos_valor,   d.contratos_meta);
-            setBar('val-in2','meta-in2','pct-in2','bar-in2', d.indicacoes_valor, d.indicacoes_meta);
+            setBar('val-ao', 'meta-ao', 'pct-ao', 'bar-ao', d.agendas_out_valor, d.agendas_out_meta);
+            setBar('val-qo', 'meta-qo', 'pct-qo', 'bar-qo', d.quals_out_valor, d.quals_out_meta);
+            setBar('val-vo', 'meta-vo', 'pct-vo', 'bar-vo', d.vendas_out_valor, d.vendas_out_meta);
+
+            // YOU PARCEIRO: aceita chaves novas (agendamentos_parceiro_*) ou antigas (apres_*, contratos_*, indicacoes_*)
+            const agpV = d.agendamentos_parceiro_valor ?? d.apres_valor;
+            const agpM = d.agendamentos_parceiro_meta  ?? d.apres_meta;
+            const qupV = d.qualificacoes_parceiro_valor ?? d.contratos_valor;
+            const qupM = d.qualificacoes_parceiro_meta  ?? d.contratos_meta;
+            const vepV = d.vendas_parceiro_valor ?? d.indicacoes_valor;
+            const vepM = d.vendas_parceiro_meta  ?? d.indicacoes_meta;
+            setBar('val-agp', 'meta-agp', 'pct-agp', 'bar-agp', agpV, agpM);
+            setBar('val-qup', 'meta-qup', 'pct-qup', 'bar-qup', qupV, qupM);
+            setBar('val-vep', 'meta-vep', 'pct-vep', 'bar-vep', vepV, vepM);
+
+            // PIPELINE — lógicas customizadas
+            renderPipelineAnalise(d.analise_valor, d.leads_valor);
+            renderPipelineDescartado(d.descartado_valor, d.leads_valor);
+
+            // Frases motivacionais
+            atualizarMensagemMotivacional(pct(d.leads_valor, d.leads_meta));
+        }
+
+        function renderPipelineAnalise(analiseValor, leadsValor) {
+            const v = +analiseValor || 0;
+            const l = +leadsValor || 0;
+            const p = l > 0 ? Math.round(v / l * 100) : 0;
+            const color = v === 0 ? '#4ade80' : p <= 10 ? '#fbbf24' : '#f87171';
+            document.getElementById('val-analise').textContent = v;
+            const pctEl = document.getElementById('pct-analise');
+            pctEl.textContent = p + '%';
+            pctEl.style.color = color;
+            const bar = document.getElementById('bar-analise');
+            bar.style.transition = 'none';
+            bar.style.width = Math.min(p, 100) + '%';
+            bar.style.background = `linear-gradient(90deg, ${color}cc, ${color})`;
+        }
+
+        function renderPipelineDescartado(descartadoValor, leadsValor) {
+            const v = +descartadoValor || 0;
+            const l = +leadsValor || 0;
+            const maxPermitido = Math.round(l * 0.35);
+            const p = maxPermitido > 0 ? Math.round(v / maxPermitido * 100) : 0;
+            const color = p >= 100 ? '#ef4444' : p >= 70 ? '#f59e0b' : '#4ade80';
+            document.getElementById('val-descartado').textContent = v;
+            const pctEl = document.getElementById('pct-descartado');
+            pctEl.textContent = p + '%';
+            pctEl.style.color = color;
+            document.getElementById('meta-descartado-val').textContent = maxPermitido || '--';
+            const bar = document.getElementById('bar-descartado');
+            bar.style.transition = 'none';
+            bar.style.width = Math.min(p, 100) + '%';
+            bar.style.background = `linear-gradient(90deg, ${color}cc, ${color})`;
+        }
+
+        function atualizarMensagemMotivacional(leadsPct) {
+            const pacePct = (() => {
+                const agora = new Date();
+                const totalDias = new Date(agora.getFullYear(), agora.getMonth() + 1, 0).getDate();
+                return Math.round((agora.getDate() / totalDias) * 100);
+            })();
+
+            let categoria = 'no_ritmo';
+            if (leadsPct >= 100) categoria = 'meta_batida';
+            else if (leadsPct >= (pacePct + 10)) categoria = 'excelente';
+            else if (leadsPct < pacePct) categoria = 'alerta';
+
+            const frases = FRASE_CONFIG[categoria];
+            const frase = frases[Math.floor(Math.random() * frases.length)];
+            const msgEl = document.getElementById('mensagem-motivacional');
+            const iconEl = document.getElementById('mensagem-icon');
+            if (!msgEl) return;
+            msgEl.textContent = frase;
+            const cor = (categoria === 'alerta') ? '#f87171' : (categoria === 'meta_batida') ? '#4ade80' : '#60a5fa';
+            msgEl.style.color = cor;
+            if (iconEl) iconEl.style.color = cor;
         }
 
         function initCharts() {
             const opts = {
                 responsive: true, maintainAspectRatio: false,
+                animation: false, // Desabilita animações para print imediato
                 plugins: { legend: { display: false }, tooltip: { enabled: false } },
                 scales: { x: { display: false }, y: { display: false, min: 0, max: 50 } },
                 elements: { point: { radius: 0 }, line: { tension: 0.4, borderWidth: 2 } }
@@ -675,17 +1345,18 @@
                 g.addColorStop(0, c1); g.addColorStop(1, c2); return g;
             };
             [
-                ['chart-reuniao',    [5,10,15,20,25,30,35,40,45,48], '#c084fc','rgba(192,132,252,0.4)','rgba(192,132,252,0)'],
-                ['chart-agend',      [8,12,15,18,22,28,32,36,40,45], '#60a5fa','rgba(96,165,250,0.4)','rgba(96,165,250,0)'],
-                ['chart-vendas',     [3,6,9,12,15,18,22,26,30,34],   '#f59e0b','rgba(245,158,11,0.4)','rgba(245,158,11,0)'],
-                ['chart-leads',      [5,10,18,22,28,33,38,42,46,48], '#4ade80','rgba(74,222,128,0.4)','rgba(74,222,128,0)'],
-                ['chart-agendas-in', [8,12,15,20,24,29,33,37,41,45], '#60a5fa','rgba(96,165,250,0.4)','rgba(96,165,250,0)'],
-                ['chart-lq',         [10,14,20,25,30,34,38,42,45,48],'#c084fc','rgba(192,132,252,0.4)','rgba(192,132,252,0)'],
+                ['chart-reuniao', [5, 10, 15, 20, 25, 30, 35, 40, 45, 48], '#c084fc', 'rgba(192,132,252,0.4)', 'rgba(192,132,252,0)'],
+                ['chart-agend', [8, 12, 15, 18, 22, 28, 32, 36, 40, 45], '#60a5fa', 'rgba(96,165,250,0.4)', 'rgba(96,165,250,0)'],
+                ['chart-vendas', [3, 6, 9, 12, 15, 18, 22, 26, 30, 34], '#f59e0b', 'rgba(245,158,11,0.4)', 'rgba(245,158,11,0)'],
+                ['chart-leads', [5, 10, 18, 22, 28, 33, 38, 42, 46, 48], '#4ade80', 'rgba(74,222,128,0.4)', 'rgba(74,222,128,0)'],
+                ['chart-agendas-in', [8, 12, 15, 20, 24, 29, 33, 37, 41, 45], '#60a5fa', 'rgba(96,165,250,0.4)', 'rgba(96,165,250,0)'],
+                ['chart-lq', [10, 14, 20, 25, 30, 34, 38, 42, 45, 48], '#c084fc', 'rgba(192,132,252,0.4)', 'rgba(192,132,252,0)'],
             ].forEach(([id, data, color, g1, g2]) => {
                 const ctx = document.getElementById(id).getContext('2d');
-                new Chart(ctx, { type:'line', data:{ labels:Array(data.length).fill(''), datasets:[{ data, borderColor:color, backgroundColor:grad(ctx,g1,g2), fill:true }]}, options:opts });
+                new Chart(ctx, { type: 'line', data: { labels: Array(data.length).fill(''), datasets: [{ data, borderColor: color, backgroundColor: grad(ctx, g1, g2), fill: true }] }, options: opts });
             });
         }
     </script>
 </body>
+
 </html>
