@@ -908,65 +908,8 @@
             </div>
         </div>
 
-        <!-- SEÇÃO 4 — OUTBOUND + YOU PARCEIRO -->
-        <div class="grid-2">
-            <div class="bottom-card-out">
-                <div class="flex-label" style="margin-bottom:0.5em">
-                    <span class="section-label" style="color:rgba(251,146,60,0.75)">📤 Outbound</span>
-                    <div class="section-divider" style="background:rgba(251,146,60,0.15)"></div>
-                </div>
-                <div class="grid-3-sub">
-                    <div class="glass-card mini-metric">
-                        <div class="mini-metric-label">Agendas</div>
-                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.15em 0">
-                            <span class="mini-metric-value" id="val-ao">--</span>
-                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span
-                                    id="meta-ao">--</span></span>
-                        </div>
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25em">
-                            <span class="mini-metric-pct" style="color:#fb923c" id="pct-ao">--%</span>
-                            <span style="font-size:0.58em;color:rgba(255,255,255,0.3)">da meta</span>
-                        </div>
-                        <div class="bar-bg">
-                            <div class="bar-fill" id="bar-ao"
-                                style="width:0%;background:linear-gradient(90deg,#fb923c,#fbbf24)"></div>
-                        </div>
-                    </div>
-                    <div class="glass-card mini-metric">
-                        <div class="mini-metric-label">Qualificações</div>
-                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.15em 0">
-                            <span class="mini-metric-value" id="val-qo">--</span>
-                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span
-                                    id="meta-qo">--</span></span>
-                        </div>
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25em">
-                            <span class="mini-metric-pct" style="color:#fb923c" id="pct-qo">--%</span>
-                            <span style="font-size:0.58em;color:rgba(255,255,255,0.3)">da meta</span>
-                        </div>
-                        <div class="bar-bg">
-                            <div class="bar-fill" id="bar-qo"
-                                style="width:0%;background:linear-gradient(90deg,#fb923c,#ef4444)"></div>
-                        </div>
-                    </div>
-                    <div class="glass-card mini-metric">
-                        <div class="mini-metric-label">Vendas</div>
-                        <div style="display:flex;align-items:baseline;gap:0.25em;margin:0.15em 0">
-                            <span class="mini-metric-value" id="val-vo">--</span>
-                            <span style="font-size:0.65em;color:rgba(255,255,255,0.3)">/ <span
-                                    id="meta-vo">--</span></span>
-                        </div>
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25em">
-                            <span class="mini-metric-pct" style="color:#fb923c" id="pct-vo">--%</span>
-                            <span style="font-size:0.58em;color:rgba(255,255,255,0.3)">da meta</span>
-                        </div>
-                        <div class="bar-bg">
-                            <div class="bar-fill" id="bar-vo"
-                                style="width:0%;background:linear-gradient(90deg,#fbbf24,#f97316)"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+        <!-- SEÇÃO 4 — YOU PARCEIRO -->
+        <div>
             <div class="bottom-card-par">
                 <div class="flex-label" style="margin-bottom:0.5em">
                     <span class="section-label" style="color:rgba(34,211,238,0.75)">🤝 You Parceiro</span>
@@ -1253,10 +1196,6 @@
             document.getElementById('val-lq-in').textContent = d.leads_qual_valor ?? '--';
             document.getElementById('meta-lq-in').textContent = d.leads_qual_meta ?? '--';
             document.getElementById('pct-lq-in').textContent = plq + '%'; ring('circle-lq', plq);
-
-            setBar('val-ao', 'meta-ao', 'pct-ao', 'bar-ao', d.agendas_out_valor, d.agendas_out_meta);
-            setBar('val-qo', 'meta-qo', 'pct-qo', 'bar-qo', d.quals_out_valor, d.quals_out_meta);
-            setBar('val-vo', 'meta-vo', 'pct-vo', 'bar-vo', d.vendas_out_valor, d.vendas_out_meta);
 
             // YOU PARCEIRO: aceita chaves novas (agendamentos_parceiro_*) ou antigas (apres_*, contratos_*, indicacoes_*)
             const agpV = d.agendamentos_parceiro_valor ?? d.apres_valor;
